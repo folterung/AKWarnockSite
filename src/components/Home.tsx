@@ -78,17 +78,14 @@ export default function Home({ homeInfo }: HomeProps) {
       });
 
       const data = await response.json();
-      console.log('Subscribe response:', { status: response.status, data });
 
       if (response.status === 200) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success('Successfully subscribed!', { position: 'bottom-right', autoClose: 5000 });
       } else {
-        console.error('Error response:', data);
         toast.error(data.error || 'Failed to subscribe. Please try again.', { position: 'bottom-right', autoClose: 5000 });
       }
     } catch (error) {
-      console.error('Subscription error:', error);
       toast.error('Failed to subscribe. Please try again.', { position: 'bottom-right', autoClose: 5000 });
     } finally {
       setLoading(false);
