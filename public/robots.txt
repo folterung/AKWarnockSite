@@ -1,4 +1,9 @@
+# *
 User-agent: *
-Disallow:
+Allow: /
 
-Sitemap: https://www.akwarnockwrites.com/sitemap-index.xml
+# Host
+Host: https://akwarnockwrites.com
+
+# Sitemaps
+Sitemap: https://akwarnockwrites.com/sitemap.xml
