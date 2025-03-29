@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Header from './layout/Header'
-import Footer from './layout/Footer'
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Header from './layout/Header';
+import Footer from './layout/Footer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
@@ -39,7 +39,7 @@ interface HomeProps {
 }
 
 export default function Home({ homeInfo }: HomeProps) {
-  const [message, setMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState(''); // Track email input
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -63,11 +63,7 @@ export default function Home({ homeInfo }: HomeProps) {
   const handleSubscription = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
-    
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    
+
     try {
       const response = await fetch('/.netlify/functions/subscribe', {
         method: 'POST',
@@ -158,14 +154,15 @@ export default function Home({ homeInfo }: HomeProps) {
             {homeInfo.newsletter.subtitle}
           </p>
           <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onSubmit={handleSubscription}>
-            {message && <p className="text-center text-green-500 mb-4">{message}</p>}
             <input
               type="email"
               name="email"
               placeholder={homeInfo.newsletter.form.placeholder}
               className="input flex-grow"
+              value={email} // Bind the input value to state
+              onChange={(e) => setEmail(e.target.value)} // Update state on change
             />
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button type="submit" className={`btn btn-primary ${loading || !email ? 'bg-gray-400 cursor-not-allowed' : ''}`} disabled={loading || !email}> {/* Disable if loading or email is empty */}
               {loading ? homeInfo.newsletter.form.loadingText : homeInfo.newsletter.form.submitButton}
             </button>
           </form>
@@ -175,5 +172,5 @@ export default function Home({ homeInfo }: HomeProps) {
       <Footer />
       <ToastContainer />
     </div>
-  )
-} 
+  );
+}
