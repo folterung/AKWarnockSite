@@ -81,7 +81,6 @@ export default function Home({ homeInfo }: HomeProps) {
       console.log('Subscribe response:', { status: response.status, data });
 
       if (response.status === 200) {
-        e.currentTarget.reset();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success('Successfully subscribed!', { position: 'bottom-right', autoClose: 5000 });
       } else {
