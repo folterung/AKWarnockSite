@@ -40,7 +40,6 @@ const Contact: React.FC<ContactProps> = ({ contactInfo }) => {
       });
 
       const responseData = await response.json();
-      console.log('Contact response:', responseData);
 
       if (response.status === 200) {
         toast.success('Your message has been sent successfully! We will get back to you soon.', {
@@ -53,7 +52,6 @@ const Contact: React.FC<ContactProps> = ({ contactInfo }) => {
         throw new Error(responseData.error || 'Failed to send message');
       }
     } catch (error) {
-      console.error('Contact form error:', error);
       toast.error('Failed to send message. Please try again.', {
         position: 'bottom-right',
         autoClose: 5000,
