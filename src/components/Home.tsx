@@ -59,7 +59,7 @@ export default function Home({ homeInfo }: HomeProps) {
       });
       router.replace('/', undefined, { shallow: true });
     }
-  }, [router.query]);
+  }, [router, router.query]);
 
   const handleSubscription = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
