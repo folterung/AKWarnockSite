@@ -13,8 +13,9 @@ interface UnsubscribePageProps {
 
 export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
   const router = useRouter();
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
   const emailInputRef = useRef<HTMLInputElement>(null);
   const unsubscribeButtonRef = useRef<HTMLButtonElement>(null);
 

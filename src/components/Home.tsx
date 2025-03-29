@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Header from './layout/Header'
 import Footer from './layout/Footer'
-import { subscribeToNewsletter } from '../utils/newsletter'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
