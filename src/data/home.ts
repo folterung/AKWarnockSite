@@ -21,7 +21,7 @@ export const homeInfo = {
   },
   newsletter: {
     title: 'Stay Updated',
-    subtitle: 'Subscribe to my newsletter for news, updates, and exclusive content.',
+    subtitle: 'Subscribe to our newsletter for news, updates, and exclusive content.',
     form: {
       placeholder: 'Enter your email',
       submitButton: 'Subscribe',
