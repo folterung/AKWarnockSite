@@ -47,6 +47,7 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
       });
 
       const data = await response.json();
+      console.log('Unsubscribe response:', { status: response.status, data });
 
       if (response.status === 200) {
         toast.success('Successfully unsubscribed from the newsletter.', {
@@ -55,9 +56,13 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
         });
         router.push('/?unsubscribed=true');
       } else {
-        throw new Error(data.error || 'Failed to unsubscribe');
+        toast.error(data.error || 'Failed to unsubscribe. Please try again.', {
+          position: 'bottom-right',
+          autoClose: 5000,
+        });
       }
     } catch (error) {
+      console.error('Unsubscribe error:', error);
       toast.error('Failed to unsubscribe. Please try again.', {
         position: 'bottom-right',
         autoClose: 5000,
