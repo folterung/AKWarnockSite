@@ -29,7 +29,7 @@ export const handler: Handler = async (event) => {
 
     // Send contact form submission to admin
     const { error } = await resend.emails.send({
-      from: 'AK Warnock <newsletter@akwarnock.com>',
+      from: 'AK Warnock <newsletter@akwarnockwrites.com>',
       to: ADMIN_EMAIL,
       subject: 'New Contact Form Submission',
       html: `
