@@ -70,7 +70,18 @@ export default function Home({ homeInfo }: HomeProps) {
     const email = formData.get('email') as string;
     
     try {
-      await subscribeToNewsletter(email);
+      const response = await fetch('/.netlify/functions/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to subscribe');
+      }
+
       toast.success('Successfully subscribed!', { position: 'bottom-right', autoClose: 5000 });
       e.currentTarget.reset();
       window.scrollTo({ top: 0, behavior: 'smooth' });

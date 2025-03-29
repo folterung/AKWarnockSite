@@ -28,12 +28,16 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
     }
   }, [router.query.email]);
 
-  const handleUnsubscribe = async (e: React.FormEvent) => {
+  const handleUnsubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-
+    setMessage(null);
+    
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    
     try {
-      const response = await fetch('/api/unsubscribe', {
+      const response = await fetch('/.netlify/functions/unsubscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +49,6 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
         throw new Error('Failed to unsubscribe');
       }
 
-      setEmail('');
       toast.success('Successfully unsubscribed from the newsletter.', {
         position: 'bottom-right',
         autoClose: 5000,
