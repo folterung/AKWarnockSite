@@ -72,7 +72,7 @@ export default function Contact({ contactInfo }: ContactPageProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/.netlify/functions/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,28 +83,34 @@ export default function Contact({ contactInfo }: ContactPageProps) {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      const data = await response.json();
+      console.log('Contact response:', { status: response.status, data });
 
-      // Reset form and redirect to home page
-      setFormData({
-        name: '',
-        phone: '',
-        email: '',
-        preferredMethod: 'email',
-        message: '',
-      });
-      setCharCount(0);
-      setErrors({
-        name: '',
-        phone: '',
-        email: '',
-        message: '',
-      });
-      router.replace('/?contactSent=true');
+      if (response.status === 200) {
+        // Reset form and redirect to home page
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          preferredMethod: 'email',
+          message: '',
+        });
+        setCharCount(0);
+        setErrors({
+          name: '',
+          phone: '',
+          email: '',
+          message: '',
+        });
+        router.replace('/?contactSent=true');
+      } else {
+        toast.error(data.error || 'Failed to send message. Please try again.', {
+          position: 'bottom-right',
+          autoClose: 5000,
+        });
+      }
     } catch (error) {
-      // Show error message and keep form data
+      console.error('Contact form error:', error);
       toast.error('Failed to send message. Please try again.', {
         position: 'bottom-right',
         autoClose: 5000,
