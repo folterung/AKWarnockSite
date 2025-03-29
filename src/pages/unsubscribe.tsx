@@ -34,9 +34,6 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
     setLoading(true);
     setMessage(null);
     
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    
     try {
       const response = await fetch('/.netlify/functions/unsubscribe', {
         method: 'POST',
