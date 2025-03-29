@@ -20,7 +20,7 @@ export const handler: Handler = async (event) => {
 
     // Send welcome email to subscriber
     const { data, error } = await resend.emails.send({
-      from: 'AK Warnock <newsletter@akwarnock.com>',
+      from: 'AK Warnock <newsletter@akwarnockwrites.com>',
       to: email,
       subject: 'Welcome to AK Warnock\'s Newsletter!',
       html: `

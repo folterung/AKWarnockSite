@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://www.akwarnockwrites.com/sitemap-index.xml

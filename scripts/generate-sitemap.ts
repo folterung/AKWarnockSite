@@ -17,7 +17,7 @@ interface Book {
 }
 
 // Base URL of your website
-const BASE_URL = 'https://akwarnock.com';
+const BASE_URL = 'https://akwarnockwrites.com';
 
 // Static pages
 const staticPages: string[] = [
