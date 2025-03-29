@@ -39,17 +39,21 @@ const Contact: React.FC<ContactProps> = ({ contactInfo }) => {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      const responseData = await response.json();
+      console.log('Contact response:', responseData);
 
-      toast.success('Your message has been sent successfully! We will get back to you soon.', {
-        position: 'bottom-right',
-        autoClose: 5000,
-      });
-      e.currentTarget.reset();
-      router.push('/?contactSent=true');
+      if (response.status === 200) {
+        toast.success('Your message has been sent successfully! We will get back to you soon.', {
+          position: 'bottom-right',
+          autoClose: 5000,
+        });
+        e.currentTarget.reset();
+        router.push('/?contactSent=true');
+      } else {
+        throw new Error(responseData.error || 'Failed to send message');
+      }
     } catch (error) {
+      console.error('Contact form error:', error);
       toast.error('Failed to send message. Please try again.', {
         position: 'bottom-right',
         autoClose: 5000,

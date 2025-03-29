@@ -46,15 +46,17 @@ export default function Unsubscribe({ unsubscribeInfo }: UnsubscribePageProps) {
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to unsubscribe');
-      }
+      const data = await response.json();
 
-      toast.success('Successfully unsubscribed from the newsletter.', {
-        position: 'bottom-right',
-        autoClose: 5000,
-      });
-      router.push('/?unsubscribed=true');
+      if (response.status === 200) {
+        toast.success('Successfully unsubscribed from the newsletter.', {
+          position: 'bottom-right',
+          autoClose: 5000,
+        });
+        router.push('/?unsubscribed=true');
+      } else {
+        throw new Error(data.error || 'Failed to unsubscribe');
+      }
     } catch (error) {
       toast.error('Failed to unsubscribe. Please try again.', {
         position: 'bottom-right',

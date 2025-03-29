@@ -77,13 +77,15 @@ export default function Home({ homeInfo }: HomeProps) {
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to subscribe');
-      }
+      const data = await response.json();
 
-      toast.success('Successfully subscribed!', { position: 'bottom-right', autoClose: 5000 });
-      e.currentTarget.reset();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (response.status === 200) {
+        toast.success('Successfully subscribed!', { position: 'bottom-right', autoClose: 5000 });
+        e.currentTarget.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
     } catch (error) {
       toast.error('Failed to subscribe. Please try again.', { position: 'bottom-right', autoClose: 5000 });
     } finally {
