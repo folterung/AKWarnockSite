@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162.87 139.14">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        font-family: RingbearerMedium, Ringbearer;
+        font-size: 98.59px;
+      }
+
+      .cls-2 {
+        fill: #cfb53b;
+      }
+
+      .cls-3 {
+        letter-spacing: .07em;
+      }
+    </style>
+  </defs>
+  <text class="cls-1" transform="translate(5.99 93.22)"><tspan class="cls-3" x="0" y="0">A</tspan><tspan x="77.5" y="0">K</tspan></text>
+  <text class="cls-2" transform="translate(0 85.71)"><tspan class="cls-3" x="0" y="0">A</tspan><tspan x="77.5" y="0">K</tspan></text>
+</svg>
