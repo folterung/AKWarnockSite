@@ -127,13 +127,13 @@ export const useGameStore = create<GameStore>()((set, get) => ({
 
         const currentState = state.grid[row][col];
         const nextState: TileState | null =
-          currentState === null
+          currentState === null || currentState === 'EMPTY'
             ? 'SUN'
             : currentState === 'SUN'
               ? 'MOON'
               : currentState === 'MOON'
                 ? 'EMPTY'
-                : null;
+                : 'EMPTY';
 
         const newGrid = state.grid.map((r) => [...r]);
         newGrid[row][col] = nextState;

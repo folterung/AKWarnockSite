@@ -35,7 +35,7 @@ export default function AxiomataPage() {
       
       try {
         const dailyKey = getDailyKey();
-        const CACHE_VERSION = '2'; // Increment to invalidate old caches
+        const CACHE_VERSION = '3'; // Increment to invalidate old caches (v3: added solvability verification)
         console.log('Loading puzzle for:', dailyKey);
         
         const cachedVersion = localStorage.getItem(`axiomata-cache-version-${dailyKey}`);

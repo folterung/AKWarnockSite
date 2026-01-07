@@ -11,6 +11,7 @@ import type {
 } from './types';
 import { getDailyKey, seedFromString, SeededRNG } from './seed';
 import { validateAll } from './validator';
+import { solve } from './solver';
 
 const GRID_SIZE = 5;
 const TILE_STATES: TileState[] = ['EMPTY', 'SUN', 'MOON'];
@@ -264,6 +265,8 @@ export function generatePuzzle(
 
   let attempts = 0;
   const maxAttempts = 5;
+  let validationFailures = 0;
+  let solvabilityFailures = 0;
 
   do {
     const adjacencyCount = difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3;
@@ -290,18 +293,36 @@ export function generatePuzzle(
     };
 
     const validation = validateAll(constraints, solution);
-    if (validation.isValid) {
-      break;
+    if (!validation.isValid) {
+      validationFailures++;
+      attempts++;
+      if (attempts < maxAttempts) {
+        rng = new SeededRNG(seed + attempts);
+      }
+      continue;
     }
 
-    attempts++;
-    if (attempts < maxAttempts) {
-      rng = new SeededRNG(seed + attempts);
+    const solved = solve(puzzle, 50000);
+    if (solved === null) {
+      solvabilityFailures++;
+      attempts++;
+      if (attempts < maxAttempts) {
+        rng = new SeededRNG(seed + attempts);
+      }
+      continue;
     }
+
+    break;
   } while (attempts < maxAttempts);
 
   if (attempts >= maxAttempts) {
-    console.warn('Failed to generate valid puzzle after', maxAttempts, 'attempts, using last attempt');
+    const errorMessage = `Failed to generate solvable puzzle after ${maxAttempts} attempts. Validation failures: ${validationFailures}, Solvability failures: ${solvabilityFailures}`;
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  if (validationFailures > 0 || solvabilityFailures > 0) {
+    console.log(`Puzzle generated after ${attempts} attempts (validation failures: ${validationFailures}, solvability failures: ${solvabilityFailures})`);
   }
 
   return puzzle;
