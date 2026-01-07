@@ -35,6 +35,18 @@ export default function Header() {
               </div>
             </div>
 
+            {/* Games Dropdown */}
+            <div className="relative group">
+              <Link href="/games/axiomata" className="nav-link">
+                Games
+              </Link>
+              <div className="nav-dropdown">
+                <Link href="/games/axiomata" className="nav-dropdown-item">
+                  Axiomata
+                </Link>
+              </div>
+            </div>
+
             {/* About Dropdown */}
             <div className="relative group">
               <button className="nav-link">
@@ -79,6 +91,9 @@ export default function Header() {
             </Link>
             <Link href="/books" className="block px-3 py-2 nav-link">
               Books
+            </Link>
+            <Link href="/games/axiomata" className="block px-3 py-2 nav-link">
+              Games - Axiomata
             </Link>
             <Link href="/about" className="block px-3 py-2 nav-link">
               About
