@@ -71,7 +71,7 @@ export default function ConstraintChip({ constraint, isValid, pairIndex }: Const
           style={{ cursor: 'default' }}
         />
       )}
-      <span className="text-sm md:text-base leading-normal flex-1 font-bold text-gray-900 font-sans text-center" style={{ lineHeight: '1.6', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>{getLabel()}</span>
+      <span className="text-sm md:text-base leading-normal flex-1 font-bold text-gray-900 font-sans text-left" style={{ lineHeight: '1.6', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>{getLabel()}</span>
     </div>
   );
 }

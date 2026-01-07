@@ -29,17 +29,21 @@ export default function PracticePage() {
         <title>Axiomata - Practice | A.K. Warnock</title>
       </Head>
       <div className="min-h-screen bg-gray-50 py-8 px-4">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-2">Axiomata - Practice</h1>
           <p className="text-center text-gray-600 mb-6">Practice mode (no streak tracking)</p>
           
           <TopBar />
           
-          <div className="mb-6">
-            <Grid />
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start lg:items-start">
+            <div className="w-full lg:flex-[3] lg:flex-shrink-0 mb-8 lg:mb-0 flex justify-center lg:justify-start">
+              <Grid />
+            </div>
+            
+            <div className="w-full lg:flex-1 lg:min-w-[280px] lg:max-w-[350px]">
+              <ConstraintsPanel />
+            </div>
           </div>
-          
-          <ConstraintsPanel />
         </div>
       </div>
     </>

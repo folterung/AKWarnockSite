@@ -73,6 +73,51 @@ function saveToStorage(state: Partial<GameState>): void {
   }
 }
 
+function getBoardStorageKey(dailyKey: string): string {
+  return `axiomata-board-${dailyKey}`;
+}
+
+function loadBoardState(dailyKey: string): {
+  grid: Grid | null;
+  isComplete: boolean;
+  startTime: number | null;
+  timeToSolveMs: number | null;
+} {
+  if (typeof window === 'undefined') {
+    return { grid: null, isComplete: false, startTime: null, timeToSolveMs: null };
+  }
+  try {
+    const stored = localStorage.getItem(getBoardStorageKey(dailyKey));
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        grid: parsed.grid || null,
+        isComplete: parsed.isComplete || false,
+        startTime: parsed.startTime || null,
+        timeToSolveMs: parsed.timeToSolveMs || null,
+      };
+    }
+  } catch (error) {
+    console.error('Failed to load board state:', error);
+  }
+  return { grid: null, isComplete: false, startTime: null, timeToSolveMs: null };
+}
+
+function saveBoardState(dailyKey: string, grid: Grid, isComplete: boolean, startTime: number | null, timeToSolveMs: number | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const toSave = {
+      grid,
+      isComplete,
+      startTime,
+      timeToSolveMs,
+    };
+    localStorage.setItem(getBoardStorageKey(dailyKey), JSON.stringify(toSave));
+  } catch (error) {
+    console.error('Failed to save board state:', error);
+  }
+}
+
 const stored = loadFromStorage();
 
 export const useGameStore = create<GameStore>()((set, get) => ({
@@ -108,11 +153,22 @@ export const useGameStore = create<GameStore>()((set, get) => ({
             attemptCountToday: 0,
           });
         } else {
-          set({
-            grid: initializeGrid(puzzle),
-            puzzle,
-            isComplete: false,
-          });
+          const savedBoardState = loadBoardState(dailyKey);
+          if (savedBoardState.grid) {
+            set({
+              grid: savedBoardState.grid,
+              puzzle,
+              isComplete: savedBoardState.isComplete,
+              startTime: savedBoardState.startTime,
+              timeToSolveMs: savedBoardState.timeToSolveMs,
+            });
+          } else {
+            set({
+              grid: initializeGrid(puzzle),
+              puzzle,
+              isComplete: false,
+            });
+          }
         }
       },
 
@@ -138,7 +194,9 @@ export const useGameStore = create<GameStore>()((set, get) => ({
         const newGrid = state.grid.map((r) => [...r]);
         newGrid[row][col] = nextState;
 
+        const dailyKey = getDailyKey();
         set({ grid: newGrid });
+        saveBoardState(dailyKey, newGrid, state.isComplete, state.startTime, state.timeToSolveMs);
         get().checkCompletion();
       },
 
@@ -174,8 +232,11 @@ export const useGameStore = create<GameStore>()((set, get) => ({
             attemptCountToday: state.attemptCountToday,
             lastDailyKey: state.lastDailyKey,
           });
+          saveBoardState(dailyKey, state.grid, true, state.startTime, solveTime);
         } else {
+          const dailyKey = getDailyKey();
           set({ isComplete: false });
+          saveBoardState(dailyKey, state.grid, false, state.startTime, state.timeToSolveMs);
         }
       },
 
@@ -194,7 +255,10 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       startTimer: () => {
         const state = get();
         if (!state.startTime && !state.isComplete) {
-          set({ startTime: Date.now() });
+          const startTime = Date.now();
+          const dailyKey = getDailyKey();
+          set({ startTime });
+          saveBoardState(dailyKey, state.grid, state.isComplete, startTime, state.timeToSolveMs);
         }
       },
 

@@ -52,8 +52,8 @@ export default function Grid() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="aspect-square grid grid-cols-5 gap-2.5 p-3 relative bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-lg">
+    <div className="w-full mx-auto">
+      <div className="aspect-square grid grid-cols-5 gap-2.5 p-3 relative bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-lg ml-auto mr-auto" style={{ minWidth: '320px', maxWidth: '600px', width: '100%' }}>
         {grid.map((row, rowIndex) =>
           row.map((tile, colIndex) => {
             const key = `${rowIndex},${colIndex}`;
