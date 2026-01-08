@@ -27,7 +27,7 @@ export default function ShareCard({ onShareComplete, captureRef }: ShareCardProp
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   useEffect(() => {
-    function checkShareAvailability() {
+    const checkShareAvailability = () => {
       const dailyKey = getDailyKey();
       const completedTimestamp = localStorage.getItem(`axiomata-completed-${dailyKey}`);
       
@@ -45,7 +45,7 @@ export default function ShareCard({ onShareComplete, captureRef }: ShareCardProp
       } else {
         setCanShare(false);
       }
-    }
+    };
 
     checkShareAvailability();
   }, []);

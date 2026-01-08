@@ -42,7 +42,7 @@ export default function Grid() {
   }
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const gameBoard = target.closest('.game-board-container');
       const tilePicker = target.closest('.tile-picker-container');
@@ -50,7 +50,7 @@ export default function Grid() {
       if (!gameBoard && !tilePicker) {
         setPickerPosition(null);
       }
-    }
+    };
 
     if (pickerPosition) {
       document.addEventListener('click', handleClickOutside);

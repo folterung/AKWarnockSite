@@ -41,7 +41,7 @@ function createEmptyGrid(gridSize: number): Grid {
 
 function initializeGrid(puzzle: Puzzle): Grid {
   const grid = createEmptyGrid(puzzle.gridSize);
-  for (const [key, value] of puzzle.givens.entries()) {
+  for (const [key, value] of Array.from(puzzle.givens.entries())) {
     const [row, col] = key.split(',').map(Number);
     if (row >= 0 && row < puzzle.gridSize && col >= 0 && col < puzzle.gridSize) {
       grid[row][col] = value;
