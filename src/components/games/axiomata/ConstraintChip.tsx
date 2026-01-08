@@ -6,22 +6,47 @@ interface ConstraintChipProps {
   constraint: Constraint;
   isValid: boolean;
   pairIndex?: number;
+  gridSize?: number;
 }
 
-export default function ConstraintChip({ constraint, isValid, pairIndex }: ConstraintChipProps) {
+export default function ConstraintChip({ constraint, isValid, pairIndex, gridSize = 5 }: ConstraintChipProps) {
+  function getPieceEmoji(tileType: string): string {
+    if (tileType === 'SUN') return '☀️';
+    if (tileType === 'MOON') return '🌙';
+    if (tileType === 'STAR') return '⭐';
+    if (tileType === 'PLANET') return '🪐';
+    if (tileType === 'COMET') return '☄️';
+    return '';
+  }
 
-  const getLabel = () => {
+  function getCountsMap(counts: any): Map<string, number> {
+    if (counts instanceof Map) {
+      return counts;
+    } else if (Array.isArray(counts)) {
+      return new Map(counts);
+    } else if (typeof counts === 'object' && counts !== null) {
+      return new Map(Object.entries(counts).map(([k, v]) => [k, v as number]));
+    }
+    return new Map();
+  }
+
+  function getLabel() {
     switch (constraint.type) {
       case 'adjacency': {
-        const tile = constraint.tileType === 'SUN' ? '☀️' : '🌙';
+        const tile = getPieceEmoji(constraint.tileType);
         return `${tile} cannot be next to ${tile} (up/down/left/right)`;
       }
       case 'count': {
         const dir = constraint.direction === 'row' ? 'Row' : 'Column';
-        const parts = [];
-        if (constraint.sunCount > 0) parts.push(`${constraint.sunCount} ☀️`);
-        if (constraint.moonCount > 0) parts.push(`${constraint.moonCount} 🌙`);
-        const rest = 5 - constraint.sunCount - constraint.moonCount;
+        const parts: string[] = [];
+        const counts = getCountsMap(constraint.counts);
+        for (const [tileType, count] of counts.entries()) {
+          if (count > 0 && tileType !== 'EMPTY') {
+            parts.push(`${count} ${getPieceEmoji(tileType)}`);
+          }
+        }
+        const totalCounted = Array.from(counts.values()).reduce((a, b) => a + b, 0);
+        const rest = gridSize - totalCounted;
         if (rest > 0) parts.push(`${rest} empty`);
         return `${dir} ${constraint.index + 1} must have: ${parts.join(', ')}`;
       }
@@ -36,15 +61,36 @@ export default function ConstraintChip({ constraint, isValid, pairIndex }: Const
           : `[${pairNum}] Cells (${r1},${c1}) and (${r2},${c2}) must be different`;
       }
       case 'region': {
-        const parts = [];
-        if (constraint.sunCount > 0) parts.push(`${constraint.sunCount} ☀️`);
-        if (constraint.moonCount > 0) parts.push(`${constraint.moonCount} 🌙`);
+        const parts: string[] = [];
+        const counts = getCountsMap(constraint.counts);
+        for (const [tileType, count] of counts.entries()) {
+          if (count > 0 && tileType !== 'EMPTY') {
+            parts.push(`${count} ${getPieceEmoji(tileType)}`);
+          }
+        }
         return `Region must have: ${parts.join(', ')}`;
+      }
+      case 'diagonalAdjacency': {
+        const tile = getPieceEmoji(constraint.tileType);
+        return `${tile} cannot be diagonally adjacent to ${tile}`;
+      }
+      case 'pattern': {
+        if (constraint.direction === 'diagonal') {
+          return `No more than ${constraint.maxInARow} of the same piece in a row (diagonal)`;
+        }
+        const dir = constraint.direction === 'row' ? 'Row' : 'Column';
+        const index = constraint.index !== undefined ? constraint.index + 1 : '?';
+        return `${dir} ${index}: No more than ${constraint.maxInARow} of the same piece in a row`;
+      }
+      case 'balance': {
+        const dir = constraint.direction === 'row' ? 'Row' : 'Column';
+        const pieces = constraint.tileTypes.map(t => getPieceEmoji(t)).filter(Boolean).join(' and ');
+        return `${dir} ${constraint.index + 1}: ${pieces} must be equal`;
       }
       default:
         return '';
     }
-  };
+  }
 
   const isPairRule = constraint.type === 'pair';
 
@@ -71,7 +117,7 @@ export default function ConstraintChip({ constraint, isValid, pairIndex }: Const
           style={{ cursor: 'default' }}
         />
       )}
-      <span className="text-sm md:text-base leading-normal flex-1 font-bold text-gray-900 font-sans text-left" style={{ lineHeight: '1.6', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>{getLabel()}</span>
+      <span className="text-xs md:text-sm leading-normal flex-1 font-bold text-gray-900 font-sans text-left" style={{ lineHeight: '1.6', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>{getLabel()}</span>
     </div>
   );
 }

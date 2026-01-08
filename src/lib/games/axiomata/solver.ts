@@ -1,14 +1,14 @@
-import type { Grid, Puzzle, TileState, Position, Constraint, CountConstraint, AdjacencyConstraint, PairConstraint } from './types';
+import type { Grid, Puzzle, TileState, Position, Constraint, CountConstraint, AdjacencyConstraint, PairConstraint, DiagonalAdjacencyConstraint } from './types';
 import { validateAll } from './validator';
 
 function copyGrid(grid: Grid): Grid {
   return grid.map((row) => [...row]);
 }
 
-function getEmptyPositions(grid: Grid): Position[] {
+function getEmptyPositions(grid: Grid, gridSize: number): Position[] {
   const positions: Position[] = [];
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
       if (grid[row][col] === null) {
         positions.push({ row, col });
       }
@@ -17,18 +17,20 @@ function getEmptyPositions(grid: Grid): Position[] {
   return positions;
 }
 
-function applyGivens(grid: Grid, givens: Map<string, TileState>): Grid {
+function applyGivens(grid: Grid, givens: Map<string, TileState>, gridSize: number): Grid {
   const result = copyGrid(grid);
   for (const [key, value] of Array.from(givens.entries())) {
     const [row, col] = key.split(',').map(Number);
-    result[row][col] = value;
+    if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+      result[row][col] = value;
+    }
   }
   return result;
 }
 
-function isComplete(grid: Grid): boolean {
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
+function isComplete(grid: Grid, gridSize: number): boolean {
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
       if (grid[row][col] === null) {
         return false;
       }
@@ -37,9 +39,9 @@ function isComplete(grid: Grid): boolean {
   return true;
 }
 
-function gridsEqual(grid1: Grid, grid2: Grid): boolean {
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
+function gridsEqual(grid1: Grid, grid2: Grid, gridSize: number): boolean {
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
       const tile1 = grid1[row][col];
       const tile2 = grid2[row][col];
       if (tile1 === null || tile2 === null) {
@@ -54,15 +56,17 @@ function gridsEqual(grid1: Grid, grid2: Grid): boolean {
 }
 
 export function solve(puzzle: Puzzle, maxIterations: number = 100000): Grid | null {
+  const gridSize = puzzle.gridSize;
   const grid = applyGivens(
-    Array(5)
+    Array(gridSize)
       .fill(null)
-      .map(() => Array(5).fill(null)),
-    puzzle.givens
+      .map(() => Array(gridSize).fill(null)),
+    puzzle.givens,
+    gridSize
   );
 
-  const emptyPositions = getEmptyPositions(grid);
-  const tileStates: TileState[] = ['EMPTY', 'SUN', 'MOON'];
+  const emptyPositions = getEmptyPositions(grid, gridSize);
+  const tileStates: TileState[] = ['EMPTY', 'SUN', 'MOON', 'STAR', 'PLANET', 'COMET'];
   let iterations = 0;
 
   function backtrack(index: number): Grid | null {
@@ -72,7 +76,7 @@ export function solve(puzzle: Puzzle, maxIterations: number = 100000): Grid | nu
     }
 
     if (index >= emptyPositions.length) {
-      const validation = validateAll(puzzle.constraints, grid);
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
       if (validation.isValid) {
         return copyGrid(grid);
       }
@@ -84,8 +88,8 @@ export function solve(puzzle: Puzzle, maxIterations: number = 100000): Grid | nu
     for (const state of tileStates) {
       grid[pos.row][pos.col] = state;
 
-      const validation = validateAll(puzzle.constraints, grid);
-      if (validation.isValid || canStillBeValid(validation, grid)) {
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
+      if (validation.isValid || canStillBeValid(validation, grid, gridSize)) {
         const result = backtrack(index + 1);
         if (result !== null) {
           return result;
@@ -100,66 +104,115 @@ export function solve(puzzle: Puzzle, maxIterations: number = 100000): Grid | nu
   return backtrack(0);
 }
 
+function getCountsMap(counts: any): Map<TileState, number> {
+  if (counts instanceof Map) {
+    return counts;
+  } else if (Array.isArray(counts)) {
+    return new Map(counts);
+  } else if (typeof counts === 'object' && counts !== null) {
+    return new Map(Object.entries(counts).map(([k, v]) => [k as TileState, v as number]));
+  }
+  return new Map();
+}
+
 function canStillBeValid(
   validation: { isValid: boolean; constraintStatus: Map<any, boolean> },
-  grid: Grid
+  grid: Grid,
+  gridSize: number
 ): boolean {
   if (validation.isValid) {
     return true;
   }
 
-  if (isComplete(grid)) {
+  if (isComplete(grid, gridSize)) {
     return false;
   }
 
-      for (const [constraint, isValid] of Array.from(validation.constraintStatus.entries())) {
-        if (!isValid) {
-          if (constraint.type === 'count') {
-            const countConstraint = constraint as CountConstraint;
-        let sunCount = 0;
-        let moonCount = 0;
+  for (const [constraint, isValid] of Array.from(validation.constraintStatus.entries())) {
+    if (!isValid) {
+      if (constraint.type === 'count') {
+        const countConstraint = constraint as any;
+        const expectedCounts = getCountsMap(countConstraint.counts);
+        const counts = new Map<TileState, number>();
         let emptyCount = 0;
+
+        for (const [tileType, _] of expectedCounts.entries()) {
+          counts.set(tileType, 0);
+        }
 
         if (countConstraint.direction === 'row') {
           const row = grid[countConstraint.index];
-          for (let col = 0; col < 5; col++) {
+          for (let col = 0; col < gridSize; col++) {
             const tile = row[col];
-            if (tile === 'SUN') sunCount++;
-            else if (tile === 'MOON') moonCount++;
-            else if (tile === null) emptyCount++;
+            if (tile === null) {
+              emptyCount++;
+            } else if (tile !== 'EMPTY' && counts.has(tile)) {
+              counts.set(tile, (counts.get(tile) || 0) + 1);
+            }
           }
         } else {
-          for (let row = 0; row < 5; row++) {
+          for (let row = 0; row < gridSize; row++) {
             const tile = grid[row][countConstraint.index];
-            if (tile === 'SUN') sunCount++;
-            else if (tile === 'MOON') moonCount++;
-            else if (tile === null) emptyCount++;
+            if (tile === null) {
+              emptyCount++;
+            } else if (tile !== 'EMPTY' && counts.has(tile)) {
+              counts.set(tile, (counts.get(tile) || 0) + 1);
+            }
           }
         }
 
-        if (sunCount > countConstraint.sunCount || moonCount > countConstraint.moonCount) {
-          return false;
+        for (const [tileType, expectedCount] of expectedCounts.entries()) {
+          const actualCount = counts.get(tileType) || 0;
+          if (actualCount > expectedCount) {
+            return false;
+          }
         }
 
-        const remainingNeeded = (countConstraint.sunCount - sunCount) + (countConstraint.moonCount - moonCount);
+        let remainingNeeded = 0;
+        for (const [tileType, expectedCount] of expectedCounts.entries()) {
+          const actualCount = counts.get(tileType) || 0;
+          remainingNeeded += (expectedCount - actualCount);
+        }
         if (remainingNeeded > emptyCount) {
           return false;
         }
       } else if (constraint.type === 'adjacency') {
         const adjConstraint = constraint as AdjacencyConstraint;
         if (adjConstraint.cannotTouch) {
-          for (let row = 0; row < 5; row++) {
-            for (let col = 0; col < 5; col++) {
+          for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
               const tile = grid[row][col];
               if (tile === adjConstraint.tileType) {
                 const neighbors = [
                   row > 0 ? grid[row - 1][col] : null,
-                  row < 4 ? grid[row + 1][col] : null,
+                  row < gridSize - 1 ? grid[row + 1][col] : null,
                   col > 0 ? grid[row][col - 1] : null,
-                  col < 4 ? grid[row][col + 1] : null,
+                  col < gridSize - 1 ? grid[row][col + 1] : null,
                 ];
                 for (const neighbor of neighbors) {
                   if (neighbor === adjConstraint.tileType) {
+                    return false;
+                  }
+                }
+              }
+            }
+          }
+        }
+      } else if (constraint.type === 'diagonalAdjacency') {
+        const diagConstraint = constraint as DiagonalAdjacencyConstraint;
+        if (diagConstraint.cannotTouch) {
+          for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
+              const tile = grid[row][col];
+              if (tile === diagConstraint.tileType) {
+                const diagonalNeighbors = [
+                  row > 0 && col > 0 ? grid[row - 1][col - 1] : null,
+                  row > 0 && col < gridSize - 1 ? grid[row - 1][col + 1] : null,
+                  row < gridSize - 1 && col > 0 ? grid[row + 1][col - 1] : null,
+                  row < gridSize - 1 && col < gridSize - 1 ? grid[row + 1][col + 1] : null,
+                ];
+                for (const neighbor of diagonalNeighbors) {
+                  if (neighbor === diagConstraint.tileType) {
                     return false;
                   }
                 }
@@ -193,15 +246,17 @@ export function hasUniqueSolution(puzzle: Puzzle): boolean {
     return false;
   }
 
+  const gridSize = puzzle.gridSize;
   const grid = applyGivens(
-    Array(5)
+    Array(gridSize)
       .fill(null)
-      .map(() => Array(5).fill(null)),
-    puzzle.givens
+      .map(() => Array(gridSize).fill(null)),
+    puzzle.givens,
+    gridSize
   );
 
-  const emptyPositions = getEmptyPositions(grid);
-  const tileStates: TileState[] = ['EMPTY', 'SUN', 'MOON'];
+  const emptyPositions = getEmptyPositions(grid, gridSize);
+  const tileStates: TileState[] = ['EMPTY', 'SUN', 'MOON', 'STAR', 'PLANET', 'COMET'];
   let solutionCount = 0;
 
   function findSolutions(index: number): void {
@@ -210,11 +265,11 @@ export function hasUniqueSolution(puzzle: Puzzle): boolean {
     }
 
     if (index >= emptyPositions.length) {
-      const validation = validateAll(puzzle.constraints, grid);
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
       if (validation.isValid) {
         if (solutionCount === 0) {
           solutionCount = 1;
-        } else if (firstSolution !== null && !gridsEqual(grid, firstSolution)) {
+        } else if (firstSolution !== null && !gridsEqual(grid, firstSolution, gridSize)) {
           solutionCount = 2;
           return;
         }
@@ -227,8 +282,8 @@ export function hasUniqueSolution(puzzle: Puzzle): boolean {
     for (const state of tileStates) {
       grid[pos.row][pos.col] = state;
 
-      const validation = validateAll(puzzle.constraints, grid);
-      if (validation.isValid || canStillBeValid(validation, grid)) {
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
+      if (validation.isValid || canStillBeValid(validation, grid, gridSize)) {
         findSolutions(index + 1);
         if (solutionCount >= 2) {
           return;
@@ -243,4 +298,3 @@ export function hasUniqueSolution(puzzle: Puzzle): boolean {
 
   return solutionCount === 1;
 }
-

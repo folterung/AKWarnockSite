@@ -1,24 +1,74 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Tile from './Tile';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
+import { getDifficultyConfig } from '@/lib/games/axiomata/difficulty';
+import type { TileState } from '@/lib/games/axiomata/types';
 
 export default function Grid() {
   const grid = useGameStore((state) => state.grid);
   const puzzle = useGameStore((state) => state.puzzle);
-  const toggleTile = useGameStore((state) => state.toggleTile);
+  const selectedDifficulty = useGameStore((state) => state.selectedDifficulty);
+  const setTile = useGameStore((state) => state.setTile);
   const startTimer = useGameStore((state) => state.startTimer);
 
+  const [pickerPosition, setPickerPosition] = useState<{ row: number; col: number } | null>(null);
 
-  const handleTileClick = (row: number, col: number) => {
+  function handleTileClick(row: number, col: number) {
+    if (!puzzle || !selectedDifficulty) return;
+    
+    const key = `${row},${col}`;
+    if (puzzle.givens.has(key)) {
+      return;
+    }
+
     startTimer();
-    toggleTile(row, col);
-  };
+
+    if (pickerPosition && pickerPosition.row === row && pickerPosition.col === col) {
+      setPickerPosition(null);
+    } else {
+      setPickerPosition({ row, col });
+    }
+  }
+
+  function handleIconSelect(row: number, col: number, tileState: TileState | null) {
+    setTile(row, col, tileState);
+    setPickerPosition(null);
+  }
+
+  function handleClosePicker() {
+    setPickerPosition(null);
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      const gameBoard = target.closest('.game-board-container');
+      const tilePicker = target.closest('.tile-picker-container');
+      
+      if (!gameBoard && !tilePicker) {
+        setPickerPosition(null);
+      }
+    }
+
+    if (pickerPosition) {
+      document.addEventListener('click', handleClickOutside);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
+  }, [pickerPosition]);
 
   if (!puzzle) {
+    const defaultSize = 5;
+    const totalTiles = defaultSize * defaultSize;
     return (
-      <div className="w-full max-w-md mx-auto aspect-square grid grid-cols-5 gap-2 p-3 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner">
-        {Array(25)
+      <div 
+        className="w-full max-w-md mx-auto aspect-square grid gap-2 p-3 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner"
+        style={{ gridTemplateColumns: `repeat(${defaultSize}, minmax(0, 1fr))` }}
+      >
+        {Array(totalTiles)
           .fill(null)
           .map((_, i) => (
             <div
@@ -51,20 +101,38 @@ export default function Grid() {
     return { isPair: false };
   };
 
+  const gridSize = puzzle.gridSize;
+  const config = selectedDifficulty ? getDifficultyConfig(selectedDifficulty) : null;
+  const availablePieces = config?.availablePieces || [];
+
   return (
-    <div className="w-full mx-auto">
-      <div className="aspect-square grid grid-cols-5 gap-2.5 p-3 relative bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-lg ml-auto mr-auto" style={{ minWidth: '320px', maxWidth: '600px', width: '100%' }}>
+    <div className="w-full mx-auto game-board-container">
+      <div 
+        className="aspect-square grid gap-2.5 p-3 relative bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-lg ml-auto mr-auto" 
+        style={{ 
+          minWidth: '320px', 
+          maxWidth: '600px', 
+          width: '100%',
+          gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`
+        }}
+      >
         {grid.map((row, rowIndex) =>
           row.map((tile, colIndex) => {
             const key = `${rowIndex},${colIndex}`;
             const isLocked = puzzle.givens.has(key);
             const pairInfo = getPairInfo(rowIndex, colIndex);
+            const isPickerOpen = pickerPosition?.row === rowIndex && pickerPosition?.col === colIndex;
+            
             return (
-              <div key={key} className="relative">
+              <div key={key} className="relative tile-picker-container">
                 <Tile
                   state={tile}
                   isLocked={isLocked}
                   onClick={() => handleTileClick(rowIndex, colIndex)}
+                  isPickerOpen={isPickerOpen}
+                  availablePieces={availablePieces}
+                  onIconSelect={(tileState) => handleIconSelect(rowIndex, colIndex, tileState)}
+                  onClosePicker={handleClosePicker}
                 />
                 {pairInfo.isPair && (
                   <span

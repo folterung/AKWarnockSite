@@ -1,4 +1,4 @@
-export type TileState = 'EMPTY' | 'SUN' | 'MOON';
+export type TileState = 'EMPTY' | 'SUN' | 'MOON' | 'STAR' | 'PLANET' | 'COMET';
 
 export interface Position {
   row: number;
@@ -9,7 +9,7 @@ export type Grid = (TileState | null)[][];
 
 export interface AdjacencyConstraint {
   type: 'adjacency';
-  tileType: 'SUN' | 'MOON';
+  tileType: 'SUN' | 'MOON' | 'STAR' | 'PLANET' | 'COMET';
   cannotTouch: boolean;
 }
 
@@ -17,8 +17,7 @@ export interface CountConstraint {
   type: 'count';
   direction: 'row' | 'col';
   index: number;
-  sunCount: number;
-  moonCount: number;
+  counts: Map<TileState, number>;
 }
 
 export interface PairConstraint {
@@ -31,17 +30,41 @@ export interface PairConstraint {
 export interface RegionConstraint {
   type: 'region';
   cells: Position[];
-  sunCount: number;
-  moonCount: number;
+  counts: Map<TileState, number>;
+}
+
+export interface DiagonalAdjacencyConstraint {
+  type: 'diagonalAdjacency';
+  tileType: 'SUN' | 'MOON' | 'STAR' | 'PLANET' | 'COMET';
+  cannotTouch: boolean;
+}
+
+export interface PatternConstraint {
+  type: 'pattern';
+  direction: 'row' | 'col' | 'diagonal';
+  index?: number;
+  maxInARow: number;
+  tileType?: 'SUN' | 'MOON' | 'STAR' | 'PLANET' | 'COMET';
+}
+
+export interface BalanceConstraint {
+  type: 'balance';
+  direction: 'row' | 'col';
+  index: number;
+  tileTypes: TileState[];
+  mustBeEqual: boolean;
 }
 
 export type Constraint =
   | AdjacencyConstraint
   | CountConstraint
   | PairConstraint
-  | RegionConstraint;
+  | RegionConstraint
+  | DiagonalAdjacencyConstraint
+  | PatternConstraint
+  | BalanceConstraint;
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 
 export interface Puzzle {
   solution: Grid;
@@ -49,6 +72,7 @@ export interface Puzzle {
   constraints: Constraint[];
   difficulty: Difficulty;
   dailyKey: string;
+  gridSize: number;
 }
 
 export interface ValidationResult {

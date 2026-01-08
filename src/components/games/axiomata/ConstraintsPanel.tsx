@@ -13,7 +13,7 @@ export default function ConstraintsPanel() {
     if (!puzzle) {
       return { isValid: false, constraintStatus: new Map() };
     }
-    return validateAll(puzzle.constraints, grid);
+    return validateAll(puzzle.constraints, grid, puzzle.gridSize);
   }, [puzzle, grid]);
 
   if (!puzzle) {
@@ -24,17 +24,25 @@ export default function ConstraintsPanel() {
   const countConstraints = puzzle.constraints.filter((c) => c.type === 'count');
   const pairConstraints = puzzle.constraints.filter((c) => c.type === 'pair');
   const regionConstraints = puzzle.constraints.filter((c) => c.type === 'region');
+  const diagonalAdjacencyConstraints = puzzle.constraints.filter((c) => c.type === 'diagonalAdjacency');
+  const patternConstraints = puzzle.constraints.filter((c) => c.type === 'pattern');
+  const balanceConstraints = puzzle.constraints.filter((c) => c.type === 'balance');
 
   function getAdjacencyText() {
-    const sunAdjacency = adjacencyConstraints.find(c => c.tileType === 'SUN');
-    const moonAdjacency = adjacencyConstraints.find(c => c.tileType === 'MOON');
-    if (sunAdjacency && moonAdjacency) {
-      return '☀️ and 🌙 tiles cannot be adjacent to tiles of the same type (up/down/left/right)';
-    } else if (sunAdjacency) {
-      return '☀️ tiles cannot be adjacent to other ☀️ tiles (up/down/left/right)';
-    } else {
-      return '🌙 tiles cannot be adjacent to other 🌙 tiles (up/down/left/right)';
+    const pieces = adjacencyConstraints.map(c => {
+      if (c.tileType === 'SUN') return '☀️';
+      if (c.tileType === 'MOON') return '🌙';
+      if (c.tileType === 'STAR') return '⭐';
+      if (c.tileType === 'PLANET') return '🪐';
+      if (c.tileType === 'COMET') return '☄️';
+      return '';
+    }).filter(Boolean);
+    
+    if (pieces.length === 0) return '';
+    if (pieces.length === 1) {
+      return `${pieces[0]} tiles cannot be adjacent to other ${pieces[0]} tiles (up/down/left/right)`;
     }
+    return `${pieces.join(' and ')} tiles cannot be adjacent to tiles of the same type (up/down/left/right)`;
   }
 
   function renderAdjacencyRule() {
@@ -59,7 +67,7 @@ export default function ConstraintsPanel() {
           className="w-5 h-5 rounded border-2 flex-shrink-0 cursor-default accent-green-600 mt-0.5"
           style={{ cursor: 'default' }}
         />
-        <span className="text-sm md:text-base leading-relaxed flex-1 font-bold text-gray-900 font-sans text-left block" style={{ lineHeight: '1.7', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+        <span className="text-xs md:text-sm leading-relaxed flex-1 font-bold text-gray-900 font-sans text-left block" style={{ lineHeight: '1.7', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
           {getAdjacencyText()}
         </span>
       </div>
@@ -78,7 +86,7 @@ export default function ConstraintsPanel() {
         <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-80"></div>
       </div>
       
-      <div className="space-y-2.5 max-h-[calc(100vh-400px)] lg:max-h-[600px] overflow-y-auto pr-2">
+      <div className="space-y-2.5 max-h-[calc(100vh-300px)] lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
         {renderAdjacencyRule()}
         
         {countConstraints.map((constraint, index) => (
@@ -86,6 +94,7 @@ export default function ConstraintsPanel() {
             key={`count-${index}`}
             constraint={constraint}
             isValid={validation.constraintStatus.get(constraint) ?? false}
+            gridSize={puzzle.gridSize}
           />
         ))}
         
@@ -95,6 +104,7 @@ export default function ConstraintsPanel() {
             constraint={constraint}
             isValid={validation.constraintStatus.get(constraint) ?? false}
             pairIndex={index}
+            gridSize={puzzle.gridSize}
           />
         ))}
         
@@ -103,6 +113,34 @@ export default function ConstraintsPanel() {
             key={`region-${index}`}
             constraint={constraint}
             isValid={validation.constraintStatus.get(constraint) ?? false}
+            gridSize={puzzle.gridSize}
+          />
+        ))}
+        
+        {diagonalAdjacencyConstraints.map((constraint, index) => (
+          <ConstraintChip
+            key={`diagonal-${index}`}
+            constraint={constraint}
+            isValid={validation.constraintStatus.get(constraint) ?? false}
+            gridSize={puzzle.gridSize}
+          />
+        ))}
+        
+        {patternConstraints.map((constraint, index) => (
+          <ConstraintChip
+            key={`pattern-${index}`}
+            constraint={constraint}
+            isValid={validation.constraintStatus.get(constraint) ?? false}
+            gridSize={puzzle.gridSize}
+          />
+        ))}
+        
+        {balanceConstraints.map((constraint, index) => (
+          <ConstraintChip
+            key={`balance-${index}`}
+            constraint={constraint}
+            isValid={validation.constraintStatus.get(constraint) ?? false}
+            gridSize={puzzle.gridSize}
           />
         ))}
       </div>
