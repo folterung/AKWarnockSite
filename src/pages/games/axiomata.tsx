@@ -81,7 +81,7 @@ export default function AxiomataPage() {
             console.log('Found cached puzzle');
             const parsed = JSON.parse(cachedPuzzle);
             
-            function normalizeConstraints(constraints: any[]): Constraint[] {
+            const normalizeConstraints = (constraints: any[]): Constraint[] => {
               return constraints.map((c: any) => {
                 if (c.type === 'count') {
                   const countConstraint = c as any;
@@ -132,7 +132,7 @@ export default function AxiomataPage() {
                 }
                 return c;
               });
-            }
+            };
             
             const puzzle = {
               ...parsed,
