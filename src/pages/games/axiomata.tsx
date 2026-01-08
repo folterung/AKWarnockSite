@@ -437,7 +437,7 @@ export default function AxiomataPage() {
                       </li>
                       <li className="flex items-start">
                         <span className="mr-2 text-primary-600 font-bold">•</span>
-                        <span className="font-bold">Locked tiles (🔒) are clues - you can't change them</span>
+                        <span className="font-bold">Locked tiles (🔒) are clues - you can&apos;t change them</span>
                       </li>
                       <li className="flex items-start">
                         <span className="mr-2 text-primary-600 font-bold">•</span>

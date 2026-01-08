@@ -13,7 +13,10 @@
       ],
       "plugins": [
         "jest"
-      ]
+      ],
+      "rules": {
+        "jest/no-conditional-expect": "off"
+      }
     }
   ]
 }

@@ -78,7 +78,7 @@ export default function DifficultySelector({ onSelect }: DifficultySelectorProps
         </div>
         
         <p className="text-sm text-gray-500 text-center italic">
-          You must choose a difficulty each day. Your selection will persist for today's puzzle.
+          You must choose a difficulty each day. Your selection will persist for today&apos;s puzzle.
         </p>
       </div>
     </div>

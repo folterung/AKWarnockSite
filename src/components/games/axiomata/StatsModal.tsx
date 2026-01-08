@@ -71,7 +71,7 @@ export default function StatsModal({ isOpen, onClose }: StatsModalProps) {
             </div>
             <div className="bg-gradient-to-br from-teal-50 to-green-50 border-2 border-teal-200 rounded-xl p-4 shadow-sm">
               <div className="text-base italic text-teal-900 mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                "{quote.text}"
+                &ldquo;{quote.text}&rdquo;
               </div>
               <div className="text-sm text-teal-700 font-medium text-right">
                 — {quote.author}
