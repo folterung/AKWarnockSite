@@ -77,7 +77,7 @@ function validateCount(constraint: CountConstraint, grid: Grid, gridSize: number
 
   const counts = new Map<TileState, number>();
   
-  for (const [tileType, _] of expectedCounts.entries()) {
+  for (const [tileType, _] of Array.from(expectedCounts.entries())) {
     counts.set(tileType, 0);
   }
 
@@ -110,7 +110,7 @@ function validateCount(constraint: CountConstraint, grid: Grid, gridSize: number
     }
   }
 
-  for (const [tileType, expectedCount] of expectedCounts.entries()) {
+  for (const [tileType, expectedCount] of Array.from(expectedCounts.entries())) {
     const actualCount = counts.get(tileType) || 0;
     if (actualCount !== expectedCount) {
       return false;
@@ -157,7 +157,7 @@ function validateRegion(constraint: RegionConstraint, grid: Grid, gridSize: numb
 
   const counts = new Map<TileState, number>();
   
-  for (const [tileType, _] of expectedCounts.entries()) {
+  for (const [tileType, _] of Array.from(expectedCounts.entries())) {
     counts.set(tileType, 0);
   }
 
@@ -168,7 +168,7 @@ function validateRegion(constraint: RegionConstraint, grid: Grid, gridSize: numb
     }
   }
 
-  for (const [tileType, expectedCount] of expectedCounts.entries()) {
+  for (const [tileType, expectedCount] of Array.from(expectedCounts.entries())) {
     const actualCount = counts.get(tileType) || 0;
     if (actualCount !== expectedCount) {
       return false;
