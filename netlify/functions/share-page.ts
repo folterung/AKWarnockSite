@@ -12,10 +12,10 @@ function escapeHtml(text: string): string {
 }
 
 export const handler: Handler = async (event) => {
-  const queryParams = new URLSearchParams(event.queryStringParameters || {});
-  const imageUrl = queryParams.get('image');
-  const time = queryParams.get('time') || '0:00';
-  const textRaw = queryParams.get('text') || `I solved today's Axiomata puzzle in ${time}!`;
+  const queryParams = event.queryStringParameters || {};
+  const imageUrl = queryParams.image;
+  const time = queryParams.time || '0:00';
+  const textRaw = queryParams.text || `I solved today's Axiomata puzzle in ${time}!`;
 
   if (!imageUrl) {
     return {
