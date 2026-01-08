@@ -40,7 +40,7 @@ export default function ConstraintChip({ constraint, isValid, pairIndex, gridSiz
         const dir = constraint.direction === 'row' ? 'Row' : 'Column';
         const parts: string[] = [];
         const counts = getCountsMap(constraint.counts);
-        for (const [tileType, count] of counts.entries()) {
+        for (const [tileType, count] of Array.from(counts.entries())) {
           if (count > 0 && tileType !== 'EMPTY') {
             parts.push(`${count} ${getPieceEmoji(tileType)}`);
           }
