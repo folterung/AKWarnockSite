@@ -25,6 +25,24 @@ const nextConfig = {
     ];
   },
   trailingSlash: true,
+  transpilePackages: ['zustand', 'html-to-image'],
+  webpack: (config, { isServer, dev }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    
+    if (dev) {
+      config.optimization = {
+        ...config.optimization,
+        moduleIds: 'named',
+      };
+    }
+    
+    return config;
+  },
 };
 
 export default nextConfig; 

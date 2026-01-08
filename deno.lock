@@ -1,0 +1,53 @@
+{
+  "version": "5",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "6a2ce0e544e15e8f8883a5c18da5948e37fd0f2619f68cb31f3af53c51817025",
+    "https://edge.netlify.com/bootstrap/context.ts": "e97240232121e2f369f6546ce961490f34d961ea1ea54be3ff09633e3f08373f",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "eaa6148ded3121d8dee62dd91c86e7fe76601df0f3ca8d7962243a30f4c8935f"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@heroicons/react@^2.2.0",
+        "npm:@mdx-js/loader@3",
+        "npm:@mdx-js/react@3",
+        "npm:@netlify/functions@^3.0.4",
+        "npm:@netlify/plugin-nextjs@^5.10.1",
+        "npm:@next/eslint-plugin-next@^15.2.4",
+        "npm:@types/jest@^29.5.14",
+        "npm:@types/node@^20.11.16",
+        "npm:@types/nodemailer@^6.4.17",
+        "npm:@types/react-dom@^18.2.18",
+        "npm:@types/react@^18.2.52",
+        "npm:autoprefixer@^10.4.17",
+        "npm:axios@^1.8.4",
+        "npm:eslint-config-next@^14.2.5",
+        "npm:eslint-plugin-jest@28",
+        "npm:eslint@^8.57.0",
+        "npm:html-to-image@^1.11.11",
+        "npm:jest-environment-jsdom@^29.7.0",
+        "npm:jest@^29.7.0",
+        "npm:netlify-cli@^23.13.3",
+        "npm:next-sitemap@^4.2.3",
+        "npm:next@^14.2.35",
+        "npm:nodemailer@^7.0.12",
+        "npm:postcss@^8.4.35",
+        "npm:react-dom@18.2.0",
+        "npm:react-hook-form@^7.50.0",
+        "npm:react-hot-toast@^2.4.1",
+        "npm:react-icons@^5.5.0",
+        "npm:react-toastify@^11.0.5",
+        "npm:react@18.2.0",
+        "npm:resend@^4.2.0",
+        "npm:tailwindcss@^3.4.1",
+        "npm:ts-jest@^29.4.6",
+        "npm:ts-node@^10.9.2",
+        "npm:typescript@^5.3.3",
+        "npm:zustand@^4.5.0"
+      ]
+    }
+  }
+}

@@ -5,7 +5,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className="fixed w-full bg-white/90 backdrop-blur-sm z-50 border-b border-gray-100">
+    <header className="fixed w-full bg-white/90 backdrop-blur-sm z-[60] border-b border-gray-100">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
@@ -31,6 +31,18 @@ export default function Header() {
               <div className="nav-dropdown">
                 <Link href="/books/spirit-blessed-chronicles" className="nav-dropdown-item">
                   Spirit Blessed Chronicles
+                </Link>
+              </div>
+            </div>
+
+            {/* Games Dropdown */}
+            <div className="relative group">
+              <Link href="/games" className="nav-link">
+                Games
+              </Link>
+              <div className="nav-dropdown">
+                <Link href="/games/axiomata" className="nav-dropdown-item">
+                  Axiomata
                 </Link>
               </div>
             </div>
@@ -79,6 +91,9 @@ export default function Header() {
             </Link>
             <Link href="/books" className="block px-3 py-2 nav-link">
               Books
+            </Link>
+            <Link href="/games" className="block px-3 py-2 nav-link">
+              Games
             </Link>
             <Link href="/about" className="block px-3 py-2 nav-link">
               About
