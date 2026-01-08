@@ -109,7 +109,7 @@ export default function IconPicker({ availablePieces, onSelect, onClose }: IconP
                 transform: 'translate(-50%, -50%)',
                 animationDelay: `${index * 50}ms`,
               }}
-              title={isEmpty ? 'Empty' : tileState}
+              title={isEmpty ? 'Empty' : (tileState ?? undefined)}
             >
               {content && (
                 <span className="drop-shadow-sm">
