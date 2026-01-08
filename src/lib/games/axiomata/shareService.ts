@@ -404,7 +404,7 @@ async function shareViaNative(
       };
     }
     
-    if (navigator.clipboard && navigator.clipboard.write) {
+    if (navigator.clipboard && 'write' in navigator.clipboard) {
       try {
         await copyImageToClipboard(dataUrl);
         return {
