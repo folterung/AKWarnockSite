@@ -60,7 +60,7 @@ export default function AxiomataPage() {
     let isMounted = true;
     let isGenerating = false;
     
-    function loadPuzzle() {
+    const loadPuzzle = () => {
       if (!isMounted || isGenerating || !selectedDifficulty || !dailyKey) return;
       isGenerating = true;
       setIsLoading(true);
@@ -192,7 +192,7 @@ export default function AxiomataPage() {
             
             console.log('Puzzle generated ✓');
             
-            function serializeConstraints(constraints: Constraint[]): any[] {
+            const serializeConstraints = (constraints: Constraint[]): any[] => {
               return constraints.map(c => {
                 if (c.type === 'count' || c.type === 'region') {
                   const constraint = c as CountConstraint | RegionConstraint;
@@ -203,7 +203,7 @@ export default function AxiomataPage() {
                 }
                 return c;
               });
-            }
+            };
             
             const serializable = {
               ...resolvedPuzzle,
@@ -255,7 +255,7 @@ export default function AxiomataPage() {
         setIsLoading(false);
         isGenerating = false;
       }
-    }
+    };
     
     loadPuzzle();
     
