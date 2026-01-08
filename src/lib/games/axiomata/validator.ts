@@ -85,14 +85,26 @@ function validateCount(constraint: CountConstraint, grid: Grid, gridSize: number
     const row = grid[constraint.index];
     for (let col = 0; col < gridSize; col++) {
       const tile = row[col];
-      if (tile && tile !== 'EMPTY' && counts.has(tile)) {
+      if (tile === null) {
+        // Skip null (unfilled) tiles - they're not part of validation
+        continue;
+      }
+      if (tile === 'EMPTY' && counts.has('EMPTY')) {
+        counts.set('EMPTY', (counts.get('EMPTY') || 0) + 1);
+      } else if (tile && tile !== 'EMPTY' && counts.has(tile)) {
         counts.set(tile, (counts.get(tile) || 0) + 1);
       }
     }
   } else {
     for (let row = 0; row < gridSize; row++) {
       const tile = grid[row][constraint.index];
-      if (tile && tile !== 'EMPTY' && counts.has(tile)) {
+      if (tile === null) {
+        // Skip null (unfilled) tiles - they're not part of validation
+        continue;
+      }
+      if (tile === 'EMPTY' && counts.has('EMPTY')) {
+        counts.set('EMPTY', (counts.get('EMPTY') || 0) + 1);
+      } else if (tile && tile !== 'EMPTY' && counts.has(tile)) {
         counts.set(tile, (counts.get(tile) || 0) + 1);
       }
     }

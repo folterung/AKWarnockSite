@@ -29,12 +29,14 @@ export default function ConstraintsPanel() {
   const balanceConstraints = puzzle.constraints.filter((c) => c.type === 'balance');
 
   function getAdjacencyText() {
-    const pieces = adjacencyConstraints.map(c => {
-      if (c.tileType === 'SUN') return '☀️';
-      if (c.tileType === 'MOON') return '🌙';
-      if (c.tileType === 'STAR') return '⭐';
-      if (c.tileType === 'PLANET') return '🪐';
-      if (c.tileType === 'COMET') return '☄️';
+    // Deduplicate adjacency constraints by tile type
+    const uniqueTileTypes = new Set(adjacencyConstraints.map(c => c.tileType));
+    const pieces = Array.from(uniqueTileTypes).map(tileType => {
+      if (tileType === 'SUN') return '☀️';
+      if (tileType === 'MOON') return '🌙';
+      if (tileType === 'STAR') return '⭐';
+      if (tileType === 'PLANET') return '🪐';
+      if (tileType === 'COMET') return '☄️';
       return '';
     }).filter(Boolean);
     
@@ -42,7 +44,9 @@ export default function ConstraintsPanel() {
     if (pieces.length === 1) {
       return `${pieces[0]} tiles cannot be adjacent to other ${pieces[0]} tiles (up/down/left/right)`;
     }
-    return `${pieces.join(' and ')} tiles cannot be adjacent to tiles of the same type (up/down/left/right)`;
+    // For multiple constraints, make it clearer: each tile type cannot touch itself
+    const pieceText = pieces.map(p => `${p} tiles`).join(' and ');
+    return `${pieceText} cannot be adjacent to tiles of their own type (up/down/left/right)`;
   }
 
   function renderAdjacencyRule() {
