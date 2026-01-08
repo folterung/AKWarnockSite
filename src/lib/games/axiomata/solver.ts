@@ -136,7 +136,7 @@ function canStillBeValid(
         const counts = new Map<TileState, number>();
         let emptyCount = 0;
 
-        for (const [tileType, _] of expectedCounts.entries()) {
+        for (const [tileType, _] of Array.from(expectedCounts.entries())) {
           counts.set(tileType, 0);
         }
 
@@ -161,7 +161,7 @@ function canStillBeValid(
           }
         }
 
-        for (const [tileType, expectedCount] of expectedCounts.entries()) {
+        for (const [tileType, expectedCount] of Array.from(expectedCounts.entries())) {
           const actualCount = counts.get(tileType) || 0;
           if (actualCount > expectedCount) {
             return false;
@@ -169,7 +169,7 @@ function canStillBeValid(
         }
 
         let remainingNeeded = 0;
-        for (const [tileType, expectedCount] of expectedCounts.entries()) {
+        for (const [tileType, expectedCount] of Array.from(expectedCounts.entries())) {
           const actualCount = counts.get(tileType) || 0;
           remainingNeeded += (expectedCount - actualCount);
         }
