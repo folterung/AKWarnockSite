@@ -1,6 +1,8 @@
 import { SharePlatform } from './shareTypes';
 import { getShareUrl } from './shareService';
 
+const GAME_URL = typeof window !== 'undefined' ? window.location.origin + '/games/axiomata' : '';
+
 export interface ShareTestResult {
   success: boolean;
   error?: string;
@@ -69,7 +71,8 @@ async function simulateShare(
   url?: string
 ): Promise<ShareTestResult> {
   try {
-    const shareUrl = getShareUrl(platform, { text: shareText, url });
+    const shareablePageUrl = url || GAME_URL;
+    const shareUrl = getShareUrl(platform, { text: shareText }, shareablePageUrl);
     
     if (!verifyShareUrl(platform, shareUrl)) {
       return {
