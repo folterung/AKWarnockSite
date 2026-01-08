@@ -20,7 +20,10 @@ export const handler: Handler = async (event) => {
   if (!imageUrl) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'text/html' },
+      headers: {
+        'Content-Type': 'text/html',
+        'Cache-Control': 'no-cache',
+      },
       body: '<html><body><h1>Invalid share URL</h1></body></html>',
     };
   }
