@@ -139,7 +139,7 @@ export default function Grid() {
                     className="absolute -top-2 -left-2 text-xs bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold shadow-lg border-2 border-purple-800 z-10"
                     title={pairInfo.mustBeSame ? 'Must be same' : 'Must be different'}
                   >
-                    {pairInfo.pairIndex + 1}
+                    {(pairInfo.pairIndex ?? 0) + 1}
                   </span>
                 )}
               </div>
