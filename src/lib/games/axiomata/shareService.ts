@@ -321,7 +321,8 @@ async function shareToSocialPlatform(
   url?: string
 ): Promise<ShareResult> {
   try {
-    const shareUrl = getShareUrl(platform, { text: shareText, url });
+    const shareablePageUrl = url || GAME_URL;
+    const shareUrl = getShareUrl(platform, { text: shareText }, shareablePageUrl);
     const shareWindow = window.open(
       shareUrl,
       'share',
