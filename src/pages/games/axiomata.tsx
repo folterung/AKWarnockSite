@@ -424,16 +424,25 @@ export default function AxiomataPage() {
 
             {isHowToPlayOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsHowToPlayOpen(false)}>
-                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border-2 border-gray-100" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 border-2 border-gray-100 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <h2 className="text-3xl font-semibold italic text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                     How to Play
                   </h2>
                   
-                  <div className="bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl p-5 mb-6">
-                    <ul className="text-sm text-primary-800 space-y-3 list-none">
+                  <div className="bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl p-5 mb-4">
+                    <h3 className="text-lg font-semibold text-primary-900 mb-3">Getting Started</h3>
+                    <ul className="text-sm text-primary-800 space-y-2.5 list-none">
                       <li className="flex items-start">
                         <span className="mr-2 text-primary-600 font-bold">•</span>
-                        <span className="font-bold">Click any tile to cycle through available pieces</span>
+                        <span className="font-bold">Choose your difficulty level: Easy (5×5), Medium (6×6), Hard (7×7), or Expert (8×8)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-primary-600 font-bold">•</span>
+                        <span className="font-bold">Click any empty tile to open the piece picker</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-primary-600 font-bold">•</span>
+                        <span className="font-bold">Select a piece from the picker (☀️ SUN, 🌙 MOON, ⭐ STAR, 🪐 PLANET, ☄️ COMET, or EMPTY)</span>
                       </li>
                       <li className="flex items-start">
                         <span className="mr-2 text-primary-600 font-bold">•</span>
@@ -441,11 +450,55 @@ export default function AxiomataPage() {
                       </li>
                       <li className="flex items-start">
                         <span className="mr-2 text-primary-600 font-bold">•</span>
-                        <span className="font-bold">Purple numbers show linked pairs - see rules below</span>
+                        <span className="font-bold">Purple numbers show linked pairs - see rules panel</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-teal-50 to-green-50 border-2 border-teal-200 rounded-xl p-5 mb-4">
+                    <h3 className="text-lg font-semibold text-teal-900 mb-3">Rules to Satisfy</h3>
+                    <ul className="text-sm text-teal-800 space-y-2.5 list-none">
+                      <li className="flex items-start">
+                        <span className="mr-2 text-teal-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Adjacency:</strong> Some pieces cannot be orthogonally adjacent to the same type</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="mr-2 text-primary-600 font-bold">•</span>
-                        <span className="font-bold">Satisfy all rules to win!</span>
+                        <span className="mr-2 text-teal-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Count:</strong> Rows/columns must have exact counts of specific pieces</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-teal-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Pair:</strong> Two cells must be the SAME or DIFFERENT (marked with purple numbers)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-teal-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Region/Diagonal/Pattern/Balance:</strong> Additional constraints on harder difficulties</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-teal-600 font-bold">•</span>
+                        <span className="font-bold">All rules must be satisfied (green checkmarks) to complete the puzzle!</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-5 mb-6">
+                    <h3 className="text-lg font-semibold text-amber-900 mb-3">Completing Puzzles</h3>
+                    <ul className="text-sm text-amber-800 space-y-2.5 list-none">
+                      <li className="flex items-start">
+                        <span className="mr-2 text-amber-600 font-bold">•</span>
+                        <span className="font-bold">Your time is tracked from first move to completion</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-amber-600 font-bold">•</span>
+                        <span className="font-bold">Upon completion, enjoy a daily positive mindset quote</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-amber-600 font-bold">•</span>
+                        <span className="font-bold">Share your results by copying the completion image to your clipboard</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-amber-600 font-bold">•</span>
+                        <span className="font-bold">New puzzle available each day at midnight ET</span>
                       </li>
                     </ul>
                   </div>
