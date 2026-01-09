@@ -51,7 +51,7 @@ export default function Games() {
         </div>
 
         <section className="mt-12">
-          <h2 className="text-3xl font-bold text-center mb-6">Kids' Creations</h2>
+          <h2 className="text-3xl font-bold text-center mb-6">Kids&apos; Creations</h2>
           <div className="space-y-6">
             <a 
               href="https://scratch.mit.edu/users/RainbowDash0109/" 
