@@ -25,6 +25,8 @@ export default function AxiomataPage() {
   const selectedDifficultyDate = useGameStore((state) => state.selectedDifficultyDate);
   const setDifficulty = useGameStore((state) => state.setDifficulty);
   const clearDifficulty = useGameStore((state) => state.clearDifficulty);
+  const [forceShowSelector, setForceShowSelector] = useState(false);
+  const [viewingCompleted, setViewingCompleted] = useState<Difficulty | null>(null);
 
   const [dailyKey, setDailyKey] = useState<string>('');
 
@@ -33,6 +35,17 @@ export default function AxiomataPage() {
     
     const currentDailyKey = getDailyKey();
     setDailyKey(currentDailyKey);
+    
+    // Check if we should show difficulty selector (navigating from header)
+    const shouldShowSelector = sessionStorage.getItem('showDifficultySelector') === 'true';
+    
+    if (shouldShowSelector) {
+      sessionStorage.removeItem('showDifficultySelector');
+      clearDifficulty();
+      setForceShowSelector(true);
+      setIsHydrated(true);
+      return;
+    }
     
     const savedDifficulty = localStorage.getItem(`axiomata-difficulty-${currentDailyKey}`);
     
@@ -46,7 +59,16 @@ export default function AxiomataPage() {
     setIsHydrated(true);
   }, [setDifficulty, clearDifficulty]);
 
-  const needsDifficultySelection = isHydrated && dailyKey && (!selectedDifficulty || selectedDifficultyDate !== dailyKey);
+  const needsDifficultySelection = isHydrated && dailyKey && (forceShowSelector || !selectedDifficulty || selectedDifficultyDate !== dailyKey);
+  
+  function handleTryAnotherDifficulty() {
+    clearDifficulty();
+  }
+
+  function handleChangeDifficulty() {
+    clearDifficulty();
+    setForceShowSelector(true);
+  }
 
   useEffect(() => {
     track('puzzle_loaded', { game: 'axiomata' });
@@ -54,6 +76,11 @@ export default function AxiomataPage() {
 
   useEffect(() => {
     if (!isHydrated || !dailyKey || needsDifficultySelection) {
+      return;
+    }
+
+    // Don't load puzzle if we're viewing a completed one (it's handled separately)
+    if (viewingCompleted) {
       return;
     }
 
@@ -263,7 +290,7 @@ export default function AxiomataPage() {
       isMounted = false;
       isGenerating = false;
     };
-  }, [selectedDifficulty, selectedDifficultyDate, dailyKey, needsDifficultySelection, isHydrated, loadDailyPuzzle]);
+  }, [selectedDifficulty, selectedDifficultyDate, dailyKey, needsDifficultySelection, isHydrated, loadDailyPuzzle, viewingCompleted]);
 
   useEffect(() => {
     if (puzzle && isLoading) {
@@ -273,11 +300,16 @@ export default function AxiomataPage() {
   }, [puzzle, isLoading]);
 
   useEffect(() => {
-    if (isComplete && !isModalOpen && !hasSeenCompletion) {
+    // Only auto-open modal if we're viewing a completed puzzle and it's loaded
+    if (viewingCompleted && isComplete && !isModalOpen && puzzle) {
+      setIsModalOpen(true);
+      setHasSeenCompletion(true);
+    } else if (!viewingCompleted && isComplete && !isModalOpen && !hasSeenCompletion) {
+      // Normal completion flow (not viewing a completed puzzle)
       setIsModalOpen(true);
       setHasSeenCompletion(true);
     }
-  }, [isComplete, isModalOpen, hasSeenCompletion]);
+  }, [isComplete, isModalOpen, hasSeenCompletion, viewingCompleted, puzzle]);
   
   useEffect(() => {
     if (!isComplete) {
@@ -287,7 +319,120 @@ export default function AxiomataPage() {
 
   function handleDifficultySelect(difficulty: Difficulty) {
     setIsLoading(true);
+    // Reset completion state when selecting a new difficulty
+    setIsModalOpen(false);
+    setHasSeenCompletion(false);
+    setViewingCompleted(null);
     setDifficulty(difficulty);
+    setForceShowSelector(false);
+  }
+
+  async function handleViewCompleted(difficulty: Difficulty) {
+    setIsLoading(true);
+    setError(null);
+    setViewingCompleted(difficulty);
+    setForceShowSelector(false);
+    
+    // Set the difficulty to load the puzzle
+    setDifficulty(difficulty);
+    
+    try {
+      const CACHE_VERSION = '4';
+      const cacheKey = `axiomata-puzzle-${dailyKey}-${difficulty}`;
+      const versionKey = `axiomata-cache-version-${dailyKey}-${difficulty}`;
+      
+      const cachedVersion = localStorage.getItem(versionKey);
+      const cachedPuzzle = localStorage.getItem(cacheKey);
+      
+      if (cachedPuzzle && cachedVersion === CACHE_VERSION) {
+        try {
+          const parsed = JSON.parse(cachedPuzzle);
+          
+          const normalizeConstraints = (constraints: any[]): Constraint[] => {
+            return constraints.map((c: any) => {
+              if (c.type === 'count') {
+                const countConstraint = c as any;
+                if (countConstraint.counts instanceof Map) {
+                  return c;
+                } else if (Array.isArray(countConstraint.counts)) {
+                  return {
+                    ...c,
+                    counts: new Map(countConstraint.counts),
+                  };
+                } else if (typeof countConstraint.counts === 'object' && countConstraint.counts !== null) {
+                  return {
+                    ...c,
+                    counts: new Map(Object.entries(countConstraint.counts).map(([k, v]) => [k, v])),
+                  };
+                } else if (countConstraint.sunCount !== undefined || countConstraint.moonCount !== undefined) {
+                  const counts = new Map();
+                  if (countConstraint.sunCount) counts.set('SUN', countConstraint.sunCount);
+                  if (countConstraint.moonCount) counts.set('MOON', countConstraint.moonCount);
+                  return {
+                    ...c,
+                    counts,
+                  };
+                }
+              } else if (c.type === 'region') {
+                const regionConstraint = c as any;
+                if (regionConstraint.counts instanceof Map) {
+                  return c;
+                } else if (Array.isArray(regionConstraint.counts)) {
+                  return {
+                    ...c,
+                    counts: new Map(regionConstraint.counts),
+                  };
+                } else if (typeof regionConstraint.counts === 'object' && regionConstraint.counts !== null) {
+                  return {
+                    ...c,
+                    counts: new Map(Object.entries(regionConstraint.counts).map(([k, v]) => [k, v])),
+                  };
+                } else if (regionConstraint.sunCount !== undefined || regionConstraint.moonCount !== undefined) {
+                  const counts = new Map();
+                  if (regionConstraint.sunCount) counts.set('SUN', regionConstraint.sunCount);
+                  if (regionConstraint.moonCount) counts.set('MOON', regionConstraint.moonCount);
+                  return {
+                    ...c,
+                    counts,
+                  };
+                }
+              }
+              return c;
+            });
+          };
+          
+          const puzzle = {
+            ...parsed,
+            givens: new Map(parsed.givens),
+            constraints: normalizeConstraints(parsed.constraints || []),
+            gridSize: parsed.gridSize || 5,
+          };
+          
+          loadDailyPuzzle(puzzle);
+          setIsLoading(false);
+          
+          // Wait for state to update, then show modal
+          setTimeout(() => {
+            setIsModalOpen(true);
+            setHasSeenCompletion(true);
+          }, 150);
+        } catch (error) {
+          console.error('Failed to load cached puzzle:', error);
+          setError('Failed to load completed puzzle');
+          setIsLoading(false);
+          setViewingCompleted(null);
+        }
+      } else {
+        setError('Completed puzzle not found');
+        setIsLoading(false);
+        setViewingCompleted(null);
+      }
+    } catch (err) {
+      console.error('Failed to load completed puzzle:', err);
+      setError('Failed to load completed puzzle');
+      setIsLoading(false);
+      setViewingCompleted(null);
+    }
   }
 
   if (!isHydrated) {
@@ -321,7 +466,10 @@ export default function AxiomataPage() {
           <title>Axiomata | A.K. Warnock</title>
         </Head>
         <Header />
-        <DifficultySelector onSelect={handleDifficultySelect} />
+        <DifficultySelector 
+          onSelect={handleDifficultySelect} 
+          onViewCompleted={handleViewCompleted}
+        />
       </>
     );
   }
@@ -402,13 +550,20 @@ export default function AxiomataPage() {
               </div>
               
               <div className="w-full lg:flex-1 lg:min-w-[280px] lg:max-w-[350px] lg:sticky lg:top-4">
-                <div className="mb-4">
+                <div className="mb-4 space-y-2">
                   <button
                     onClick={() => setIsHowToPlayOpen(true)}
                     className="w-full px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl hover:from-primary-100 hover:to-blue-100 hover:border-primary-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900">How to Play</span>
+                  </button>
+                  <button
+                    onClick={handleChangeDifficulty}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl hover:from-amber-100 hover:to-orange-100 hover:border-amber-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
+                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                  >
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-amber-600 to-gray-900">Change Difficulty</span>
                   </button>
                 </div>
                 <ConstraintsPanel />
@@ -420,6 +575,7 @@ export default function AxiomataPage() {
               onClose={() => {
                 setIsModalOpen(false);
               }}
+              onTryAnotherDifficulty={handleTryAnotherDifficulty}
             />
 
             {isHowToPlayOpen && (

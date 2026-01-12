@@ -162,6 +162,71 @@ function saveBoardState(
   }
 }
 
+function getCompletionKey(dailyKey: string, difficulty: Difficulty): string {
+  return `axiomata-completed-${dailyKey}-${difficulty}`;
+}
+
+function isDifficultyCompleted(dailyKey: string, difficulty: Difficulty): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const stored = localStorage.getItem(getCompletionKey(dailyKey, difficulty));
+    return stored !== null && stored !== '';
+  } catch (error) {
+    console.error('Failed to check difficulty completion:', error);
+    return false;
+  }
+}
+
+function markDifficultyCompleted(dailyKey: string, difficulty: Difficulty, timeToSolveMs: number | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const completionData = {
+      timestamp: Date.now(),
+      timeToSolveMs: timeToSolveMs,
+    };
+    localStorage.setItem(getCompletionKey(dailyKey, difficulty), JSON.stringify(completionData));
+  } catch (error) {
+    console.error('Failed to mark difficulty as completed:', error);
+  }
+}
+
+function getDifficultyCompletionTime(dailyKey: string, difficulty: Difficulty): number | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    // First try to get from board state (most reliable source)
+    const boardState = loadBoardState(dailyKey, difficulty);
+    if (boardState.isComplete && boardState.timeToSolveMs !== null && boardState.timeToSolveMs !== undefined) {
+      return boardState.timeToSolveMs;
+    }
+    
+    // Fallback: try to get from completion data
+    const completionStored = localStorage.getItem(getCompletionKey(dailyKey, difficulty));
+    if (completionStored) {
+      try {
+        const parsed = JSON.parse(completionStored);
+        // Handle new format (object with timeToSolveMs)
+        if (typeof parsed === 'object' && parsed !== null && 'timeToSolveMs' in parsed) {
+          const time = parsed.timeToSolveMs;
+          if (time !== null && time !== undefined) {
+            return time;
+          }
+        }
+      } catch {
+        // Handle old format (just timestamp string) - no time available
+      }
+    }
+  } catch (error) {
+    console.error('Failed to get difficulty completion time:', error);
+  }
+  return null;
+}
+
+function getCompletedDifficulties(dailyKey: string): Difficulty[] {
+  if (typeof window === 'undefined') return [];
+  const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+  return difficulties.filter(d => isDifficultyCompleted(dailyKey, d));
+}
+
 const stored = typeof window !== 'undefined' ? loadFromStorage() : {};
 
 export const useGameStore = create<GameStore>()((set, get) => {
@@ -181,9 +246,14 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     setDifficulty: (difficulty: Difficulty) => {
       const dailyKey = getDailyKey();
+      
+      // Always reset completion state when switching difficulties
+      // The loadDailyPuzzle function will set it correctly based on the actual board state
       set({
         selectedDifficulty: difficulty,
         selectedDifficultyDate: dailyKey,
+        isComplete: false,
+        timeToSolveMs: null,
       });
       saveDifficulty(dailyKey, difficulty);
     },
@@ -224,8 +294,24 @@ export const useGameStore = create<GameStore>()((set, get) => {
           attemptCountToday: 0,
         });
       } else {
+        // Only load board state if we have a selected difficulty
+        if (!state.selectedDifficulty) {
+          set({
+            grid: initializeGrid(puzzle),
+            puzzle,
+            isComplete: false,
+          });
+          return;
+        }
+        
         const savedBoardState = loadBoardState(dailyKey, state.selectedDifficulty);
-        if (savedBoardState.grid) {
+        
+        // Verify the board state is for the correct difficulty by checking if it's actually completed
+        const isActuallyCompleted = isDifficultyCompleted(dailyKey, state.selectedDifficulty);
+        
+        if (savedBoardState.grid && isActuallyCompleted) {
+          // Only load completion state if the difficulty is actually marked as completed
+          // This prevents loading completion state from a different difficulty
           set({
             grid: savedBoardState.grid,
             puzzle,
@@ -234,10 +320,13 @@ export const useGameStore = create<GameStore>()((set, get) => {
             timeToSolveMs: savedBoardState.timeToSolveMs,
           });
         } else {
+          // Reset to fresh state for non-completed or new puzzles
           set({
-            grid: initializeGrid(puzzle),
+            grid: savedBoardState.grid ? savedBoardState.grid : initializeGrid(puzzle),
             puzzle,
             isComplete: false,
+            startTime: savedBoardState.startTime,
+            timeToSolveMs: null,
           });
         }
       }
@@ -358,6 +447,10 @@ export const useGameStore = create<GameStore>()((set, get) => {
           state.startTime,
           solveTime
         );
+        
+        if (state.selectedDifficulty) {
+          markDifficultyCompleted(dailyKey, state.selectedDifficulty, solveTime);
+        }
       } else {
         const dailyKey = getDailyKey();
         set({ isComplete: false });
@@ -413,3 +506,5 @@ export const useGameStore = create<GameStore>()((set, get) => {
     },
   };
 });
+
+export { isDifficultyCompleted, getCompletedDifficulties, getDifficultyCompletionTime };

@@ -5,32 +5,35 @@ import { useGameStore } from '@/store/games/axiomata/useGameStore';
 import { track } from '@/lib/analytics';
 import { getDailyKey } from '@/lib/games/axiomata/seed';
 import { getQuoteOfTheDay } from '@/lib/games/axiomata/quotes';
+import { getCompletedDifficulties } from '@/store/games/axiomata/useGameStore';
+import type { Difficulty } from '@/lib/games/axiomata/types';
 import ShareCard from './ShareCard';
 
 interface StatsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onTryAnotherDifficulty?: () => void;
 }
 
-export default function StatsModal({ isOpen, onClose }: StatsModalProps) {
+export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: StatsModalProps) {
   const modalContentRef = useRef<HTMLDivElement>(null);
   const timeToSolveMs = useGameStore((state) => state.timeToSolveMs);
+  const clearDifficulty = useGameStore((state) => state.clearDifficulty);
+  const dailyKey = getDailyKey();
+  const completedDifficulties = getCompletedDifficulties(dailyKey);
+  const allDifficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+  const hasMoreDifficulties = completedDifficulties.length < allDifficulties.length;
 
   useEffect(() => {
     if (isOpen) {
       track('puzzle_completed', {
         timeToSolveMs,
       });
-
-      const dailyKey = getDailyKey();
-      const completionTimestamp = Date.now();
-      localStorage.setItem(`axiomata-completed-${dailyKey}`, completionTimestamp.toString());
     }
   }, [isOpen, timeToSolveMs]);
 
   if (!isOpen) return null;
 
-  const dailyKey = getDailyKey();
   const quote = getQuoteOfTheDay(dailyKey);
 
   function formatTime(ms: number | null): string {
@@ -44,14 +47,25 @@ export default function StatsModal({ isOpen, onClose }: StatsModalProps) {
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
     >
       <div 
         className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border-2 border-gray-100 relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            clearDifficulty();
+            if (onTryAnotherDifficulty) {
+              onTryAnotherDifficulty();
+            }
+          }}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
           aria-label="Close"
         >
@@ -79,6 +93,23 @@ export default function StatsModal({ isOpen, onClose }: StatsModalProps) {
             </div>
           </div>
         </div>
+
+        {hasMoreDifficulties && onTryAnotherDifficulty && (
+          <div className="mt-6">
+            <button
+              onClick={() => {
+                onClose();
+                clearDifficulty();
+                if (onTryAnotherDifficulty) {
+                  onTryAnotherDifficulty();
+                }
+              }}
+              className="w-full px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              Try Another Difficulty
+            </button>
+          </div>
+        )}
 
         <div className="flex gap-3 mt-8">
           <div className="w-full">

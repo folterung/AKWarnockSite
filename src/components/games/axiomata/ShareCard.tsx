@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
 import { track } from '@/lib/analytics';
 import { getDailyKey } from '@/lib/games/axiomata/seed';
+import { isDifficultyCompleted } from '@/store/games/axiomata/useGameStore';
 import {
   generateShareImage,
   copyImageToClipboard,
@@ -22,33 +23,36 @@ interface ToastMessage {
 
 export default function ShareCard({ onShareComplete, captureRef }: ShareCardProps) {
   const timeToSolveMs = useGameStore((state) => state.timeToSolveMs);
+  const selectedDifficulty = useGameStore((state) => state.selectedDifficulty);
+  const isComplete = useGameStore((state) => state.isComplete);
   const [isGenerating, setIsGenerating] = useState(false);
   const [canShare, setCanShare] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   useEffect(() => {
-    const checkShareAvailability = () => {
-      const dailyKey = getDailyKey();
-      const completedTimestamp = localStorage.getItem(`axiomata-completed-${dailyKey}`);
-      
-      if (completedTimestamp) {
-        const timestamp = parseInt(completedTimestamp, 10);
-        const completionDate = new Date(timestamp);
-        const today = new Date();
-        
-        const isSameDay = 
-          completionDate.getFullYear() === today.getFullYear() &&
-          completionDate.getMonth() === today.getMonth() &&
-          completionDate.getDate() === today.getDate();
-        
-        setCanShare(isSameDay);
-      } else {
+    function checkShareAvailability() {
+      if (!selectedDifficulty) {
         setCanShare(false);
+        return;
       }
-    };
+
+      const dailyKey = getDailyKey();
+      const isCompleted = isDifficultyCompleted(dailyKey, selectedDifficulty);
+      
+      // Enable sharing if puzzle is complete OR difficulty is marked as completed
+      // This handles both immediate completion and persisted completion state
+      setCanShare(isComplete || isCompleted);
+    }
 
     checkShareAvailability();
-  }, []);
+    
+    // Re-check after a short delay to ensure localStorage write has completed
+    const timeoutId = setTimeout(() => {
+      checkShareAvailability();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [selectedDifficulty, isComplete]);
 
   useEffect(() => {
     if (toast) {

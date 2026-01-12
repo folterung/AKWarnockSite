@@ -25,7 +25,7 @@ export default function Grid() {
 
     startTimer();
 
-    if (pickerPosition && pickerPosition.row === row && pickerPosition.col === col) {
+    if (pickerPosition) {
       setPickerPosition(null);
     } else {
       setPickerPosition({ row, col });
@@ -39,6 +39,12 @@ export default function Grid() {
 
   function handleClosePicker() {
     setPickerPosition(null);
+  }
+
+  function handleGridClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (event.target === event.currentTarget && pickerPosition) {
+      setPickerPosition(null);
+    }
   }
 
   useEffect(() => {
@@ -115,6 +121,7 @@ export default function Grid() {
           width: '100%',
           gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`
         }}
+        onClick={handleGridClick}
       >
         {grid.map((row, rowIndex) =>
           row.map((tile, colIndex) => {

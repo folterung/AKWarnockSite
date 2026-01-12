@@ -37,11 +37,27 @@ export default function Header() {
 
             {/* Games Dropdown */}
             <div className="relative group">
-              <Link href="/games" className="nav-link">
+              <Link 
+                href="/games" 
+                className="nav-link"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('showDifficultySelector', 'true');
+                  }
+                }}
+              >
                 Games
               </Link>
               <div className="nav-dropdown">
-                <Link href="/games/axiomata" className="nav-dropdown-item">
+                <Link 
+                  href="/games/axiomata" 
+                  className="nav-dropdown-item"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.setItem('showDifficultySelector', 'true');
+                    }
+                  }}
+                >
                   Axiomata
                 </Link>
               </div>
@@ -92,7 +108,15 @@ export default function Header() {
             <Link href="/books" className="block px-3 py-2 nav-link">
               Books
             </Link>
-            <Link href="/games" className="block px-3 py-2 nav-link">
+            <Link 
+              href="/games" 
+              className="block px-3 py-2 nav-link"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem('showDifficultySelector', 'true');
+                }
+              }}
+            >
               Games
             </Link>
             <Link href="/about" className="block px-3 py-2 nav-link">
