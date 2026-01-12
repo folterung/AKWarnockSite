@@ -319,9 +319,12 @@ export default function AxiomataPage() {
 
   function handleDifficultySelect(difficulty: Difficulty) {
     setIsLoading(true);
+    // Reset completion state when selecting a new difficulty
+    setIsModalOpen(false);
+    setHasSeenCompletion(false);
+    setViewingCompleted(null);
     setDifficulty(difficulty);
     setForceShowSelector(false);
-    setViewingCompleted(null);
   }
 
   async function handleViewCompleted(difficulty: Difficulty) {

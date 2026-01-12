@@ -289,12 +289,28 @@ export const useGameStore = create<GameStore>()((set, get) => {
           attemptCountToday: 0,
         });
       } else {
+        // Only load board state if we have a selected difficulty
+        if (!state.selectedDifficulty) {
+          set({
+            grid: initializeGrid(puzzle),
+            puzzle,
+            isComplete: false,
+          });
+          return;
+        }
+        
         const savedBoardState = loadBoardState(dailyKey, state.selectedDifficulty);
+        
+        // Verify the board state is for the correct difficulty by checking if it's actually completed
+        const isActuallyCompleted = isDifficultyCompleted(dailyKey, state.selectedDifficulty);
+        
         if (savedBoardState.grid) {
+          // Only set isComplete if the difficulty is actually marked as completed
+          // This prevents loading completion state from a different difficulty
           set({
             grid: savedBoardState.grid,
             puzzle,
-            isComplete: savedBoardState.isComplete,
+            isComplete: savedBoardState.isComplete && isActuallyCompleted,
             startTime: savedBoardState.startTime,
             timeToSolveMs: savedBoardState.timeToSolveMs,
           });
