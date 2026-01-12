@@ -246,9 +246,14 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     setDifficulty: (difficulty: Difficulty) => {
       const dailyKey = getDailyKey();
+      
+      // Always reset completion state when switching difficulties
+      // The loadDailyPuzzle function will set it correctly based on the actual board state
       set({
         selectedDifficulty: difficulty,
         selectedDifficultyDate: dailyKey,
+        isComplete: false,
+        timeToSolveMs: null,
       });
       saveDifficulty(dailyKey, difficulty);
     },
@@ -304,21 +309,24 @@ export const useGameStore = create<GameStore>()((set, get) => {
         // Verify the board state is for the correct difficulty by checking if it's actually completed
         const isActuallyCompleted = isDifficultyCompleted(dailyKey, state.selectedDifficulty);
         
-        if (savedBoardState.grid) {
-          // Only set isComplete if the difficulty is actually marked as completed
+        if (savedBoardState.grid && isActuallyCompleted) {
+          // Only load completion state if the difficulty is actually marked as completed
           // This prevents loading completion state from a different difficulty
           set({
             grid: savedBoardState.grid,
             puzzle,
-            isComplete: savedBoardState.isComplete && isActuallyCompleted,
+            isComplete: savedBoardState.isComplete,
             startTime: savedBoardState.startTime,
             timeToSolveMs: savedBoardState.timeToSolveMs,
           });
         } else {
+          // Reset to fresh state for non-completed or new puzzles
           set({
-            grid: initializeGrid(puzzle),
+            grid: savedBoardState.grid ? savedBoardState.grid : initializeGrid(puzzle),
             puzzle,
             isComplete: false,
+            startTime: savedBoardState.startTime,
+            timeToSolveMs: null,
           });
         }
       }

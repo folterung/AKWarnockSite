@@ -59,7 +59,13 @@ export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: 
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            clearDifficulty();
+            if (onTryAnotherDifficulty) {
+              onTryAnotherDifficulty();
+            }
+          }}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
           aria-label="Close"
         >
