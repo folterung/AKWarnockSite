@@ -25,6 +25,7 @@ export default function AxiomataPage() {
   const selectedDifficultyDate = useGameStore((state) => state.selectedDifficultyDate);
   const setDifficulty = useGameStore((state) => state.setDifficulty);
   const clearDifficulty = useGameStore((state) => state.clearDifficulty);
+  const [forceShowSelector, setForceShowSelector] = useState(false);
 
   const [dailyKey, setDailyKey] = useState<string>('');
 
@@ -33,6 +34,17 @@ export default function AxiomataPage() {
     
     const currentDailyKey = getDailyKey();
     setDailyKey(currentDailyKey);
+    
+    // Check if we should show difficulty selector (navigating from header)
+    const shouldShowSelector = sessionStorage.getItem('showDifficultySelector') === 'true';
+    
+    if (shouldShowSelector) {
+      sessionStorage.removeItem('showDifficultySelector');
+      clearDifficulty();
+      setForceShowSelector(true);
+      setIsHydrated(true);
+      return;
+    }
     
     const savedDifficulty = localStorage.getItem(`axiomata-difficulty-${currentDailyKey}`);
     
@@ -46,10 +58,15 @@ export default function AxiomataPage() {
     setIsHydrated(true);
   }, [setDifficulty, clearDifficulty]);
 
-  const needsDifficultySelection = isHydrated && dailyKey && (!selectedDifficulty || selectedDifficultyDate !== dailyKey);
+  const needsDifficultySelection = isHydrated && dailyKey && (forceShowSelector || !selectedDifficulty || selectedDifficultyDate !== dailyKey);
   
   function handleTryAnotherDifficulty() {
     clearDifficulty();
+  }
+
+  function handleChangeDifficulty() {
+    clearDifficulty();
+    setForceShowSelector(true);
   }
 
   useEffect(() => {
@@ -292,6 +309,7 @@ export default function AxiomataPage() {
   function handleDifficultySelect(difficulty: Difficulty) {
     setIsLoading(true);
     setDifficulty(difficulty);
+    setForceShowSelector(false);
   }
 
   async function handleViewCompleted(difficulty: Difficulty) {
@@ -512,13 +530,20 @@ export default function AxiomataPage() {
               </div>
               
               <div className="w-full lg:flex-1 lg:min-w-[280px] lg:max-w-[350px] lg:sticky lg:top-4">
-                <div className="mb-4">
+                <div className="mb-4 space-y-2">
                   <button
                     onClick={() => setIsHowToPlayOpen(true)}
                     className="w-full px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl hover:from-primary-100 hover:to-blue-100 hover:border-primary-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900">How to Play</span>
+                  </button>
+                  <button
+                    onClick={handleChangeDifficulty}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl hover:from-amber-100 hover:to-orange-100 hover:border-amber-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
+                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                  >
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-amber-600 to-gray-900">Change Difficulty</span>
                   </button>
                 </div>
                 <ConstraintsPanel />

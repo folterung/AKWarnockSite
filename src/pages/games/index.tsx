@@ -20,6 +20,11 @@ export default function Games() {
           <Link 
             href="/games/axiomata" 
             className="block border border-gray-300 rounded-lg p-6 hover:bg-gray-100 transition group"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('showDifficultySelector', 'true');
+              }
+            }}
           >
             <div className="flex items-center gap-6">
               <div className="flex-shrink-0">
