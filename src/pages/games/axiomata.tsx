@@ -26,6 +26,7 @@ export default function AxiomataPage() {
   const setDifficulty = useGameStore((state) => state.setDifficulty);
   const clearDifficulty = useGameStore((state) => state.clearDifficulty);
   const [forceShowSelector, setForceShowSelector] = useState(false);
+  const [viewingCompleted, setViewingCompleted] = useState<Difficulty | null>(null);
 
   const [dailyKey, setDailyKey] = useState<string>('');
 
@@ -75,6 +76,11 @@ export default function AxiomataPage() {
 
   useEffect(() => {
     if (!isHydrated || !dailyKey || needsDifficultySelection) {
+      return;
+    }
+
+    // Don't load puzzle if we're viewing a completed one (it's handled separately)
+    if (viewingCompleted) {
       return;
     }
 
@@ -284,7 +290,7 @@ export default function AxiomataPage() {
       isMounted = false;
       isGenerating = false;
     };
-  }, [selectedDifficulty, selectedDifficultyDate, dailyKey, needsDifficultySelection, isHydrated, loadDailyPuzzle]);
+  }, [selectedDifficulty, selectedDifficultyDate, dailyKey, needsDifficultySelection, isHydrated, loadDailyPuzzle, viewingCompleted]);
 
   useEffect(() => {
     if (puzzle && isLoading) {
@@ -294,11 +300,16 @@ export default function AxiomataPage() {
   }, [puzzle, isLoading]);
 
   useEffect(() => {
-    if (isComplete && !isModalOpen && !hasSeenCompletion) {
+    // Only auto-open modal if we're viewing a completed puzzle and it's loaded
+    if (viewingCompleted && isComplete && !isModalOpen && puzzle) {
+      setIsModalOpen(true);
+      setHasSeenCompletion(true);
+    } else if (!viewingCompleted && isComplete && !isModalOpen && !hasSeenCompletion) {
+      // Normal completion flow (not viewing a completed puzzle)
       setIsModalOpen(true);
       setHasSeenCompletion(true);
     }
-  }, [isComplete, isModalOpen, hasSeenCompletion]);
+  }, [isComplete, isModalOpen, hasSeenCompletion, viewingCompleted, puzzle]);
   
   useEffect(() => {
     if (!isComplete) {
@@ -310,13 +321,16 @@ export default function AxiomataPage() {
     setIsLoading(true);
     setDifficulty(difficulty);
     setForceShowSelector(false);
+    setViewingCompleted(null);
   }
 
   async function handleViewCompleted(difficulty: Difficulty) {
     setIsLoading(true);
     setError(null);
+    setViewingCompleted(difficulty);
+    setForceShowSelector(false);
     
-    // Set the difficulty temporarily to load the puzzle
+    // Set the difficulty to load the puzzle
     setDifficulty(difficulty);
     
     try {
@@ -394,24 +408,27 @@ export default function AxiomataPage() {
           loadDailyPuzzle(puzzle);
           setIsLoading(false);
           
-          // Wait a moment for state to update, then show modal
+          // Wait for state to update, then show modal
           setTimeout(() => {
             setIsModalOpen(true);
             setHasSeenCompletion(true);
-          }, 100);
+          }, 150);
         } catch (error) {
           console.error('Failed to load cached puzzle:', error);
           setError('Failed to load completed puzzle');
           setIsLoading(false);
+          setViewingCompleted(null);
         }
       } else {
         setError('Completed puzzle not found');
         setIsLoading(false);
+        setViewingCompleted(null);
       }
     } catch (err) {
       console.error('Failed to load completed puzzle:', err);
       setError('Failed to load completed puzzle');
       setIsLoading(false);
+      setViewingCompleted(null);
     }
   }
 
