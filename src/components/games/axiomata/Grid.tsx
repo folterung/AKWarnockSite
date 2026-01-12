@@ -68,6 +68,24 @@ export default function Grid() {
     }
   }, [pickerPosition]);
 
+  const gridSize = puzzle?.gridSize ?? 5;
+  const config = selectedDifficulty ? getDifficultyConfig(selectedDifficulty) : null;
+  const availablePieces = config?.availablePieces || [];
+
+  const adjacencyViolations = useMemo(() => {
+    if (!showAdjacencyHints || !puzzle) {
+      return new Set<string>();
+    }
+    const adjacencyConstraints = puzzle.constraints.filter(
+      (c): c is AdjacencyConstraint => c.type === 'adjacency'
+    );
+    if (adjacencyConstraints.length === 0) {
+      return new Set<string>();
+    }
+    const violations = findAdjacencyViolations(adjacencyConstraints, grid, gridSize);
+    return new Set(violations.map(v => `${v.row},${v.col}`));
+  }, [showAdjacencyHints, puzzle, grid, gridSize]);
+
   if (!puzzle) {
     const defaultSize = 5;
     const totalTiles = defaultSize * defaultSize;
@@ -90,7 +108,7 @@ export default function Grid() {
     );
   }
 
-  const getPairInfo = (row: number, col: number) => {
+  function getPairInfo(row: number, col: number) {
     const pairConstraints = puzzle.constraints.filter((c) => c.type === 'pair');
     for (const constraint of pairConstraints) {
       const pos1 = constraint.cell1;
@@ -107,25 +125,7 @@ export default function Grid() {
       }
     }
     return { isPair: false };
-  };
-
-  const gridSize = puzzle.gridSize;
-  const config = selectedDifficulty ? getDifficultyConfig(selectedDifficulty) : null;
-  const availablePieces = config?.availablePieces || [];
-
-  const adjacencyViolations = useMemo(() => {
-    if (!showAdjacencyHints || !puzzle) {
-      return new Set<string>();
-    }
-    const adjacencyConstraints = puzzle.constraints.filter(
-      (c): c is AdjacencyConstraint => c.type === 'adjacency'
-    );
-    if (adjacencyConstraints.length === 0) {
-      return new Set<string>();
-    }
-    const violations = findAdjacencyViolations(adjacencyConstraints, grid, gridSize);
-    return new Set(violations.map(v => `${v.row},${v.col}`));
-  }, [showAdjacencyHints, puzzle, grid, gridSize]);
+  }
 
   return (
     <div className="w-full mx-auto game-board-container">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import { ToastContainer, toast } from 'react-toastify';
@@ -125,9 +126,11 @@ export default function Home({ homeInfo }: HomeProps) {
           <div className="max-w-3xl mx-auto">
             <div className="group">
               <Link href={homeInfo.featuredBook.link}>
-                <img
+                <Image
                   src={homeInfo.featuredBook.image}
                   alt={homeInfo.featuredBook.alt}
+                  width={800}
+                  height={600}
                   className="w-full h-[600px] object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </Link>

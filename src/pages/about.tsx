@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -46,9 +47,11 @@ export default function About({ images, authorInfo }: AboutPageProps) {
                     index < currentImageIndex ? '-translate-x-full' : 'translate-x-full'
                   }`}
                 >
-                  <img
+                  <Image
                     src={image.src}
                     alt={image.alt}
+                    width={1200}
+                    height={600}
                     className="w-full h-full object-contain"
                   />
                 </div>
