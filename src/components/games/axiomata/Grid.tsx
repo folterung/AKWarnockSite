@@ -109,7 +109,7 @@ export default function Grid() {
   }
 
   function getPairInfo(row: number, col: number) {
-    const pairConstraints = puzzle.constraints.filter((c) => c.type === 'pair');
+    const pairConstraints = puzzle!.constraints.filter((c) => c.type === 'pair');
     for (const constraint of pairConstraints) {
       const pos1 = constraint.cell1;
       const pos2 = constraint.cell2;
