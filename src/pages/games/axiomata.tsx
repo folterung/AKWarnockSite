@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import Grid from '@/components/games/axiomata/Grid';
 import ConstraintsPanel from '@/components/games/axiomata/ConstraintsPanel';
 import StatsModal from '@/components/games/axiomata/StatsModal';
@@ -25,6 +26,7 @@ export default function AxiomataPage() {
   const selectedDifficultyDate = useGameStore((state) => state.selectedDifficultyDate);
   const setDifficulty = useGameStore((state) => state.setDifficulty);
   const clearDifficulty = useGameStore((state) => state.clearDifficulty);
+  const resetPuzzle = useGameStore((state) => state.resetPuzzle);
   const [forceShowSelector, setForceShowSelector] = useState(false);
   const [viewingCompleted, setViewingCompleted] = useState<Difficulty | null>(null);
 
@@ -442,10 +444,10 @@ export default function AxiomataPage() {
           <title>Axiomata | A.K. Warnock</title>
         </Head>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 py-4 md:pt-[4.5rem] px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Axiomata
               </h1>
               <div className="flex items-center justify-center">
@@ -480,10 +482,10 @@ export default function AxiomataPage() {
         <Head>
           <title>Axiomata | A.K. Warnock</title>
         </Head>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Axiomata
               </h1>
               <div className="flex items-center justify-center">
@@ -503,13 +505,13 @@ export default function AxiomataPage() {
         <Head>
           <title>Axiomata | A.K. Warnock</title>
         </Head>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Axiomata
               </h1>
-              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 text-center">
+              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 sm:p-5 md:p-6 text-center">
                 <div className="text-red-800 font-semibold mb-2">Error</div>
                 <div className="text-red-600">{error}</div>
               </div>
@@ -526,10 +528,10 @@ export default function AxiomataPage() {
         <title>Axiomata | A.K. Warnock</title>
       </Head>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 py-4 md:pt-[4.5rem] px-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8 pb-32 sm:pb-36 md:pb-40">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start lg:items-start max-w-[946px] ml-auto mr-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 md:gap-6 lg:gap-8 items-start lg:items-start max-w-[946px] ml-auto mr-auto">
               <div className="w-full lg:flex-[3] lg:flex-shrink-0 mb-8 lg:mb-0">
                 <div className="relative mb-4 lg:mb-0">
                   <div className="flex justify-center">
@@ -557,6 +559,16 @@ export default function AxiomataPage() {
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900">How to Play</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      resetPuzzle();
+                      track('clear_tiles', { game: 'axiomata' });
+                    }}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
+                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                  >
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900">Clear Tiles</span>
                   </button>
                   <button
                     onClick={handleChangeDifficulty}
@@ -671,6 +683,7 @@ export default function AxiomataPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

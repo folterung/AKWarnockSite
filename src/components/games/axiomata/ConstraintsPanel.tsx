@@ -3,11 +3,14 @@
 import { useMemo } from 'react';
 import ConstraintChip from './ConstraintChip';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
-import { validateAll } from '@/lib/games/axiomata/validator';
+import { validateAll, findAdjacencyViolations } from '@/lib/games/axiomata/validator';
+import type { AdjacencyConstraint } from '@/lib/games/axiomata/types';
 
 export default function ConstraintsPanel() {
   const grid = useGameStore((state) => state.grid);
   const puzzle = useGameStore((state) => state.puzzle);
+  const showAdjacencyHints = useGameStore((state) => state.showAdjacencyHints);
+  const toggleAdjacencyHints = useGameStore((state) => state.toggleAdjacencyHints);
 
   const validation = useMemo(() => {
     if (!puzzle) {
@@ -15,6 +18,20 @@ export default function ConstraintsPanel() {
     }
     return validateAll(puzzle.constraints, grid, puzzle.gridSize);
   }, [puzzle, grid]);
+
+  const hasAdjacencyViolations = useMemo(() => {
+    if (!showAdjacencyHints || !puzzle) {
+      return false;
+    }
+    const adjacencyConstraints = puzzle.constraints.filter(
+      (c): c is AdjacencyConstraint => c.type === 'adjacency'
+    );
+    if (adjacencyConstraints.length === 0) {
+      return false;
+    }
+    const violations = findAdjacencyViolations(adjacencyConstraints, grid, puzzle.gridSize);
+    return violations.length > 0;
+  }, [showAdjacencyHints, puzzle, grid]);
 
   if (!puzzle) {
     return null;
@@ -57,23 +74,43 @@ export default function ConstraintsPanel() {
     return (
       <div
         className={`
-          flex items-start gap-4 px-5 py-4 rounded-xl border-2 transition-all duration-300
+          flex flex-col gap-3 px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 rounded-xl border-2 transition-all duration-300
           ${allAdjacencyValid 
             ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300 shadow-sm' 
             : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300 shadow-sm'
           }
         `}
       >
-        <input
-          type="checkbox"
-          checked={allAdjacencyValid}
-          readOnly
-          className="w-5 h-5 rounded border-2 flex-shrink-0 cursor-default accent-green-600 mt-0.5"
-          style={{ cursor: 'default' }}
-        />
-        <span className="text-xs md:text-sm leading-relaxed flex-1 font-bold text-gray-900 font-sans text-left block" style={{ lineHeight: '1.7', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-          {getAdjacencyText()}
-        </span>
+        <div className="flex items-start gap-3 sm:gap-4 md:gap-5">
+          <input
+            type="checkbox"
+            checked={allAdjacencyValid}
+            readOnly
+            className="w-5 h-5 rounded border-2 flex-shrink-0 cursor-default accent-green-600 mt-0.5"
+            style={{ cursor: 'default' }}
+          />
+          <span className="text-xs md:text-sm leading-relaxed flex-1 font-bold text-gray-900 font-sans text-left block" style={{ lineHeight: '1.7', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+            {getAdjacencyText()}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 pl-2 sm:pl-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            {hasAdjacencyViolations && (
+              <span className="text-sm" title="Adjacency rule violation detected">
+                ⚠️
+              </span>
+            )}
+            <input
+              type="checkbox"
+              checked={showAdjacencyHints}
+              onChange={toggleAdjacencyHints}
+              className="w-4 h-4 rounded border-2 cursor-pointer accent-primary-600"
+            />
+            <span className="text-xs text-gray-700 font-medium">
+              Show violation indicators
+            </span>
+          </label>
+        </div>
       </div>
     );
   }
@@ -90,7 +127,7 @@ export default function ConstraintsPanel() {
         <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-80"></div>
       </div>
       
-      <div className="space-y-2.5 max-h-[calc(100vh-300px)] lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+      <div className="space-y-2 sm:space-y-2.5 md:space-y-3 max-h-[calc(100vh-300px)] sm:max-h-[calc(100vh-280px)] md:max-h-[calc(100vh-260px)] lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
         {renderAdjacencyRule()}
         
         {countConstraints.map((constraint, index) => (

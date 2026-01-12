@@ -13,13 +13,13 @@ export default function Games() {
         <meta name="description" content="Play games by A.K. Warnock" />
       </Head>
 
-      <div className="pt-24 px-4 py-8 max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Games</h1>
+      <div className="pt-20 sm:pt-24 md:pt-28 px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12 pb-32 sm:pb-36 md:pb-40 max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-6 sm:mb-7 md:mb-8">Games</h1>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8">
           <Link 
             href="/games/axiomata" 
-            className="block border border-gray-300 rounded-lg p-6 hover:bg-gray-100 transition group"
+            className="block border border-gray-300 rounded-lg p-4 sm:p-5 md:p-6 hover:bg-gray-100 transition group"
             onClick={() => {
               if (typeof window !== 'undefined') {
                 sessionStorage.setItem('showDifficultySelector', 'true');
@@ -55,14 +55,14 @@ export default function Games() {
           </Link>
         </div>
 
-        <section className="mt-12">
-          <h2 className="text-3xl font-bold text-center mb-6">Kids&apos; Creations</h2>
-          <div className="space-y-6">
+        <section className="mt-8 sm:mt-10 md:mt-12">
+          <h2 className="text-3xl font-bold text-center mb-4 sm:mb-5 md:mb-6">Kids&apos; Creations</h2>
+          <div className="space-y-4 sm:space-y-6 md:space-y-8">
             <a 
               href="https://scratch.mit.edu/users/RainbowDash0109/" 
               target="_blank"
               rel="noopener noreferrer"
-              className="block border border-gray-300 rounded-lg p-6 hover:bg-gray-100 transition group"
+              className="block border border-gray-300 rounded-lg p-4 sm:p-5 md:p-6 hover:bg-gray-100 transition group"
             >
               <div className="flex items-center gap-6">
                 <div className="flex-shrink-0">
@@ -96,7 +96,7 @@ export default function Games() {
               href="https://scratch.mit.edu/users/ScratchMaster08130/" 
               target="_blank"
               rel="noopener noreferrer"
-              className="block border border-gray-300 rounded-lg p-6 hover:bg-gray-100 transition group"
+              className="block border border-gray-300 rounded-lg p-4 sm:p-5 md:p-6 hover:bg-gray-100 transition group"
             >
               <div className="flex items-center gap-6">
                 <div className="flex-shrink-0">
