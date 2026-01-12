@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import type { TileState } from '@/lib/games/axiomata/types';
 
 interface IconPickerProps {
@@ -8,7 +9,71 @@ interface IconPickerProps {
   onClose: () => void;
 }
 
+const HEADER_HEIGHT = 64; // h-16 = 4rem = 64px
+
 export default function IconPicker({ availablePieces, onSelect, onClose }: IconPickerProps) {
+  const [radius, setRadius] = useState(60);
+  const [iconSize, setIconSize] = useState(40);
+  const [verticalOffset, setVerticalOffset] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function updateSizes() {
+      const width = window.innerWidth;
+      if (width >= 768) {
+        // md and above
+        setRadius(80);
+        setIconSize(48);
+      } else if (width >= 640) {
+        // sm
+        setRadius(70);
+        setIconSize(44);
+      } else {
+        // xs (mobile)
+        setRadius(60);
+        setIconSize(40);
+      }
+    }
+
+    function updatePosition() {
+      if (!containerRef.current) return;
+      
+      // Get the tile container (parent of the picker)
+      const tileContainer = containerRef.current.closest('.tile-picker-container') as HTMLElement;
+      if (!tileContainer) return;
+      
+      const tileRect = tileContainer.getBoundingClientRect();
+      const pickerTop = tileRect.top + tileRect.height / 2 - radius - iconSize / 2;
+      const minTop = HEADER_HEIGHT + 20; // Header height + some padding
+      
+      if (pickerTop < minTop) {
+        // Push the picker down so it's below the header
+        const offset = minTop - pickerTop;
+        setVerticalOffset(offset);
+      } else {
+        setVerticalOffset(0);
+      }
+    }
+
+    updateSizes();
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(updatePosition, 0);
+    
+    const handleResize = () => {
+      updateSizes();
+      updatePosition();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', updatePosition, true);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [radius, iconSize]);
+
   function getIconContent(state: TileState): string {
     if (state === 'SUN') return '☀️';
     if (state === 'MOON') return '🌙';
@@ -42,8 +107,6 @@ export default function IconPicker({ availablePieces, onSelect, onClose }: IconP
   }
 
   const allOptions: (TileState | null)[] = [...availablePieces, 'EMPTY'];
-  const radius = 80;
-  const iconSize = 48;
 
   function handleIconClick(tileState: TileState | null, event: React.MouseEvent) {
     event.stopPropagation();
@@ -57,26 +120,27 @@ export default function IconPicker({ availablePieces, onSelect, onClose }: IconP
   return (
     <>
       <div
-        className="absolute z-40 rounded-full"
+        className="absolute z-[70] rounded-full"
         style={{
           left: '50%',
           top: '50%',
           width: backdropSize,
           height: backdropSize,
-          transform: 'translate(-50%, -50%)',
+          transform: `translate(-50%, calc(-50% + ${verticalOffset}px))`,
           backgroundColor: 'rgba(107, 114, 128, 0.7)',
         }}
         onClick={onClose}
         aria-hidden="true"
       />
       <div
-        className="absolute z-50 pointer-events-none"
+        ref={containerRef}
+        className="absolute z-[70] pointer-events-none"
         style={{ 
           left: '50%',
           top: '50%',
           width: containerSize,
           height: containerSize,
-          transform: 'translate(-50%, -50%)',
+          transform: `translate(-50%, calc(-50% + ${verticalOffset}px))`,
         }}
       >
         {allOptions.map((tileState, index) => {
@@ -94,9 +158,9 @@ export default function IconPicker({ availablePieces, onSelect, onClose }: IconP
               type="button"
               onClick={(e) => handleIconClick(tileState, e)}
               className={`
-                absolute w-12 h-12 rounded-xl border-2
+                absolute w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl border-2
                 flex items-center justify-center
-                text-2xl md:text-3xl
+                text-xl sm:text-2xl md:text-3xl
                 transition-all duration-200 ease-out
                 shadow-lg hover:shadow-xl
                 active:scale-90

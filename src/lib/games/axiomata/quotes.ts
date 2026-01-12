@@ -5,7 +5,7 @@ export interface Quote {
   author: string;
 }
 
-const CACHED_QUOTE_KEY = 'axiomata-cached-quote';
+const CACHED_QUOTES_KEY = 'axiomata-cached-quotes';
 const LAST_QUOTE_INDEX_KEY = 'axiomata-last-quote-index';
 const SEEN_QUOTES_KEY = 'axiomata-seen-quotes';
 
@@ -74,19 +74,22 @@ const QUOTES: Quote[] = [
 ];
 
 interface CachedQuote {
-  dailyKey: string;
   quote: Quote;
   quoteIndex: number;
 }
 
-function getCachedQuote(dailyKey: string): Quote | null {
+interface CachedQuotes {
+  [puzzleKey: string]: CachedQuote;
+}
+
+function getCachedQuote(puzzleKey: string): Quote | null {
   if (typeof window === 'undefined') return null;
   try {
-    const stored = localStorage.getItem(CACHED_QUOTE_KEY);
+    const stored = localStorage.getItem(CACHED_QUOTES_KEY);
     if (stored) {
-      const cached: CachedQuote = JSON.parse(stored);
-      if (cached.dailyKey === dailyKey) {
-        return cached.quote;
+      const cached: CachedQuotes = JSON.parse(stored);
+      if (cached[puzzleKey]) {
+        return cached[puzzleKey].quote;
       }
     }
   } catch (error) {
@@ -95,15 +98,16 @@ function getCachedQuote(dailyKey: string): Quote | null {
   return null;
 }
 
-function setCachedQuote(dailyKey: string, quote: Quote, quoteIndex: number): void {
+function setCachedQuote(puzzleKey: string, quote: Quote, quoteIndex: number): void {
   if (typeof window === 'undefined') return;
   try {
-    const cached: CachedQuote = {
-      dailyKey,
+    const stored = localStorage.getItem(CACHED_QUOTES_KEY);
+    const cached: CachedQuotes = stored ? JSON.parse(stored) : {};
+    cached[puzzleKey] = {
       quote,
       quoteIndex,
     };
-    localStorage.setItem(CACHED_QUOTE_KEY, JSON.stringify(cached));
+    localStorage.setItem(CACHED_QUOTES_KEY, JSON.stringify(cached));
   } catch (error) {
     console.error('Failed to cache quote:', error);
   }
@@ -167,15 +171,20 @@ function resetSeenQuotes(): void {
   }
 }
 
-export function getQuoteOfTheDay(dailyKey: string): Quote {
-  // Check if we have a cached quote for this daily key
-  const cachedQuote = getCachedQuote(dailyKey);
+export function getQuoteOfTheDay(dailyKey: string, difficulty?: string | null): Quote {
+  // Create a puzzle key that includes both dailyKey and difficulty
+  // This ensures each puzzle (date + difficulty) gets its own quote
+  const puzzleKey = difficulty ? `${dailyKey}-${difficulty}` : dailyKey;
+  
+  // Check if we have a cached quote for this puzzle
+  const cachedQuote = getCachedQuote(puzzleKey);
   if (cachedQuote) {
     return cachedQuote;
   }
 
-  // Generate a new quote for this day
-  const seed = seedFromString(dailyKey);
+  // Generate a new quote for this puzzle
+  // Use the puzzle key as the seed so each puzzle gets a deterministic but different quote
+  const seed = seedFromString(puzzleKey);
   const rng = new SeededRNG(seed);
   const lastQuoteIndex = getLastQuoteIndex();
   const seenIndices = getSeenQuoteIndices();
@@ -209,8 +218,8 @@ export function getQuoteOfTheDay(dailyKey: string): Quote {
     selected = rng.choice(availableQuotes);
   }
   
-  // Cache the quote for this daily key
-  setCachedQuote(dailyKey, selected.quote, selected.index);
+  // Cache the quote for this puzzle key
+  setCachedQuote(puzzleKey, selected.quote, selected.index);
   
   // Track as last quote shown
   setLastQuoteIndex(selected.index);

@@ -62,7 +62,7 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           e.preventDefault();
@@ -70,15 +70,17 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 border-2 border-gray-100">
+      <div className="min-h-full flex items-center justify-center p-4 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-4 overflow-y-auto">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 border-2 border-gray-100 max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-9rem)] md:max-h-[calc(100vh-10rem)] flex flex-col overflow-hidden">
+          <div className="overflow-y-auto flex-1 p-4 sm:p-6 md:p-8">
         <h2 
-          className="text-4xl md:text-5xl font-semibold italic text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" 
+          className="text-4xl md:text-5xl font-semibold italic text-center mb-6 sm:mb-7 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" 
           style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
         >
           Choose Difficulty
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 mb-6">
           {difficultyInfo.map(({ difficulty, name, gridSize, pieces, constraintCount, fillPercentage }) => {
             const isCompleted = isDifficultyCompleted(dailyKey, difficulty);
             const completionTime = isCompleted ? getDifficultyCompletionTime(dailyKey, difficulty) : null;
@@ -95,14 +97,14 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
               <button
                 key={difficulty}
                 onClick={handleClick}
-                className={`px-6 py-5 rounded-xl border-2 transition-all duration-200 text-left group relative ${
+                className={`px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 rounded-xl border-2 transition-all duration-200 text-left group relative ${
                   isCompleted
                     ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-300 hover:border-green-400 hover:shadow-lg cursor-pointer'
                     : 'bg-gradient-to-br from-gray-50 to-white border-gray-300 hover:border-primary-400 hover:shadow-lg'
                 }`}
               >
                 {isCompleted && (
-                  <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold shadow-md">
+                  <div className="absolute bottom-2 right-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold shadow-md">
                     ✓
                   </div>
                 )}
@@ -122,18 +124,20 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
                     {gridSize}×{gridSize}
                   </span>
                 </div>
-                {isCompleted && (
-                  <div className="mb-2 flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
-                      Completed
-                    </span>
-                    {completionTime !== null && completionTime !== undefined && (
-                      <span className="text-xs font-mono font-semibold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">
-                        {formatTime(completionTime)}
+                <div className="mb-2 min-h-[28px] flex items-center gap-2 flex-wrap">
+                  {isCompleted && (
+                    <>
+                      <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
+                        Completed
                       </span>
-                    )}
-                  </div>
-                )}
+                      {completionTime !== null && completionTime !== undefined && (
+                        <span className="text-xs font-mono font-semibold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">
+                          {formatTime(completionTime)}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
                 <div className={`space-y-1 text-sm ${
                   isCompleted ? 'text-green-700' : 'text-gray-600'
                 }`}>
@@ -155,9 +159,11 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
           })}
         </div>
         
-        <p className="text-sm text-gray-500 text-center italic">
-          You can try each difficulty once per day. Your progress is saved for each difficulty level.
-        </p>
+            <p className="text-sm text-gray-500 text-center italic">
+              You can try each difficulty once per day. Your progress is saved for each difficulty level.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import type {
   DiagonalAdjacencyConstraint,
   PatternConstraint,
   BalanceConstraint,
+  Position,
 } from './types';
 
 function getTile(grid: Grid, row: number, col: number, gridSize: number): TileState | null {
@@ -53,6 +54,50 @@ function validateAdjacency(
   }
 
   return true;
+}
+
+export function findAdjacencyViolations(
+  constraints: AdjacencyConstraint[],
+  grid: Grid,
+  gridSize: number
+): Position[] {
+  const violations = new Set<string>();
+  
+  for (const constraint of constraints) {
+    if (!constraint.cannotTouch) {
+      continue;
+    }
+
+    const targetType = constraint.tileType;
+
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        const tile = getTile(grid, row, col, gridSize);
+        if (tile !== targetType) {
+          continue;
+        }
+
+        const neighbors = [
+          { row: row - 1, col, tile: getTile(grid, row - 1, col, gridSize) },
+          { row: row + 1, col, tile: getTile(grid, row + 1, col, gridSize) },
+          { row, col: col - 1, tile: getTile(grid, row, col - 1, gridSize) },
+          { row, col: col + 1, tile: getTile(grid, row, col + 1, gridSize) },
+        ];
+
+        for (const neighbor of neighbors) {
+          if (neighbor.tile === targetType) {
+            violations.add(`${row},${col}`);
+            violations.add(`${neighbor.row},${neighbor.col}`);
+          }
+        }
+      }
+    }
+  }
+
+  return Array.from(violations).map(key => {
+    const [row, col] = key.split(',').map(Number);
+    return { row, col };
+  });
 }
 
 function validateCount(constraint: CountConstraint, grid: Grid, gridSize: number): boolean {

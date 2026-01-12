@@ -60,6 +60,25 @@ export default function Header() {
                 >
                   Axiomata
                 </Link>
+                <div className="nav-dropdown-header">
+                  Kid&apos;s Creations
+                </div>
+                <a 
+                  href="https://scratch.mit.edu/users/RainbowDash0109/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-dropdown-item"
+                >
+                  RainbowDash0109
+                </a>
+                <a 
+                  href="https://scratch.mit.edu/users/ScratchMaster08130/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-dropdown-item"
+                >
+                  ScratchMaster08130
+                </a>
               </div>
             </div>
 

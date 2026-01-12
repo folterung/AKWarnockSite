@@ -17,6 +17,7 @@ interface GameState {
   lastDailyKey: string | null;
   selectedDifficulty: Difficulty | null;
   selectedDifficultyDate: string | null;
+  showAdjacencyHints: boolean;
 }
 
 interface GameActions {
@@ -29,6 +30,7 @@ interface GameActions {
   stopTimer: () => void;
   setDifficulty: (difficulty: Difficulty) => void;
   clearDifficulty: () => void;
+  toggleAdjacencyHints: () => void;
 }
 
 type GameStore = GameState & GameActions;
@@ -51,6 +53,7 @@ function initializeGrid(puzzle: Puzzle): Grid {
 }
 
 const STORAGE_KEY = 'axiomata-game-storage';
+const ADJACENCY_HINTS_KEY = 'axiomata-adjacency-hints';
 
 function loadFromStorage(): Partial<GameState> {
   if (typeof window === 'undefined') return {};
@@ -63,6 +66,28 @@ function loadFromStorage(): Partial<GameState> {
     console.error('Failed to load from storage:', error);
   }
   return {};
+}
+
+function loadAdjacencyHintsPreference(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const stored = localStorage.getItem(ADJACENCY_HINTS_KEY);
+    if (stored !== null) {
+      return JSON.parse(stored) === true;
+    }
+  } catch (error) {
+    console.error('Failed to load adjacency hints preference:', error);
+  }
+  return false;
+}
+
+function saveAdjacencyHintsPreference(value: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(ADJACENCY_HINTS_KEY, JSON.stringify(value));
+  } catch (error) {
+    console.error('Failed to save adjacency hints preference:', error);
+  }
 }
 
 function saveToStorage(state: Partial<GameState>): void {
@@ -243,6 +268,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
     lastDailyKey: stored.lastDailyKey ?? null,
     selectedDifficulty: null,
     selectedDifficultyDate: null,
+    showAdjacencyHints: loadAdjacencyHintsPreference(),
 
     setDifficulty: (difficulty: Difficulty) => {
       const dailyKey = getDailyKey();
@@ -469,12 +495,24 @@ export const useGameStore = create<GameStore>()((set, get) => {
       const state = get();
       if (!state.puzzle) return;
 
+      const newGrid = initializeGrid(state.puzzle);
+      const dailyKey = getDailyKey();
+      
       set({
-        grid: initializeGrid(state.puzzle),
+        grid: newGrid,
         isComplete: false,
         startTime: null,
         timeToSolveMs: null,
       });
+      
+      saveBoardState(
+        dailyKey,
+        state.selectedDifficulty,
+        newGrid,
+        false,
+        null,
+        null
+      );
     },
 
     startTimer: () => {
@@ -503,6 +541,13 @@ export const useGameStore = create<GameStore>()((set, get) => {
           startTime: null,
         });
       }
+    },
+
+    toggleAdjacencyHints: () => {
+      const state = get();
+      const newValue = !state.showAdjacencyHints;
+      set({ showAdjacencyHints: newValue });
+      saveAdjacencyHintsPreference(newValue);
     },
   };
 });
