@@ -47,6 +47,10 @@ export default function AxiomataPage() {
   }, [setDifficulty, clearDifficulty]);
 
   const needsDifficultySelection = isHydrated && dailyKey && (!selectedDifficulty || selectedDifficultyDate !== dailyKey);
+  
+  function handleTryAnotherDifficulty() {
+    clearDifficulty();
+  }
 
   useEffect(() => {
     track('puzzle_loaded', { game: 'axiomata' });
@@ -290,6 +294,109 @@ export default function AxiomataPage() {
     setDifficulty(difficulty);
   }
 
+  async function handleViewCompleted(difficulty: Difficulty) {
+    setIsLoading(true);
+    setError(null);
+    
+    // Set the difficulty temporarily to load the puzzle
+    setDifficulty(difficulty);
+    
+    try {
+      const CACHE_VERSION = '4';
+      const cacheKey = `axiomata-puzzle-${dailyKey}-${difficulty}`;
+      const versionKey = `axiomata-cache-version-${dailyKey}-${difficulty}`;
+      
+      const cachedVersion = localStorage.getItem(versionKey);
+      const cachedPuzzle = localStorage.getItem(cacheKey);
+      
+      if (cachedPuzzle && cachedVersion === CACHE_VERSION) {
+        try {
+          const parsed = JSON.parse(cachedPuzzle);
+          
+          const normalizeConstraints = (constraints: any[]): Constraint[] => {
+            return constraints.map((c: any) => {
+              if (c.type === 'count') {
+                const countConstraint = c as any;
+                if (countConstraint.counts instanceof Map) {
+                  return c;
+                } else if (Array.isArray(countConstraint.counts)) {
+                  return {
+                    ...c,
+                    counts: new Map(countConstraint.counts),
+                  };
+                } else if (typeof countConstraint.counts === 'object' && countConstraint.counts !== null) {
+                  return {
+                    ...c,
+                    counts: new Map(Object.entries(countConstraint.counts).map(([k, v]) => [k, v])),
+                  };
+                } else if (countConstraint.sunCount !== undefined || countConstraint.moonCount !== undefined) {
+                  const counts = new Map();
+                  if (countConstraint.sunCount) counts.set('SUN', countConstraint.sunCount);
+                  if (countConstraint.moonCount) counts.set('MOON', countConstraint.moonCount);
+                  return {
+                    ...c,
+                    counts,
+                  };
+                }
+              } else if (c.type === 'region') {
+                const regionConstraint = c as any;
+                if (regionConstraint.counts instanceof Map) {
+                  return c;
+                } else if (Array.isArray(regionConstraint.counts)) {
+                  return {
+                    ...c,
+                    counts: new Map(regionConstraint.counts),
+                  };
+                } else if (typeof regionConstraint.counts === 'object' && regionConstraint.counts !== null) {
+                  return {
+                    ...c,
+                    counts: new Map(Object.entries(regionConstraint.counts).map(([k, v]) => [k, v])),
+                  };
+                } else if (regionConstraint.sunCount !== undefined || regionConstraint.moonCount !== undefined) {
+                  const counts = new Map();
+                  if (regionConstraint.sunCount) counts.set('SUN', regionConstraint.sunCount);
+                  if (regionConstraint.moonCount) counts.set('MOON', regionConstraint.moonCount);
+                  return {
+                    ...c,
+                    counts,
+                  };
+                }
+              }
+              return c;
+            });
+          };
+          
+          const puzzle = {
+            ...parsed,
+            givens: new Map(parsed.givens),
+            constraints: normalizeConstraints(parsed.constraints || []),
+            gridSize: parsed.gridSize || 5,
+          };
+          
+          loadDailyPuzzle(puzzle);
+          setIsLoading(false);
+          
+          // Wait a moment for state to update, then show modal
+          setTimeout(() => {
+            setIsModalOpen(true);
+            setHasSeenCompletion(true);
+          }, 100);
+        } catch (error) {
+          console.error('Failed to load cached puzzle:', error);
+          setError('Failed to load completed puzzle');
+          setIsLoading(false);
+        }
+      } else {
+        setError('Completed puzzle not found');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error('Failed to load completed puzzle:', err);
+      setError('Failed to load completed puzzle');
+      setIsLoading(false);
+    }
+  }
+
   if (!isHydrated) {
     return (
       <>
@@ -321,7 +428,10 @@ export default function AxiomataPage() {
           <title>Axiomata | A.K. Warnock</title>
         </Head>
         <Header />
-        <DifficultySelector onSelect={handleDifficultySelect} />
+        <DifficultySelector 
+          onSelect={handleDifficultySelect} 
+          onViewCompleted={handleViewCompleted}
+        />
       </>
     );
   }
@@ -420,6 +530,7 @@ export default function AxiomataPage() {
               onClose={() => {
                 setIsModalOpen(false);
               }}
+              onTryAnotherDifficulty={handleTryAnotherDifficulty}
             />
 
             {isHowToPlayOpen && (
