@@ -10,7 +10,7 @@ import type {
   Difficulty,
 } from './types';
 import { seedFromString, SeededRNG } from './seed';
-import { solve } from './solver';
+import { solve, solveAsync } from './solver';
 import { validateAll } from './validator';
 import { getDifficultyConfig } from './difficulty';
 
@@ -619,6 +619,121 @@ export function generatePuzzle(
     // Use iterations that scale with empty tiles but have reasonable max caps
     const maxIterations = Math.min(emptyTiles * 500, gridSize <= 5 ? 15000 : gridSize <= 6 ? 25000 : gridSize <= 7 ? 35000 : 50000);
     const solved = solve(puzzle, maxIterations);
+    if (solved === null) {
+      solvabilityFailures++;
+      attempts++;
+      if (attempts < maxAttempts) {
+        rng = new SeededRNG(seed + attempts);
+      }
+      continue;
+    }
+
+    break;
+  } while (attempts < maxAttempts);
+
+  if (attempts >= maxAttempts) {
+    const errorMessage = `Failed to generate solvable puzzle after ${maxAttempts} attempts. Validation failures: ${validationFailures}, Solvability failures: ${solvabilityFailures}`;
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  if (validationFailures > 0 || solvabilityFailures > 0) {
+    console.log(`Puzzle generated after ${attempts} attempts (validation failures: ${validationFailures}, solvability failures: ${solvabilityFailures})`);
+  }
+
+  return puzzle;
+}
+
+async function yieldToBrowser(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+export async function generatePuzzleAsync(
+  dailyKey: string,
+  difficulty: Difficulty = 'medium'
+): Promise<Puzzle> {
+  const config = getDifficultyConfig(difficulty);
+  const seed = seedFromString(`${dailyKey}-${difficulty}`);
+  let rng = new SeededRNG(seed);
+
+  let solution: Grid;
+  let constraints: Constraint[];
+  let givens: Map<string, TileState>;
+  let puzzle: Puzzle;
+
+  let attempts = 0;
+  const maxAttempts = difficulty === 'expert' ? 30 : 20;
+  let validationFailures = 0;
+  let solvabilityFailures = 0;
+
+  do {
+    await yieldToBrowser();
+    
+    const adjacencyCount = config.constraintCounts.adjacency;
+    const adjacencyConstraints: AdjacencyConstraint[] = [];
+    const pieceTypes = config.availablePieces.filter(p => p !== 'EMPTY');
+    
+    const shuffledPieces = rng.shuffle([...pieceTypes]);
+    const uniquePieces = shuffledPieces.slice(0, Math.min(adjacencyCount, shuffledPieces.length));
+    
+    for (const tileType of uniquePieces) {
+      adjacencyConstraints.push({
+        type: 'adjacency',
+        tileType: tileType as 'SUN' | 'MOON' | 'STAR' | 'PLANET' | 'COMET',
+        cannotTouch: true,
+      });
+    }
+
+    solution = generateRandomSolution(
+      rng,
+      config.gridSize,
+      config.availablePieces,
+      adjacencyConstraints,
+      config.minFillPercentage
+    );
+    
+    await yieldToBrowser();
+    
+    constraints = generateConstraints(solution, rng, difficulty, adjacencyConstraints, config);
+    givens = createGivens(solution, constraints, rng, config.gridSize, config.givenCount);
+
+    puzzle = {
+      solution,
+      givens,
+      constraints,
+      difficulty,
+      dailyKey,
+      gridSize: config.gridSize,
+    };
+
+    const validation = validateAll(constraints, solution, config.gridSize);
+    if (!validation.isValid) {
+      validationFailures++;
+      attempts++;
+      if (attempts < maxAttempts) {
+        rng = new SeededRNG(seed + attempts);
+      }
+      continue;
+    }
+
+    const filledCount = countFilledTiles(solution, config.gridSize);
+    const totalTiles = config.gridSize * config.gridSize;
+    const fillPercentage = filledCount / totalTiles;
+    if (fillPercentage < config.minFillPercentage) {
+      validationFailures++;
+      attempts++;
+      if (attempts < maxAttempts) {
+        rng = new SeededRNG(seed + attempts);
+      }
+      continue;
+    }
+
+    await yieldToBrowser();
+
+    const gridSize = config.gridSize;
+    const emptyTiles = gridSize * gridSize - givens.size;
+    const maxIterations = Math.min(emptyTiles * 500, gridSize <= 5 ? 15000 : gridSize <= 6 ? 25000 : gridSize <= 7 ? 35000 : 50000);
+    const solved = await solveAsync(puzzle, maxIterations, 1000);
     if (solved === null) {
       solvabilityFailures++;
       attempts++;

@@ -5,6 +5,7 @@ import { useGameStore } from '@/store/games/axiomata/useGameStore';
 import { track } from '@/lib/analytics';
 import { getDailyKey } from '@/lib/games/axiomata/seed';
 import { isDifficultyCompleted } from '@/store/games/axiomata/useGameStore';
+import { TEST_SPARKLES_ANIMATION } from '@/lib/games/axiomata/testConfig';
 import {
   generateShareImage,
   copyImageToClipboard,
@@ -39,9 +40,11 @@ export default function ShareCard({ onShareComplete, captureRef }: ShareCardProp
       const dailyKey = getDailyKey();
       const isCompleted = isDifficultyCompleted(dailyKey, selectedDifficulty);
       
-      // Enable sharing if puzzle is complete OR difficulty is marked as completed
-      // This handles both immediate completion and persisted completion state
-      setCanShare(isComplete || isCompleted);
+      // Enable sharing if:
+      // 1. Puzzle is complete (immediate completion)
+      // 2. Difficulty is marked as completed (persisted completion state)
+      // 3. Test mode is enabled (for testing)
+      setCanShare(isComplete || isCompleted || TEST_SPARKLES_ANIMATION);
     }
 
     checkShareAvailability();
@@ -51,7 +54,15 @@ export default function ShareCard({ onShareComplete, captureRef }: ShareCardProp
       checkShareAvailability();
     }, 100);
     
-    return () => clearTimeout(timeoutId);
+    // Also check when modal opens (additional delay for test mode)
+    const timeoutId2 = setTimeout(() => {
+      checkShareAvailability();
+    }, 300);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      clearTimeout(timeoutId2);
+    };
   }, [selectedDifficulty, isComplete]);
 
   useEffect(() => {

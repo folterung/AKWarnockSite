@@ -4,7 +4,7 @@ import Grid from '@/components/games/axiomata/Grid';
 import ConstraintsPanel from '@/components/games/axiomata/ConstraintsPanel';
 import TopBar from '@/components/games/axiomata/TopBar';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
-import { generatePuzzle } from '@/lib/games/axiomata/generator';
+import { generatePuzzleAsync } from '@/lib/games/axiomata/generator';
 import { seedFromString, SeededRNG } from '@/lib/games/axiomata/seed';
 import { track } from '@/lib/analytics';
 
@@ -14,13 +14,28 @@ export default function PracticePage() {
   useEffect(() => {
     track('practice_mode_loaded', { game: 'axiomata' });
     
-    const randomSeed = Math.floor(Math.random() * 1000000);
-    const rng = new SeededRNG(randomSeed);
-    const practiceKey = `practice-${Date.now()}-${rng.nextInt(0, 999999)}`;
-    const seed = seedFromString(practiceKey);
+    let isMounted = true;
     
-    const puzzle = generatePuzzle(practiceKey, 'medium');
-    loadDailyPuzzle(puzzle);
+    async function loadPracticePuzzle() {
+      const randomSeed = Math.floor(Math.random() * 1000000);
+      const rng = new SeededRNG(randomSeed);
+      const practiceKey = `practice-${Date.now()}-${rng.nextInt(0, 999999)}`;
+      
+      try {
+        const puzzle = await generatePuzzleAsync(practiceKey, 'medium');
+        if (isMounted) {
+          loadDailyPuzzle(puzzle);
+        }
+      } catch (error) {
+        console.error('Failed to generate practice puzzle:', error);
+      }
+    }
+    
+    loadPracticePuzzle();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [loadDailyPuzzle]);
 
   return (

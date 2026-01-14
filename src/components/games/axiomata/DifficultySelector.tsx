@@ -6,6 +6,7 @@ import { getDifficultyConfig } from '@/lib/games/axiomata/difficulty';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
 import { getDailyKey } from '@/lib/games/axiomata/seed';
 import { isDifficultyCompleted, getCompletedDifficulties, getDifficultyCompletionTime } from '@/store/games/axiomata/useGameStore';
+import { TEST_SPARKLES_ANIMATION } from '@/lib/games/axiomata/testConfig';
 
 interface DifficultySelectorProps {
   onSelect: (difficulty: Difficulty) => void;
@@ -82,11 +83,15 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 mb-6">
           {difficultyInfo.map(({ difficulty, name, gridSize, pieces, constraintCount, fillPercentage }) => {
-            const isCompleted = isDifficultyCompleted(dailyKey, difficulty);
-            const completionTime = isCompleted ? getDifficultyCompletionTime(dailyKey, difficulty) : null;
+            // In test mode, treat all difficulties as completed
+            const isCompleted = TEST_SPARKLES_ANIMATION || isDifficultyCompleted(dailyKey, difficulty);
+            const completionTime = isCompleted ? (getDifficultyCompletionTime(dailyKey, difficulty) || 60000) : null;
             
             function handleClick() {
-              if (isCompleted && onViewCompleted) {
+              // In test mode, always use onViewCompleted to show completed puzzle
+              if (TEST_SPARKLES_ANIMATION && onViewCompleted) {
+                onViewCompleted(difficulty);
+              } else if (isCompleted && onViewCompleted) {
                 onViewCompleted(difficulty);
               } else {
                 onSelect(difficulty);
