@@ -7,8 +7,10 @@ import ConstraintsPanel from '@/components/games/axiomata/ConstraintsPanel';
 import StatsModal from '@/components/games/axiomata/StatsModal';
 import DifficultySelector from '@/components/games/axiomata/DifficultySelector';
 import { useGameStore } from '@/store/games/axiomata/useGameStore';
-import { generatePuzzle } from '@/lib/games/axiomata/generator';
+import { generatePuzzleAsync } from '@/lib/games/axiomata/generator';
 import { getDailyKey } from '@/lib/games/axiomata/seed';
+import { markAllDifficultiesCompletedForTesting } from '@/store/games/axiomata/useGameStore';
+import { TEST_SPARKLES_ANIMATION } from '@/lib/games/axiomata/testConfig';
 import { track } from '@/lib/analytics';
 import type { Puzzle, Difficulty, Constraint, CountConstraint, RegionConstraint } from '@/lib/games/axiomata/types';
 
@@ -38,6 +40,10 @@ export default function AxiomataPage() {
     const currentDailyKey = getDailyKey();
     setDailyKey(currentDailyKey);
     
+    // In test mode, mark all difficulties as completed
+    // When test mode is disabled, clean up test completions from localStorage
+    markAllDifficultiesCompletedForTesting(currentDailyKey, TEST_SPARKLES_ANIMATION);
+    
     // Check if we should show difficulty selector (navigating from header)
     const shouldShowSelector = sessionStorage.getItem('showDifficultySelector') === 'true';
     
@@ -63,6 +69,19 @@ export default function AxiomataPage() {
 
   const needsDifficultySelection = isHydrated && dailyKey && (forceShowSelector || !selectedDifficulty || selectedDifficultyDate !== dailyKey);
   
+  function serializeConstraints(constraints: Constraint[]): any[] {
+    return constraints.map(c => {
+      if (c.type === 'count' || c.type === 'region') {
+        const constraint = c as CountConstraint | RegionConstraint;
+        return {
+          ...c,
+          counts: Array.from(constraint.counts.entries()),
+        };
+      }
+      return c;
+    });
+  }
+  
   function handleTryAnotherDifficulty() {
     clearDifficulty();
   }
@@ -75,6 +94,73 @@ export default function AxiomataPage() {
   useEffect(() => {
     track('puzzle_loaded', { game: 'axiomata' });
   }, []);
+
+  useEffect(() => {
+    if (!isHydrated || !dailyKey) return;
+
+    function preloadPuzzles() {
+      const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+      const CACHE_VERSION = '4';
+      
+      difficulties.forEach((difficulty) => {
+        const cacheKey = `axiomata-puzzle-${dailyKey}-${difficulty}`;
+        const versionKey = `axiomata-cache-version-${dailyKey}-${difficulty}`;
+        
+        const cachedVersion = localStorage.getItem(versionKey);
+        const cachedPuzzle = localStorage.getItem(cacheKey);
+        
+        if (!cachedPuzzle || cachedVersion !== CACHE_VERSION) {
+          if (typeof requestIdleCallback !== 'undefined') {
+            requestIdleCallback(() => {
+              generatePuzzleAsync(dailyKey, difficulty)
+                .then((puzzle) => {
+                  const serializable = {
+                    ...puzzle,
+                    givens: Array.from(puzzle.givens.entries()),
+                    constraints: serializeConstraints(puzzle.constraints),
+                  };
+                  
+                  try {
+                    localStorage.setItem(cacheKey, JSON.stringify(serializable));
+                    localStorage.setItem(versionKey, CACHE_VERSION);
+                    console.log(`Pre-loaded puzzle for ${difficulty}`);
+                  } catch (storageError) {
+                    console.warn(`Failed to save pre-loaded puzzle for ${difficulty}:`, storageError);
+                  }
+                })
+                .catch((error) => {
+                  console.warn(`Failed to pre-load puzzle for ${difficulty}:`, error);
+                });
+            }, { timeout: 5000 });
+          } else {
+            setTimeout(() => {
+              generatePuzzleAsync(dailyKey, difficulty)
+                .then((puzzle) => {
+                  const serializable = {
+                    ...puzzle,
+                    givens: Array.from(puzzle.givens.entries()),
+                    constraints: serializeConstraints(puzzle.constraints),
+                  };
+                  
+                  try {
+                    localStorage.setItem(cacheKey, JSON.stringify(serializable));
+                    localStorage.setItem(versionKey, CACHE_VERSION);
+                    console.log(`Pre-loaded puzzle for ${difficulty}`);
+                  } catch (storageError) {
+                    console.warn(`Failed to save pre-loaded puzzle for ${difficulty}:`, storageError);
+                  }
+                })
+                .catch((error) => {
+                  console.warn(`Failed to pre-load puzzle for ${difficulty}:`, error);
+                });
+            }, 1000);
+          }
+        }
+      });
+    }
+
+    preloadPuzzles();
+  }, [isHydrated, dailyKey]);
 
   useEffect(() => {
     if (!isHydrated || !dailyKey || needsDifficultySelection) {
@@ -194,20 +280,10 @@ export default function AxiomataPage() {
         (async () => {
           try {
             const timeoutPromise = new Promise<never>((_, reject) => {
-              setTimeout(() => reject(new Error('Generation timeout after 30 seconds')), 30000);
+              setTimeout(() => reject(new Error('Generation timeout after 60 seconds')), 60000);
             });
             
-            const generatePromise = new Promise<Puzzle>((resolve, reject) => {
-              // Use setTimeout to yield to the browser, but with minimal delay
-              setTimeout(() => {
-                try {
-                  const puzzle = generatePuzzle(dailyKey, selectedDifficulty);
-                  resolve(puzzle);
-                } catch (error) {
-                  reject(error);
-                }
-              }, 0);
-            });
+            const generatePromise = generatePuzzleAsync(dailyKey, selectedDifficulty);
             
             const resolvedPuzzle = await Promise.race([generatePromise, timeoutPromise]);
             console.log('Puzzle generated in', Date.now() - startTime, 'ms');
@@ -220,19 +296,6 @@ export default function AxiomataPage() {
             });
             
             console.log('Puzzle generated ✓');
-            
-            const serializeConstraints = (constraints: Constraint[]): any[] => {
-              return constraints.map(c => {
-                if (c.type === 'count' || c.type === 'region') {
-                  const constraint = c as CountConstraint | RegionConstraint;
-                  return {
-                    ...c,
-                    counts: Array.from(constraint.counts.entries()),
-                  };
-                }
-                return c;
-              });
-            };
             
             const serializable = {
               ...resolvedPuzzle,
@@ -425,9 +488,29 @@ export default function AxiomataPage() {
           setViewingCompleted(null);
         }
       } else {
-        setError('Completed puzzle not found');
-        setIsLoading(false);
-        setViewingCompleted(null);
+        // In test mode, generate the puzzle if it's not cached
+        if (TEST_SPARKLES_ANIMATION) {
+          try {
+            const puzzle = await generatePuzzleAsync(dailyKey, difficulty);
+            loadDailyPuzzle(puzzle);
+            setIsLoading(false);
+            
+            // Wait for state to update, then show modal
+            setTimeout(() => {
+              setIsModalOpen(true);
+              setHasSeenCompletion(true);
+            }, 150);
+          } catch (error) {
+            console.error('Failed to generate puzzle in test mode:', error);
+            setError('Failed to generate puzzle');
+            setIsLoading(false);
+            setViewingCompleted(null);
+          }
+        } else {
+          setError('Completed puzzle not found');
+          setIsLoading(false);
+          setViewingCompleted(null);
+        }
       }
     } catch (err) {
       console.error('Failed to load completed puzzle:', err);
@@ -597,6 +680,20 @@ export default function AxiomataPage() {
                     How to Play
                   </h2>
                   
+                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-5 mb-4">
+                    <h3 className="text-lg font-semibold text-indigo-900 mb-3">Keyboard Shortcuts</h3>
+                    <ul className="text-sm text-indigo-800 space-y-2.5 list-none">
+                      <li className="flex items-start">
+                        <span className="mr-2 text-indigo-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Undo:</strong> Press <kbd className="px-2 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-mono">Ctrl+Z</kbd> (or <kbd className="px-2 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-mono">Cmd+Z</kbd> on Mac) to undo your last move</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-indigo-600 font-bold">•</span>
+                        <span className="font-bold"><strong>Redo:</strong> Press <kbd className="px-2 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-mono">Ctrl+Shift+Z</kbd> (or <kbd className="px-2 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-mono">Cmd+Shift+Z</kbd> on Mac) to redo an undone move</span>
+                      </li>
+                    </ul>
+                  </div>
+
                   <div className="bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl p-5 mb-4">
                     <h3 className="text-lg font-semibold text-primary-900 mb-3">Getting Started</h3>
                     <ul className="text-sm text-primary-800 space-y-2.5 list-none">
@@ -620,6 +717,10 @@ export default function AxiomataPage() {
                         <span className="mr-2 text-primary-600 font-bold">•</span>
                         <span className="font-bold">Purple numbers show linked pairs - see rules panel</span>
                       </li>
+                      <li className="flex items-start">
+                        <span className="mr-2 text-primary-600 font-bold">•</span>
+                        <span className="font-bold">Use the &quot;Clear Tiles&quot; button to reset all non-locked tiles</span>
+                      </li>
                     </ul>
                   </div>
 
@@ -628,7 +729,7 @@ export default function AxiomataPage() {
                     <ul className="text-sm text-teal-800 space-y-2.5 list-none">
                       <li className="flex items-start">
                         <span className="mr-2 text-teal-600 font-bold">•</span>
-                        <span className="font-bold"><strong>Adjacency:</strong> Some pieces cannot be orthogonally adjacent to the same type</span>
+                        <span className="font-bold"><strong>Adjacency:</strong> Some pieces cannot be orthogonally adjacent to the same type. Toggle &quot;Show violation indicators&quot; in the rules panel to see ⚠️ warnings on violating tiles</span>
                       </li>
                       <li className="flex items-start">
                         <span className="mr-2 text-teal-600 font-bold">•</span>

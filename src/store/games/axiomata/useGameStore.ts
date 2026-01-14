@@ -18,6 +18,8 @@ interface GameState {
   selectedDifficulty: Difficulty | null;
   selectedDifficultyDate: string | null;
   showAdjacencyHints: boolean;
+  undoStack: Grid[];
+  redoStack: Grid[];
 }
 
 interface GameActions {
@@ -31,6 +33,9 @@ interface GameActions {
   setDifficulty: (difficulty: Difficulty) => void;
   clearDifficulty: () => void;
   toggleAdjacencyHints: () => void;
+  undo: () => void;
+  redo: () => void;
+  clearHistory: () => void;
 }
 
 type GameStore = GameState & GameActions;
@@ -50,6 +55,10 @@ function initializeGrid(puzzle: Puzzle): Grid {
     }
   }
   return grid;
+}
+
+function copyGrid(grid: Grid): Grid {
+  return grid.map(row => [...row]);
 }
 
 const STORAGE_KEY = 'axiomata-game-storage';
@@ -252,6 +261,44 @@ function getCompletedDifficulties(dailyKey: string): Difficulty[] {
   return difficulties.filter(d => isDifficultyCompleted(dailyKey, d));
 }
 
+function markAllDifficultiesCompletedForTesting(dailyKey: string, enabled: boolean): void {
+  if (typeof window === 'undefined') return;
+  const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+  
+  if (enabled) {
+    // Mark all difficulties as completed
+    difficulties.forEach((difficulty) => {
+      const completionData = {
+        timestamp: Date.now(),
+        timeToSolveMs: 60000, // 1 minute as test value
+        isTest: true, // Flag to identify test completions
+      };
+      try {
+        localStorage.setItem(getCompletionKey(dailyKey, difficulty), JSON.stringify(completionData));
+      } catch (error) {
+        console.error(`Failed to mark ${difficulty} as completed for testing:`, error);
+      }
+    });
+  } else {
+    // Clear test completions
+    difficulties.forEach((difficulty) => {
+      try {
+        const completionKey = getCompletionKey(dailyKey, difficulty);
+        const stored = localStorage.getItem(completionKey);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          // Only remove if it's a test completion
+          if (parsed && parsed.isTest === true) {
+            localStorage.removeItem(completionKey);
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to clear test completion for ${difficulty}:`, error);
+      }
+    });
+  }
+}
+
 const stored = typeof window !== 'undefined' ? loadFromStorage() : {};
 
 export const useGameStore = create<GameStore>()((set, get) => {
@@ -269,6 +316,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
     selectedDifficulty: null,
     selectedDifficultyDate: null,
     showAdjacencyHints: loadAdjacencyHintsPreference(),
+    undoStack: [],
+    redoStack: [],
 
     setDifficulty: (difficulty: Difficulty) => {
       const dailyKey = getDailyKey();
@@ -308,6 +357,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
           timeToSolveMs: null,
           selectedDifficulty: savedDifficulty,
           selectedDifficultyDate: savedDifficulty ? dailyKey : null,
+          undoStack: [],
+          redoStack: [],
         };
         set(newState);
         // Save the difficulty if we're using the current one
@@ -326,6 +377,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
             grid: initializeGrid(puzzle),
             puzzle,
             isComplete: false,
+            undoStack: [],
+            redoStack: [],
           });
           return;
         }
@@ -344,6 +397,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
             isComplete: savedBoardState.isComplete,
             startTime: savedBoardState.startTime,
             timeToSolveMs: savedBoardState.timeToSolveMs,
+            undoStack: [],
+            redoStack: [],
           });
         } else {
           // Reset to fresh state for non-completed or new puzzles
@@ -353,6 +408,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
             isComplete: false,
             startTime: savedBoardState.startTime,
             timeToSolveMs: null,
+            undoStack: [],
+            redoStack: [],
           });
         }
       }
@@ -389,7 +446,17 @@ export const useGameStore = create<GameStore>()((set, get) => {
       newGrid[row][col] = nextState;
 
       const dailyKey = getDailyKey();
-      set({ grid: newGrid });
+      
+      const updatedUndoStack = [...state.undoStack, copyGrid(state.grid)];
+      if (updatedUndoStack.length > 50) {
+        updatedUndoStack.shift();
+      }
+      
+      set({ 
+        grid: newGrid,
+        undoStack: updatedUndoStack,
+        redoStack: []
+      });
       saveBoardState(
         dailyKey,
         state.selectedDifficulty,
@@ -421,7 +488,17 @@ export const useGameStore = create<GameStore>()((set, get) => {
       newGrid[row][col] = tileState;
 
       const dailyKey = getDailyKey();
-      set({ grid: newGrid });
+      
+      const updatedUndoStack = [...state.undoStack, copyGrid(state.grid)];
+      if (updatedUndoStack.length > 50) {
+        updatedUndoStack.shift();
+      }
+      
+      set({ 
+        grid: newGrid,
+        undoStack: updatedUndoStack,
+        redoStack: []
+      });
       saveBoardState(
         dailyKey,
         state.selectedDifficulty,
@@ -503,6 +580,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
         isComplete: false,
         startTime: null,
         timeToSolveMs: null,
+        undoStack: [],
+        redoStack: [],
       });
       
       saveBoardState(
@@ -549,7 +628,68 @@ export const useGameStore = create<GameStore>()((set, get) => {
       set({ showAdjacencyHints: newValue });
       saveAdjacencyHintsPreference(newValue);
     },
+
+    undo: () => {
+      const state = get();
+      if (!state.puzzle || !state.selectedDifficulty || state.undoStack.length === 0) {
+        return;
+      }
+
+      const previousGrid = state.undoStack[state.undoStack.length - 1];
+      const updatedUndoStack = state.undoStack.slice(0, -1);
+      const updatedRedoStack = [...state.redoStack, copyGrid(state.grid)];
+
+      const dailyKey = getDailyKey();
+      set({
+        grid: previousGrid,
+        undoStack: updatedUndoStack,
+        redoStack: updatedRedoStack,
+      });
+      saveBoardState(
+        dailyKey,
+        state.selectedDifficulty,
+        previousGrid,
+        state.isComplete,
+        state.startTime,
+        state.timeToSolveMs
+      );
+      get().checkCompletion();
+    },
+
+    redo: () => {
+      const state = get();
+      if (!state.puzzle || !state.selectedDifficulty || state.redoStack.length === 0) {
+        return;
+      }
+
+      const nextGrid = state.redoStack[state.redoStack.length - 1];
+      const updatedRedoStack = state.redoStack.slice(0, -1);
+      const updatedUndoStack = [...state.undoStack, copyGrid(state.grid)];
+
+      const dailyKey = getDailyKey();
+      set({
+        grid: nextGrid,
+        undoStack: updatedUndoStack,
+        redoStack: updatedRedoStack,
+      });
+      saveBoardState(
+        dailyKey,
+        state.selectedDifficulty,
+        nextGrid,
+        state.isComplete,
+        state.startTime,
+        state.timeToSolveMs
+      );
+      get().checkCompletion();
+    },
+
+    clearHistory: () => {
+      set({
+        undoStack: [],
+        redoStack: [],
+      });
+    },
   };
 });
 
-export { isDifficultyCompleted, getCompletedDifficulties, getDifficultyCompletionTime };
+export { isDifficultyCompleted, getCompletedDifficulties, getDifficultyCompletionTime, markAllDifficultiesCompletedForTesting };

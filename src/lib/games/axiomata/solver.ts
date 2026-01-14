@@ -104,6 +104,68 @@ export function solve(puzzle: Puzzle, maxIterations: number = 100000): Grid | nu
   return backtrack(0);
 }
 
+async function yieldToBrowser(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+export async function solveAsync(
+  puzzle: Puzzle,
+  maxIterations: number = 100000,
+  yieldInterval: number = 1000
+): Promise<Grid | null> {
+  const gridSize = puzzle.gridSize;
+  const grid = applyGivens(
+    Array(gridSize)
+      .fill(null)
+      .map(() => Array(gridSize).fill(null)),
+    puzzle.givens,
+    gridSize
+  );
+
+  const emptyPositions = getEmptyPositions(grid, gridSize);
+  const tileStates: TileState[] = ['EMPTY', 'SUN', 'MOON', 'STAR', 'PLANET', 'COMET'];
+  let iterations = 0;
+
+  async function backtrack(index: number): Promise<Grid | null> {
+    iterations++;
+    
+    if (iterations % yieldInterval === 0) {
+      await yieldToBrowser();
+    }
+    
+    if (iterations > maxIterations) {
+      return null;
+    }
+
+    if (index >= emptyPositions.length) {
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
+      if (validation.isValid) {
+        return copyGrid(grid);
+      }
+      return null;
+    }
+
+    const pos = emptyPositions[index];
+
+    for (const state of tileStates) {
+      grid[pos.row][pos.col] = state;
+
+      const validation = validateAll(puzzle.constraints, grid, gridSize);
+      if (validation.isValid || canStillBeValid(validation, grid, gridSize)) {
+        const result = await backtrack(index + 1);
+        if (result !== null) {
+          return result;
+        }
+      }
+    }
+
+    grid[pos.row][pos.col] = null;
+    return null;
+  }
+
+  return await backtrack(0);
+}
+
 function getCountsMap(counts: any): Map<TileState, number> {
   if (counts instanceof Map) {
     return counts;
