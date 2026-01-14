@@ -25,8 +25,7 @@ export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: 
   const dailyKey = getDailyKey();
   const completedDifficulties = getCompletedDifficulties(dailyKey);
   const allDifficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
-  // Always show the button - users can view other completed puzzles or try again
-  const hasMoreDifficulties = true;
+  const hasMoreDifficulties = completedDifficulties.length < 4;
   const [showSparkles, setShowSparkles] = useState(false);
 
   useEffect(() => {
