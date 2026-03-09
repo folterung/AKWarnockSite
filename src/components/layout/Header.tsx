@@ -91,6 +91,10 @@ export default function Header() {
               </button>
             </div>
 
+            <a href="/resume-game/" className="nav-link">
+              Interactive Resume
+            </a>
+
             <Link href="/contact" className="nav-link">
               Contact
             </Link>
@@ -141,6 +145,9 @@ export default function Header() {
             <Link href="/about" className="block px-3 py-2 nav-link">
               About
             </Link>
+            <a href="/resume-game/" className="block px-3 py-2 nav-link">
+              Interactive Resume
+            </a>
             <Link href="/contact" className="block px-3 py-2 nav-link">
               Contact
             </Link>

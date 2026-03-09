@@ -25,6 +25,18 @@ const nextConfig = {
     ];
   },
   trailingSlash: true,
+  async rewrites() {
+    // In development, proxy /resume-game/* to the Vite dev server
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/resume-game/:path*',
+          destination: 'http://localhost:5174/resume-game/:path*',
+        },
+      ];
+    }
+    return [];
+  },
   transpilePackages: ['zustand', 'html-to-image'],
   webpack: (config, { isServer, dev }) => {
     if (!isServer) {
