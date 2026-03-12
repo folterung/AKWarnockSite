@@ -28,7 +28,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   updateFromState(state: PlayerPhysicsState): void {
-    this.setPosition(state.x, state.y + PLAYER_HEIGHT + SPRITE_Y_OFFSET);
+    this.setPosition(state.x + PLAYER_WIDTH / 2, state.y + PLAYER_HEIGHT + SPRITE_Y_OFFSET);
     this.setFlipX(state.facing === 'left');
 
     const anim = getPlayerAnimationState(state);

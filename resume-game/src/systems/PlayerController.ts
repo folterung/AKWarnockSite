@@ -53,10 +53,12 @@ export function updatePlayerPhysics(
   y += velocityY * deltaSeconds;
 
   // Platform collision (one-way: only when falling)
+  // Use a narrower horizontal hitbox so player can't stand on air at platform edges
+  const platformInset = PLAYER_WIDTH * 0.25;
   const playerFeetY = y + PLAYER_HEIGHT;
   const prevFeetY = state.y + PLAYER_HEIGHT;
-  const playerLeft = x;
-  const playerRight = x + PLAYER_WIDTH;
+  const playerLeft = x + platformInset;
+  const playerRight = x + PLAYER_WIDTH - platformInset;
 
   if (velocityY > 0) {
     for (const platform of platforms) {
