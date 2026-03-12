@@ -3,9 +3,9 @@ import { computeProgress } from '../../systems/ProgressTracker';
 import type { SectionBounds } from '../../types/world';
 
 const mockSections: SectionBounds[] = [
-  { type: 'intro', label: 'Welcome', startX: 0, endX: 1000, themeColor: 0, decorationSet: 'office' },
-  { type: 'career', label: 'Career', startX: 1000, endX: 3000, themeColor: 0, decorationSet: 'office' },
-  { type: 'contact', label: 'Contact', startX: 3000, endX: 4000, themeColor: 0, decorationSet: 'park' },
+  { type: 'intro', label: 'Welcome', startX: 0, endX: 1000, themeColor: 0, decorationSet: 'office', biome: 'city', groundY: 520 },
+  { type: 'career', label: 'Career', startX: 1000, endX: 3000, themeColor: 0, decorationSet: 'office', biome: 'city', groundY: 520 },
+  { type: 'contact', label: 'Contact', startX: 3000, endX: 4000, themeColor: 0, decorationSet: 'park', biome: 'park', groundY: 550 },
 ];
 
 const totalWidth = 4000;

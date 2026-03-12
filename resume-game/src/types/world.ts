@@ -13,12 +13,25 @@ export type DecorationSet =
   | 'campus'
   | 'park';
 
+export type BiomeType = 'city' | 'circuit' | 'gallery' | 'campus' | 'park';
+
+export interface WorldPlatform {
+  id: string;
+  x: number;       // left edge
+  y: number;       // top surface (player lands here)
+  width: number;
+  height: number;  // visual thickness (24px)
+  sectionType: SectionType;
+  biome: BiomeType;
+}
+
 export interface SectionConfig {
   type: SectionType;
   widthPx: number;
   themeColor: number;
   label: string;
   decorationSet: DecorationSet;
+  groundY?: number;
 }
 
 export interface SectionBounds {
@@ -28,6 +41,8 @@ export interface SectionBounds {
   endX: number;
   themeColor: number;
   decorationSet: DecorationSet;
+  biome: BiomeType;
+  groundY: number;
 }
 
 export interface WorldInteractable {
@@ -70,6 +85,7 @@ export interface WorldLayout {
   sections: SectionBounds[];
   interactables: WorldInteractable[];
   decorations: WorldDecoration[];
+  platforms: WorldPlatform[];
   spawnX: number;
   spawnY: number;
 }

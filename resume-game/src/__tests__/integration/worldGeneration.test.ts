@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { computeWorldLayout } from '../../systems/LayoutEngine';
+import { computeWorldLayout, getGroundYAtX } from '../../systems/LayoutEngine';
 import { findNearestInteractable } from '../../systems/InteractionDetector';
 import { computeProgress } from '../../systems/ProgressTracker';
 import { updatePlayerPhysics } from '../../systems/PlayerController';
 import { resumeData } from '../../data/resumeContent';
 import { sectionConfigs } from '../../data/sectionConfig';
 import type { PlayerPhysicsState } from '../../types/player';
-import { GROUND_Y, PLAYER_HEIGHT } from '../../constants';
+import { PLAYER_HEIGHT, PLAYER_JUMP_VELOCITY, GRAVITY } from '../../constants';
 
 describe('World Generation Integration', () => {
   const layout = computeWorldLayout(resumeData, sectionConfigs);
@@ -21,10 +21,10 @@ describe('World Generation Integration', () => {
   });
 
   it('player can walk through all sections', () => {
-    const groundLevel = GROUND_Y - PLAYER_HEIGHT;
+    const spawnGroundY = getGroundYAtX(layout.spawnX, layout.sections);
     let state: PlayerPhysicsState = {
       x: layout.spawnX,
-      y: groundLevel,
+      y: spawnGroundY - PLAYER_HEIGHT,
       velocityX: 0,
       velocityY: 0,
       isGrounded: true,
@@ -37,7 +37,8 @@ describe('World Generation Integration', () => {
 
     // Simulate walking right for enough frames
     for (let i = 0; i < 5000; i++) {
-      state = updatePlayerPhysics(state, input, 1 / 60, bounds);
+      const currentGroundY = getGroundYAtX(state.x, layout.sections);
+      state = updatePlayerPhysics(state, input, 1 / 60, bounds, [], currentGroundY);
       const progress = computeProgress(state.x, layout.sections, layout.totalWidth);
       visitedSections.add(progress.currentSection);
     }
@@ -64,5 +65,22 @@ describe('World Generation Integration', () => {
       // Minimum 50px apart to avoid overlap
       expect(gap).toBeGreaterThanOrEqual(50);
     }
+  });
+
+  it('player can jump onto lowest platform', () => {
+    if (layout.platforms.length === 0) return;
+
+    // Find the lowest platform (closest to its section ground)
+    let minHeightAboveGround = Infinity;
+    for (const p of layout.platforms) {
+      const section = layout.sections.find(s => s.type === p.sectionType);
+      const sectionGroundY = section ? section.groundY : 520;
+      const h = sectionGroundY - p.y;
+      if (h < minHeightAboveGround) minHeightAboveGround = h;
+    }
+
+    // Max jump height = v^2 / (2*g)
+    const maxJumpHeight = ((-PLAYER_JUMP_VELOCITY) * (-PLAYER_JUMP_VELOCITY)) / (2 * GRAVITY);
+    expect(minHeightAboveGround).toBeLessThanOrEqual(maxJumpHeight);
   });
 });

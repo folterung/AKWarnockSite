@@ -7,8 +7,8 @@ export function createSectionLabels(
   sections: SectionBounds[]
 ): Phaser.GameObjects.Text[] {
   return sections.map(section => {
-    const centerX = (section.startX + section.endX) / 2;
-    const text = scene.add.text(centerX, 40, section.label, {
+    const labelX = section.startX + 30;
+    const text = scene.add.text(labelX, 40, section.label, {
       fontSize: '28px',
       fontFamily: 'Segoe UI, system-ui, sans-serif',
       color: '#ffffff',
@@ -16,7 +16,7 @@ export function createSectionLabels(
       stroke: '#000000',
       strokeThickness: 3,
     });
-    text.setOrigin(0.5, 0);
+    text.setOrigin(0, 0);
     text.setDepth(DEPTH.sectionLabel);
     text.setAlpha(0.3);
     return text;
@@ -32,8 +32,8 @@ export function updateSectionLabelVisibility(
   for (let i = 0; i < labels.length; i++) {
     const section = sections[i];
     const label = labels[i];
-    const centerX = (section.startX + section.endX) / 2;
-    const isVisible = centerX > cameraX - 200 && centerX < cameraX + cameraWidth + 200;
+    const labelX = section.startX + 30;
+    const isVisible = labelX > cameraX - 200 && labelX < cameraX + cameraWidth + 200;
     const isInSection = cameraX + cameraWidth / 2 > section.startX &&
       cameraX + cameraWidth / 2 < section.endX;
 

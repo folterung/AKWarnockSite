@@ -4,9 +4,20 @@ export const GAME_HEIGHT = 600;
 export const GROUND_Y = 520;
 export const GROUND_HEIGHT = 80;
 
+// Ground altitude per section
+export const TRANSITION_WIDTH = 150;
+export const SECTION_GROUND_Y: Record<string, number> = {
+  intro: 520,
+  career: 520,
+  skills: 470,
+  featuredWork: 530,
+  certifications: 460,
+  contact: 550,
+};
+
 // Player physics
-export const PLAYER_WIDTH = 32;
-export const PLAYER_HEIGHT = 48;
+export const PLAYER_WIDTH = 56;
+export const PLAYER_HEIGHT = 72;
 export const PLAYER_SPEED = 300;
 export const PLAYER_ACCELERATION = 1200;
 export const PLAYER_DECELERATION = 800;
@@ -46,6 +57,7 @@ export const DEPTH = {
   parallaxMid: 2,
   parallaxNear: 3,
   ground: 4,
+  platforms: 4.5,
   decorations: 5,
   interactables: 6,
   player: 7,
@@ -57,6 +69,9 @@ export const DEPTH = {
 export const TEXTURES = {
   player_idle: 'player_idle',
   player_walk: 'player_walk',
+  player_walk_sheet: 'player_walk_sheet',
+  player_breathe_sheet: 'player_breathe_sheet',
+  player_jump_sheet: 'player_jump_sheet',
   player_jump: 'player_jump',
   ground: 'ground',
   welcome_sign: 'welcome_sign',
@@ -73,4 +88,25 @@ export const TEXTURES = {
   lamp: 'lamp',
   bookshelf: 'bookshelf',
   server: 'server',
+  // Biome far backgrounds
+  bg_circuit_far: 'bg_circuit_far',
+  bg_gallery_far: 'bg_gallery_far',
+  bg_campus_far: 'bg_campus_far',
+  bg_park_far: 'bg_park_far',
+  // Biome near backgrounds
+  bg_circuit_near: 'bg_circuit_near',
+  bg_gallery_near: 'bg_gallery_near',
+  bg_campus_near: 'bg_campus_near',
+  bg_park_near: 'bg_park_near',
+  // Platform textures
+  platform_city: 'platform_city',
+  platform_circuit: 'platform_circuit',
+  platform_gallery: 'platform_gallery',
+  platform_campus: 'platform_campus',
+  platform_park: 'platform_park',
+  // Biome ground textures
+  ground_circuit: 'ground_circuit',
+  ground_gallery: 'ground_gallery',
+  ground_campus: 'ground_campus',
+  ground_park: 'ground_park',
 } as const;

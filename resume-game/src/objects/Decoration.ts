@@ -20,7 +20,7 @@ export function createDecorations(
     sprite.setOrigin(0.5, 1);
     sprite.setDepth(DEPTH.decorations);
     sprite.setScale(dec.scale ?? 1);
-    sprite.setAlpha(0.6);
+    sprite.setAlpha(1.0);
     return sprite;
   });
 }

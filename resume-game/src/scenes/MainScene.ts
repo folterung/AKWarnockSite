@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { computeWorldLayout } from '../systems/LayoutEngine';
+import { computeWorldLayout, getGroundYAtX } from '../systems/LayoutEngine';
 import { findNearestInteractable, getInteractableById } from '../systems/InteractionDetector';
 import { computeProgress } from '../systems/ProgressTracker';
 import { updatePlayerPhysics } from '../systems/PlayerController';
@@ -9,7 +9,6 @@ import { eventBus } from '../events';
 import {
   GAME_WIDTH,
   GAME_HEIGHT,
-  GROUND_Y,
   PLAYER_HEIGHT,
   CAMERA_DEAD_ZONE_WIDTH,
   CAMERA_DEAD_ZONE_HEIGHT,
@@ -56,8 +55,8 @@ export class MainScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, layout.totalWidth, GAME_HEIGHT);
 
     // Background + ground
-    this.parallax = new ParallaxBackground(this, layout.totalWidth);
-    new Ground(this, layout.totalWidth, layout.sections);
+    this.parallax = new ParallaxBackground(this, layout.totalWidth, layout.sections);
+    new Ground(this, layout.totalWidth, layout.sections, layout.platforms);
 
     // Decorations
     createDecorations(this, layout.decorations);
@@ -75,9 +74,10 @@ export class MainScene extends Phaser.Scene {
     this.interactionPrompt = new InteractionPrompt(this);
 
     // Player
+    const spawnGroundY = getGroundYAtX(layout.spawnX, layout.sections);
     this.playerState = {
       x: layout.spawnX,
-      y: GROUND_Y - PLAYER_HEIGHT,
+      y: spawnGroundY - PLAYER_HEIGHT,
       velocityX: 0,
       velocityY: 0,
       isGrounded: true,
@@ -132,11 +132,14 @@ export class MainScene extends Phaser.Scene {
     const input = this.gatherInput();
 
     // Update player physics
+    const currentGroundY = getGroundYAtX(this.playerState.x, layout.sections);
     this.playerState = updatePlayerPhysics(
       this.playerState,
       input,
       deltaSeconds,
-      { minX: 16, maxX: layout.totalWidth - 16 }
+      { minX: 16, maxX: layout.totalWidth - 16 },
+      layout.platforms,
+      currentGroundY
     );
     this.player.updateFromState(this.playerState);
 

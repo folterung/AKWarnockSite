@@ -1,5 +1,5 @@
 import type { SectionConfig } from '../types/world';
-import { COLORS } from '../constants';
+import { COLORS, SECTION_GROUND_Y } from '../constants';
 
 export const sectionConfigs: SectionConfig[] = [
   {
@@ -8,6 +8,7 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.introTheme,
     label: 'Welcome',
     decorationSet: 'office',
+    groundY: SECTION_GROUND_Y.intro,
   },
   {
     type: 'career',
@@ -15,6 +16,7 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.careerTheme,
     label: 'Career Timeline',
     decorationSet: 'office',
+    groundY: SECTION_GROUND_Y.career,
   },
   {
     type: 'skills',
@@ -22,6 +24,7 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.skillsTheme,
     label: 'Technical Strengths',
     decorationSet: 'circuit',
+    groundY: SECTION_GROUND_Y.skills,
   },
   {
     type: 'featuredWork',
@@ -29,6 +32,7 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.featuredTheme,
     label: 'Featured Work',
     decorationSet: 'gallery',
+    groundY: SECTION_GROUND_Y.featuredWork,
   },
   {
     type: 'certifications',
@@ -36,6 +40,7 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.certsTheme,
     label: 'Certifications & Education',
     decorationSet: 'campus',
+    groundY: SECTION_GROUND_Y.certifications,
   },
   {
     type: 'contact',
@@ -43,5 +48,6 @@ export const sectionConfigs: SectionConfig[] = [
     themeColor: COLORS.contactTheme,
     label: 'Get In Touch',
     decorationSet: 'park',
+    groundY: SECTION_GROUND_Y.contact,
   },
 ];

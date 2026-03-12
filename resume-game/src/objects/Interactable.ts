@@ -73,7 +73,7 @@ export class Interactable extends Phaser.GameObjects.Container {
 
   setVisited(visited: boolean): void {
     if (visited) {
-      this.sprite.setAlpha(0.6);
+      this.sprite.setAlpha(0.8);
     }
   }
 }

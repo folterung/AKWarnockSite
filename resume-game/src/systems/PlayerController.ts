@@ -1,4 +1,5 @@
 import type { PlayerPhysicsState, InputState } from '../types/player';
+import type { WorldPlatform } from '../types/world';
 import {
   PLAYER_SPEED,
   PLAYER_ACCELERATION,
@@ -7,13 +8,16 @@ import {
   GRAVITY,
   GROUND_Y,
   PLAYER_HEIGHT,
+  PLAYER_WIDTH,
 } from '../constants';
 
 export function updatePlayerPhysics(
   state: PlayerPhysicsState,
   input: InputState,
   deltaSeconds: number,
-  worldBounds: { minX: number; maxX: number }
+  worldBounds: { minX: number; maxX: number },
+  platforms: WorldPlatform[] = [],
+  groundY: number = GROUND_Y
 ): PlayerPhysicsState {
   let { x, y, velocityX, velocityY, isGrounded, facing } = state;
 
@@ -48,8 +52,42 @@ export function updatePlayerPhysics(
   x += velocityX * deltaSeconds;
   y += velocityY * deltaSeconds;
 
-  // Ground collision
-  const groundLevel = GROUND_Y - PLAYER_HEIGHT;
+  // Platform collision (one-way: only when falling)
+  const playerFeetY = y + PLAYER_HEIGHT;
+  const prevFeetY = state.y + PLAYER_HEIGHT;
+  const playerLeft = x;
+  const playerRight = x + PLAYER_WIDTH;
+
+  if (velocityY > 0) {
+    for (const platform of platforms) {
+      // Horizontal overlap check
+      const overlapsX = playerRight > platform.x && playerLeft < platform.x + platform.width;
+      // Feet crossed platform surface from above
+      const crossedSurface = prevFeetY <= platform.y && playerFeetY >= platform.y;
+
+      if (overlapsX && crossedSurface) {
+        y = platform.y - PLAYER_HEIGHT;
+        velocityY = 0;
+        isGrounded = true;
+        break;
+      }
+    }
+  }
+
+  // Edge detection: if grounded on a platform, check if still over it
+  if (isGrounded && y < groundY - PLAYER_HEIGHT) {
+    const feetY = y + PLAYER_HEIGHT;
+    const onPlatform = platforms.some(p =>
+      playerRight > p.x && playerLeft < p.x + p.width &&
+      Math.abs(feetY - p.y) < 2
+    );
+    if (!onPlatform) {
+      isGrounded = false;
+    }
+  }
+
+  // Ground collision (ultimate floor)
+  const groundLevel = groundY - PLAYER_HEIGHT;
   if (y >= groundLevel) {
     y = groundLevel;
     velocityY = 0;

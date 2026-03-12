@@ -5,11 +5,56 @@ import type {
   SectionBounds,
   WorldInteractable,
   WorldDecoration,
+  WorldPlatform,
   InteractableObjectType,
   ModalContent,
   SectionType,
+  BiomeType,
 } from '../types/world';
-import { GROUND_Y } from '../constants';
+import { GROUND_Y, TRANSITION_WIDTH } from '../constants';
+
+const DECORATION_TO_BIOME: Record<string, BiomeType> = {
+  office: 'city',
+  circuit: 'circuit',
+  gallery: 'gallery',
+  campus: 'campus',
+  park: 'park',
+};
+
+export function getGroundYAtX(x: number, sections: SectionBounds[]): number {
+  if (sections.length === 0) return GROUND_Y;
+
+  // Before the first section
+  if (x < sections[0].startX) return sections[0].groundY;
+
+  const halfTrans = TRANSITION_WIDTH / 2;
+
+  for (let i = 0; i < sections.length; i++) {
+    const sec = sections[i];
+    if (x >= sec.startX && x < sec.endX) {
+      // Check left transition (approaching from previous section)
+      if (i > 0 && sections[i - 1].groundY !== sec.groundY) {
+        const boundary = sec.startX;
+        if (x < boundary + halfTrans) {
+          const t = (x - (boundary - halfTrans)) / TRANSITION_WIDTH;
+          return sections[i - 1].groundY + (sec.groundY - sections[i - 1].groundY) * t;
+        }
+      }
+      // Check right transition (approaching next section)
+      if (i < sections.length - 1 && sections[i + 1].groundY !== sec.groundY) {
+        const boundary = sec.endX;
+        if (x >= boundary - halfTrans) {
+          const t = (x - (boundary - halfTrans)) / TRANSITION_WIDTH;
+          return sec.groundY + (sections[i + 1].groundY - sec.groundY) * t;
+        }
+      }
+      // Flat middle
+      return sec.groundY;
+    }
+  }
+  // Past the end
+  return sections[sections.length - 1].groundY;
+}
 
 export function computeWorldLayout(
   data: ResumeData,
@@ -18,6 +63,7 @@ export function computeWorldLayout(
   const sections = computeSectionBounds(configs);
   const interactables = computeInteractables(data, sections);
   const decorations = computeDecorations(sections);
+  const platforms = computePlatforms(sections);
   const totalWidth = sections.length > 0
     ? sections[sections.length - 1].endX
     : 0;
@@ -28,8 +74,9 @@ export function computeWorldLayout(
     sections,
     interactables,
     decorations,
+    platforms,
     spawnX: 200,
-    spawnY: GROUND_Y - 48,
+    spawnY: (sections.length > 0 ? sections[0].groundY : GROUND_Y) - 48,
   };
 }
 
@@ -43,6 +90,8 @@ function computeSectionBounds(configs: SectionConfig[]): SectionBounds[] {
       endX: currentX + config.widthPx,
       themeColor: config.themeColor,
       decorationSet: config.decorationSet,
+      biome: DECORATION_TO_BIOME[config.decorationSet] || 'city',
+      groundY: config.groundY ?? GROUND_Y,
     };
     currentX += config.widthPx;
     return bounds;
@@ -119,7 +168,7 @@ function createIntroInteractables(
     {
       id: 'intro-welcome',
       x,
-      y: GROUND_Y,
+      y: section.groundY,
       sectionType: 'intro',
       objectType: 'welcome_sign',
       label: 'Welcome',
@@ -140,7 +189,7 @@ function createCareerInteractables(
   return experience.map((exp, i) => ({
     id: exp.id,
     x: positions[i],
-    y: GROUND_Y,
+    y: section.groundY,
     sectionType: 'career' as SectionType,
     objectType: 'desk' as InteractableObjectType,
     label: exp.company,
@@ -189,7 +238,7 @@ function createSkillInteractables(
     return {
       id: `skill-cat-${category}`,
       x: positions[i],
-      y: GROUND_Y,
+      y: section.groundY,
       sectionType: 'skills' as SectionType,
       objectType: 'terminal' as InteractableObjectType,
       label: categoryLabels[category],
@@ -209,7 +258,7 @@ function createFeaturedWorkInteractables(
   return featuredWork.map((work, i) => ({
     id: work.id,
     x: positions[i],
-    y: GROUND_Y,
+    y: section.groundY,
     sectionType: 'featuredWork' as SectionType,
     objectType: 'trophy' as InteractableObjectType,
     label: work.title,
@@ -232,7 +281,7 @@ function createCertEducationInteractables(
   const certInteractables: WorldInteractable[] = certs.map((cert, i) => ({
     id: cert.id,
     x: positions[i],
-    y: GROUND_Y,
+    y: section.groundY,
     sectionType: 'certifications' as SectionType,
     objectType: 'diploma' as InteractableObjectType,
     label: cert.name,
@@ -246,7 +295,7 @@ function createCertEducationInteractables(
   const eduInteractables: WorldInteractable[] = education.map((edu, i) => ({
     id: edu.id,
     x: positions[certs.length + i],
-    y: GROUND_Y,
+    y: section.groundY,
     sectionType: 'certifications' as SectionType,
     objectType: 'diploma' as InteractableObjectType,
     label: edu.institution,
@@ -258,6 +307,102 @@ function createCertEducationInteractables(
   }));
 
   return [...certInteractables, ...eduInteractables];
+}
+
+function computePlatforms(sections: SectionBounds[]): WorldPlatform[] {
+  const platforms: WorldPlatform[] = [];
+  const PLATFORM_HEIGHT = 24;
+
+  for (const section of sections) {
+    const sectionWidth = section.endX - section.startX;
+
+    switch (section.type) {
+      case 'intro':
+      case 'career':
+        // No platforms — flat, simple onboarding
+        break;
+
+      case 'skills': {
+        // 6 staggered platforms at alternating heights
+        const count = 6;
+        const spacing = sectionWidth / (count + 1);
+        for (let i = 0; i < count; i++) {
+          const heightAboveGround = i % 2 === 0 ? 60 : 90;
+          const width = 100 + (i % 3) * 20; // 100, 120, 140, 100, 120, 140
+          platforms.push({
+            id: `platform-skills-${i}`,
+            x: section.startX + spacing * (i + 1) - width / 2,
+            y: section.groundY - heightAboveGround,
+            width,
+            height: PLATFORM_HEIGHT,
+            sectionType: 'skills',
+            biome: 'circuit',
+          });
+        }
+        break;
+      }
+
+      case 'featuredWork': {
+        // 3 wide "shelf" platforms at 0.25/0.5/0.75 through section
+        const positions = [0.25, 0.5, 0.75];
+        const heights = [50, 85, 65];
+        for (let i = 0; i < positions.length; i++) {
+          const width = 160;
+          platforms.push({
+            id: `platform-featuredWork-${i}`,
+            x: section.startX + sectionWidth * positions[i] - width / 2,
+            y: section.groundY - heights[i],
+            width,
+            height: PLATFORM_HEIGHT,
+            sectionType: 'featuredWork',
+            biome: 'gallery',
+          });
+        }
+        break;
+      }
+
+      case 'certifications': {
+        // 5 ascending-then-descending staircase
+        const count = 5;
+        const spacing = sectionWidth / (count + 1);
+        const stairHeights = [40, 65, 90, 65, 40];
+        for (let i = 0; i < count; i++) {
+          const width = 110;
+          platforms.push({
+            id: `platform-certifications-${i}`,
+            x: section.startX + spacing * (i + 1) - width / 2,
+            y: section.groundY - stairHeights[i],
+            width,
+            height: PLATFORM_HEIGHT,
+            sectionType: 'certifications',
+            biome: 'campus',
+          });
+        }
+        break;
+      }
+
+      case 'contact': {
+        // 2 stepping stone platforms
+        const stepHeights = [55, 75];
+        const stepPositions = [0.35, 0.65];
+        for (let i = 0; i < stepPositions.length; i++) {
+          const width = 100;
+          platforms.push({
+            id: `platform-contact-${i}`,
+            x: section.startX + sectionWidth * stepPositions[i] - width / 2,
+            y: section.groundY - stepHeights[i],
+            width,
+            height: PLATFORM_HEIGHT,
+            sectionType: 'contact',
+            biome: 'park',
+          });
+        }
+        break;
+      }
+    }
+  }
+
+  return platforms;
 }
 
 function computeDecorations(sections: SectionBounds[]): WorldDecoration[] {
@@ -279,7 +424,7 @@ function computeDecorations(sections: SectionBounds[]): WorldDecoration[] {
       const x = section.startX + 150 + (i * sectionWidth) / count;
       decorations.push({
         x,
-        y: GROUND_Y,
+        y: section.groundY,
         type: types[i % types.length],
         sectionType: section.type,
         scale: 0.8 + Math.random() * 0.4,
@@ -298,7 +443,7 @@ function createContactInteractables(
   return contacts.map((contact, i) => ({
     id: contact.id,
     x: positions[i],
-    y: GROUND_Y,
+    y: section.groundY,
     sectionType: 'contact' as SectionType,
     objectType: 'mailbox' as InteractableObjectType,
     label: contact.label,
