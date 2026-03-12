@@ -300,7 +300,7 @@ function createCertEducationInteractables(
     y: section.groundY,
     sectionType: 'certifications' as SectionType,
     objectType: 'diploma' as InteractableObjectType,
-    label: cert.name,
+    label: cert.abbreviation,
     modalContent: {
       title: cert.name,
       subtitle: `${cert.issuer} | ${cert.year}`,

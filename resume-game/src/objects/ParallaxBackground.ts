@@ -75,25 +75,62 @@ export class ParallaxBackground {
     // into a single wider sprite to avoid visible seams between them
     if (sections.length > 0) {
       const runs = this.mergeBiomeRuns(sections);
+      // Biomes with fully opaque backgrounds need a sandwich layout:
+      // near strip at top, far layer in middle, near strip at bottom.
+      const opaqueBiomes: Set<BiomeType> = new Set(['circuit']);
+
       for (const run of runs) {
         const farTexKey = BIOME_FAR_TEXTURES[run.biome];
         const nearTexKey = BIOME_NEAR_TEXTURES[run.biome];
 
-        // Far layer — fixed in world space, parallax via tile offset
-        const farSprite = scene.add.tileSprite(
-          run.startX, run.groundY - 380, run.width, 300, farTexKey
-        );
-        farSprite.setOrigin(0, 0);
-        farSprite.setDepth(DEPTH.parallaxFar);
-        this.farSprites.push(farSprite);
+        if (opaqueBiomes.has(run.biome)) {
+          // Sandwich layout: near(top) → far(middle) → near(bottom)
+          const bgTop = run.groundY - 380;
+          const nearTopH = 100;
+          const nearBottomH = 100;
+          const farY = bgTop + nearTopH;
+          const farH = 300 - nearTopH - nearBottomH;
+          const nearBottomY = farY + farH;
 
-        // Near layer — fixed in world space, parallax via tile offset
-        const nearSprite = scene.add.tileSprite(
-          run.startX, run.groundY - 280, run.width, 200, nearTexKey
-        );
-        nearSprite.setOrigin(0, 0);
-        nearSprite.setDepth(DEPTH.parallaxMid);
-        this.nearSprites.push(nearSprite);
+          // Top near strip
+          const nearTop = scene.add.tileSprite(
+            run.startX, bgTop, run.width, nearTopH, nearTexKey
+          );
+          nearTop.setOrigin(0, 0);
+          nearTop.setDepth(DEPTH.parallaxMid);
+          this.nearSprites.push(nearTop);
+
+          // Far layer in the middle
+          const farSprite = scene.add.tileSprite(
+            run.startX, farY, run.width, farH, farTexKey
+          );
+          farSprite.setOrigin(0, 0);
+          farSprite.setDepth(DEPTH.parallaxFar);
+          this.farSprites.push(farSprite);
+
+          // Bottom near strip
+          const nearBottom = scene.add.tileSprite(
+            run.startX, nearBottomY, run.width, nearBottomH, nearTexKey
+          );
+          nearBottom.setOrigin(0, 0);
+          nearBottom.setDepth(DEPTH.parallaxMid);
+          this.nearSprites.push(nearBottom);
+        } else {
+          // Standard overlap layout for transparent biomes
+          const farSprite = scene.add.tileSprite(
+            run.startX, run.groundY - 380, run.width, 300, farTexKey
+          );
+          farSprite.setOrigin(0, 0);
+          farSprite.setDepth(DEPTH.parallaxFar);
+          this.farSprites.push(farSprite);
+
+          const nearSprite = scene.add.tileSprite(
+            run.startX, run.groundY - 280, run.width, 200, nearTexKey
+          );
+          nearSprite.setOrigin(0, 0);
+          nearSprite.setDepth(DEPTH.parallaxMid);
+          this.nearSprites.push(nearSprite);
+        }
       }
     } else {
       // Fallback: global city layers

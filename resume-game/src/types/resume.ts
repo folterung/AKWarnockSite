@@ -26,6 +26,7 @@ export type SkillCategory =
 export interface Certification {
   id: string;
   name: string;
+  abbreviation: string;
   issuer: string;
   year: number;
 }
