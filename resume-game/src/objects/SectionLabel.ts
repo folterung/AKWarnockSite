@@ -10,12 +10,14 @@ export function createSectionLabels(
     const labelX = section.startX + 30;
     const text = scene.add.text(labelX, 40, section.label, {
       fontSize: '28px',
-      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      fontFamily: '"DynaPuff", Segoe UI, system-ui, sans-serif',
       color: '#ffffff',
       fontStyle: 'bold',
       stroke: '#000000',
       strokeThickness: 3,
     });
+    text.setResolution(2);
+    text.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     text.setOrigin(0, 0);
     text.setDepth(DEPTH.sectionLabel);
     text.setAlpha(0.3);

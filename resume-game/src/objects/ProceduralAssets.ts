@@ -183,6 +183,27 @@ function generateInteractableTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x1e3a5f, 1);
     g.fillRect(6, 14, 20, 4);
   });
+
+  // Credits podium
+  createTexture(scene, TEXTURES.credits_podium, 40, 48, (g) => {
+    // Pedestal base
+    g.fillStyle(0xb8860b, 1);
+    g.fillRect(4, 28, 32, 20);
+    g.fillStyle(0xdaa520, 1);
+    g.fillRect(2, 26, 36, 4);
+    // Top surface
+    g.fillStyle(0xcd7f32, 1);
+    g.fillRect(6, 22, 28, 6);
+    // Musical note
+    g.fillStyle(0xffffff, 1);
+    // Note head (filled oval)
+    g.fillEllipse(14, 18, 8, 6);
+    // Stem
+    g.fillRect(17, 4, 2, 14);
+    // Flag
+    g.fillRect(19, 4, 6, 3);
+    g.fillRect(19, 8, 5, 2);
+  });
 }
 
 function generateDecorationTextures(scene: Phaser.Scene): void {

@@ -3,6 +3,8 @@ import './HUD.css';
 
 export class HUD {
   private controlsHint: HTMLDivElement;
+  private muteBtn: HTMLButtonElement;
+  private muted = false;
 
   constructor(parent: HTMLElement) {
     // Back to site link
@@ -10,6 +12,18 @@ export class HUD {
     backLink.className = 'hud-back-link';
     backLink.innerHTML = '<a href="/">\u2190 Back to Site</a>';
     parent.appendChild(backLink);
+
+    // Mute button (top-right)
+    this.muteBtn = document.createElement('button');
+    this.muteBtn.className = 'hud-mute-btn';
+    this.muteBtn.textContent = '\uD83D\uDD0A';
+    this.muteBtn.title = 'Toggle music';
+    this.muteBtn.addEventListener('click', () => {
+      this.muted = !this.muted;
+      this.muteBtn.textContent = this.muted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
+      eventBus.emit('audio:toggle-mute');
+    });
+    parent.appendChild(this.muteBtn);
 
     // Controls hint (desktop only)
     this.controlsHint = document.createElement('div');

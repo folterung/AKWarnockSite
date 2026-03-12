@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { generateAllAssets } from '../objects/ProceduralAssets';
-import { TEXTURES } from '../constants';
+import { TEXTURES, AUDIO } from '../constants';
 import { eventBus } from '../events';
 
 export class BootScene extends Phaser.Scene {
@@ -29,6 +29,9 @@ export class BootScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
+
+    // Load background music
+    this.load.audio(AUDIO.bgMusic, 'onyx-by-tubebackr-and-ferco.mp3');
   }
 
   create(): void {
@@ -64,7 +67,13 @@ export class BootScene extends Phaser.Scene {
       setTimeout(() => loadingScreen.remove(), 500);
     }
 
-    eventBus.emit('game:ready');
-    this.scene.start('MainScene');
+    // Start background music
+    this.sound.play(AUDIO.bgMusic, { loop: true, volume: 0.3 });
+
+    // Wait for DynaPuff font before starting MainScene so Phaser text renders correctly
+    document.fonts.load('bold 28px "DynaPuff"').then(() => {
+      eventBus.emit('game:ready');
+      this.scene.start('MainScene');
+    });
   }
 }

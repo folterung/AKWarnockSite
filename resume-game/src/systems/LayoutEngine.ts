@@ -163,11 +163,27 @@ function createIntroInteractables(
   data: ResumeData,
   section: SectionBounds
 ): WorldInteractable[] {
-  const x = (section.startX + section.endX) / 2;
+  const centerX = (section.startX + section.endX) / 2;
+  const creditsX = section.startX + (section.endX - section.startX) * 0.25;
   return [
     {
+      id: 'intro-credits',
+      x: creditsX,
+      y: section.groundY,
+      sectionType: 'intro',
+      objectType: 'credits_podium',
+      label: 'Credits',
+      modalContent: {
+        title: 'Credits',
+        body: '**Background Music**\n\n"ONYX" by Ferco & tubebackr\n\nLicensed under Creative Commons — free for non-commercial use.\n\nThis track sets the vibe for the interactive resume experience. Give it a listen!',
+        links: [
+          { label: 'tubebackr on SoundCloud', url: 'https://soundcloud.com/tubebackr' },
+        ],
+      },
+    },
+    {
       id: 'intro-welcome',
-      x,
+      x: centerX,
       y: section.groundY,
       sectionType: 'intro',
       objectType: 'welcome_sign',

@@ -49,6 +49,11 @@ eventBus.on('game:ready', () => {
   new HUD(uiOverlay);
 });
 
+// Wire mute toggle
+eventBus.on('audio:toggle-mute', () => {
+  game.sound.mute = !game.sound.mute;
+});
+
 // Prevent default keyboard behavior (scrolling)
 window.addEventListener('keydown', (e) => {
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {

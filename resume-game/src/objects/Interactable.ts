@@ -9,6 +9,7 @@ const OBJECT_TYPE_TEXTURES: Record<InteractableObjectType, string> = {
   trophy: TEXTURES.trophy,
   diploma: TEXTURES.diploma,
   mailbox: TEXTURES.mailbox,
+  credits_podium: TEXTURES.credits_podium,
 };
 
 export class Interactable extends Phaser.GameObjects.Container {

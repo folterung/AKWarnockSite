@@ -8,6 +8,7 @@ export interface GameEvents {
   'game:ready': void;
   'game:pause': void;
   'game:resume': void;
+  'audio:toggle-mute': void;
   'input:left': { active: boolean };
   'input:right': { active: boolean };
   'input:jump': void;

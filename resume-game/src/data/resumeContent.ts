@@ -204,7 +204,7 @@ export const resumeData: ResumeData = {
       id: 'contact-linkedin',
       type: 'linkedin',
       label: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/kevinwarnock/',
+      url: 'https://www.linkedin.com/in/kevin-warnock-44b78484/',
     },
     {
       id: 'contact-github',

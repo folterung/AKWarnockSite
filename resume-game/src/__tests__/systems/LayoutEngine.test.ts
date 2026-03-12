@@ -32,9 +32,9 @@ describe('LayoutEngine', () => {
     expect(layout.sections).toHaveLength(sectionConfigs.length);
   });
 
-  it('intro section has 1 interactable', () => {
+  it('intro section has 2 interactables (welcome + credits)', () => {
     const introItems = layout.interactables.filter(i => i.sectionType === 'intro');
-    expect(introItems).toHaveLength(1);
+    expect(introItems).toHaveLength(2);
   });
 
   it('career section has 8 interactables (one per experience)', () => {

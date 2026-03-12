@@ -109,4 +109,11 @@ export const TEXTURES = {
   ground_gallery: 'ground_gallery',
   ground_campus: 'ground_campus',
   ground_park: 'ground_park',
+  // Interactable
+  credits_podium: 'credits_podium',
+} as const;
+
+// Audio keys
+export const AUDIO = {
+  bgMusic: 'bg_music',
 } as const;

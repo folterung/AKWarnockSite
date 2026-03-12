@@ -61,7 +61,8 @@ export type InteractableObjectType =
   | 'terminal'
   | 'trophy'
   | 'diploma'
-  | 'mailbox';
+  | 'mailbox'
+  | 'credits_podium';
 
 export interface ModalContent {
   title: string;
