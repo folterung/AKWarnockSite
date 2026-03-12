@@ -5,13 +5,12 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Dev: proxy resume-game to Vite dev server (force=true bypasses Next.js trailingSlash)
-# Prod: static files in out/resume-game/ are served directly, so this redirect is ignored
+# Dev: proxy resume-game to Vite dev server
+# Prod: static files in out/resume-game/ are served directly (no force = files take priority)
 [[redirects]]
   from = "/resume-game/*"
   to = "http://localhost:5174/resume-game/:splat"
   status = 200
-  force = true
 
 [[headers]]
   for = "/*"
