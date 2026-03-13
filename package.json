@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:resume-game": "cd resume-game && npm run dev",
     "dev:netlify": "netlify dev",
-    "build": "next build && next-sitemap",
+    "build": "npm run build:site && npm run build:resume-game",
+    "build:site": "next build && next-sitemap",
+    "build:resume-game": "cd resume-game && npm ci && npm run build && cp -r dist ../out/resume-game",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",

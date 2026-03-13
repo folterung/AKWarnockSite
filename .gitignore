@@ -32,3 +32,7 @@ yarn-error.log*
 .netlify
 
 .env
+
+# Resume game sub-project
+resume-game/node_modules
+resume-game/dist
