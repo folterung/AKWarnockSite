@@ -359,15 +359,16 @@ function computePlatforms(sections: SectionBounds[]): WorldPlatform[] {
       }
 
       case 'featuredWork': {
-        // 3 wide "shelf" platforms at 0.25/0.5/0.75 through section
-        const positions = [0.25, 0.5, 0.75];
-        const heights = [50, 85, 65];
-        for (let i = 0; i < positions.length; i++) {
+        // Dynamic shelf platforms spread across the section
+        const count = Math.max(3, Math.floor(sectionWidth / 500));
+        const spacing = sectionWidth / (count + 1);
+        const heightPattern = [50, 85, 65];
+        for (let i = 0; i < count; i++) {
           const width = 160;
           platforms.push({
             id: `platform-featuredWork-${i}`,
-            x: section.startX + sectionWidth * positions[i] - width / 2,
-            y: section.groundY - heights[i],
+            x: section.startX + spacing * (i + 1) - width / 2,
+            y: section.groundY - heightPattern[i % heightPattern.length],
             width,
             height: PLATFORM_HEIGHT,
             sectionType: 'featuredWork',

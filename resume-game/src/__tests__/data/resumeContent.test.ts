@@ -9,8 +9,8 @@ describe('resumeContent', () => {
     expect(resumeData.tagline).toBeTruthy();
   });
 
-  it('has 8 work experiences', () => {
-    expect(resumeData.experience).toHaveLength(8);
+  it('has 13 work experiences', () => {
+    expect(resumeData.experience).toHaveLength(13);
   });
 
   it('all experiences have unique IDs', () => {

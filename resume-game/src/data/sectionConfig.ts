@@ -12,7 +12,7 @@ export const sectionConfigs: SectionConfig[] = [
   },
   {
     type: 'career',
-    widthPx: 4800,
+    widthPx: 7800,
     themeColor: COLORS.careerTheme,
     label: 'Career Timeline',
     decorationSet: 'office',
@@ -28,7 +28,7 @@ export const sectionConfigs: SectionConfig[] = [
   },
   {
     type: 'featuredWork',
-    widthPx: 1800,
+    widthPx: 4800,
     themeColor: COLORS.featuredTheme,
     label: 'Featured Work',
     decorationSet: 'gallery',
