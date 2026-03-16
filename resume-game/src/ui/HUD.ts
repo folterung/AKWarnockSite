@@ -13,6 +13,14 @@ export class HUD {
     backLink.innerHTML = '<a href="/">\u2190 Back to Site</a>';
     parent.appendChild(backLink);
 
+    // Resume download button (top-right, left of mute)
+    const resumeBtn = document.createElement('button');
+    resumeBtn.className = 'hud-resume-btn';
+    resumeBtn.innerHTML = '\uD83D\uDCC4 Resume';
+    resumeBtn.title = 'Download resume as PDF';
+    resumeBtn.addEventListener('click', () => this.showDownloadConfirm(parent));
+    parent.appendChild(resumeBtn);
+
     // Mute button (top-right)
     this.muteBtn = document.createElement('button');
     this.muteBtn.className = 'hud-mute-btn';
@@ -41,5 +49,41 @@ export class HUD {
         }, 3000);
       }
     });
+  }
+
+  private showDownloadConfirm(parent: HTMLElement): void {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'hud-confirm-backdrop';
+
+    const dialog = document.createElement('div');
+    dialog.className = 'hud-confirm-dialog';
+    dialog.innerHTML = '<p>Download resume as PDF?</p>';
+
+    const btnRow = document.createElement('div');
+    btnRow.className = 'hud-confirm-buttons';
+
+    const yesBtn = document.createElement('button');
+    yesBtn.className = 'hud-confirm-yes';
+    yesBtn.textContent = 'Download';
+    yesBtn.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = 'kevin-warnock-resume.pdf';
+      a.download = 'kevin-warnock-resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      backdrop.remove();
+    });
+
+    const noBtn = document.createElement('button');
+    noBtn.className = 'hud-confirm-no';
+    noBtn.textContent = 'Cancel';
+    noBtn.addEventListener('click', () => backdrop.remove());
+
+    btnRow.appendChild(yesBtn);
+    btnRow.appendChild(noBtn);
+    dialog.appendChild(btnRow);
+    backdrop.appendChild(dialog);
+    parent.appendChild(backdrop);
   }
 }
