@@ -127,6 +127,45 @@ export default function Games() {
             </a>
           </div>
         </section>
+
+        <section className="mt-8 sm:mt-10 md:mt-12">
+          <h2 className="text-3xl font-bold text-center mb-4 sm:mb-5 md:mb-6">Mobile Games</h2>
+          <div className="space-y-4 sm:space-y-6 md:space-y-8">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.flippyboi.game&hl=en_US"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block border border-gray-300 rounded-lg p-4 sm:p-5 md:p-6 hover:bg-gray-100 transition group"
+            >
+              <div className="flex items-center gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-24 h-24 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200 rounded-lg overflow-hidden">
+                    <Image
+                      src="/images/games/flippy-boi.webp"
+                      alt="Flippy Boi game"
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-semibold text-gray-900 group-hover:text-primary-600 transition-colors mb-2">
+                    Flippy Boi
+                  </h3>
+                  <p className="text-gray-600">
+                    An independent mobile game available on the Google Play Store. Flip, dodge, and compete for the high score!
+                  </p>
+                </div>
+                <div className="flex-shrink-0">
+                  <svg className="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
       </div>
       <Footer fixed />
     </>
