@@ -79,6 +79,17 @@ export default function Header() {
                 >
                   ScratchMaster08130
                 </a>
+                <div className="nav-dropdown-header">
+                  Android
+                </div>
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.flippyboi.game&hl=en_US"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-dropdown-item"
+                >
+                  Flippy Boi
+                </a>
               </div>
             </div>
 
