@@ -129,7 +129,7 @@ export default function Games() {
         </section>
 
         <section className="mt-8 sm:mt-10 md:mt-12">
-          <h2 className="text-3xl font-bold text-center mb-4 sm:mb-5 md:mb-6">Mobile Games</h2>
+          <h2 className="text-3xl font-bold text-center mb-4 sm:mb-5 md:mb-6">Android</h2>
           <div className="space-y-4 sm:space-y-6 md:space-y-8">
             <a
               href="https://play.google.com/store/apps/details?id=com.flippyboi.game&hl=en_US"
