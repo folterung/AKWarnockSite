@@ -9,6 +9,7 @@ export const TRANSITION_WIDTH = 150;
 export const SECTION_GROUND_Y: Record<string, number> = {
   intro: 520,
   career: 520,
+  independentProjects: 500,
   skills: 470,
   featuredWork: 530,
   certifications: 460,
@@ -43,6 +44,7 @@ export const COLORS = {
   careerTheme: 0x1a472a,
   skillsTheme: 0x3b1f5e,
   featuredTheme: 0x5e3a1f,
+  independentProjectsTheme: 0x4a3728,
   certsTheme: 0x1f4e5e,
   contactTheme: 0x2e1a3e,
   interactableGlow: 0xfbbf24,
@@ -93,22 +95,26 @@ export const TEXTURES = {
   bg_gallery_far: 'bg_gallery_far',
   bg_campus_far: 'bg_campus_far',
   bg_park_far: 'bg_park_far',
+  bg_workshop_far: 'bg_workshop_far',
   // Biome near backgrounds
   bg_circuit_near: 'bg_circuit_near',
   bg_gallery_near: 'bg_gallery_near',
   bg_campus_near: 'bg_campus_near',
   bg_park_near: 'bg_park_near',
+  bg_workshop_near: 'bg_workshop_near',
   // Platform textures
   platform_city: 'platform_city',
   platform_circuit: 'platform_circuit',
   platform_gallery: 'platform_gallery',
   platform_campus: 'platform_campus',
   platform_park: 'platform_park',
+  platform_workshop: 'platform_workshop',
   // Biome ground textures
   ground_circuit: 'ground_circuit',
   ground_gallery: 'ground_gallery',
   ground_campus: 'ground_campus',
   ground_park: 'ground_park',
+  ground_workshop: 'ground_workshop',
   // Interactable
   credits_podium: 'credits_podium',
 } as const;

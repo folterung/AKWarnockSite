@@ -13,6 +13,7 @@ import {
   CAMERA_DEAD_ZONE_WIDTH,
   CAMERA_DEAD_ZONE_HEIGHT,
   CAMERA_LERP,
+  PLAYER_WIDTH,
 } from '../constants';
 import type { PlayerPhysicsState, InputState } from '../types/player';
 import type { SectionType } from '../types/world';
@@ -131,8 +132,8 @@ export class MainScene extends Phaser.Scene {
     // Gather input
     const input = this.gatherInput();
 
-    // Update player physics
-    const currentGroundY = getGroundYAtX(this.playerState.x, layout.sections);
+    // Update player physics — sample ground at player center to align with visual ramps
+    const currentGroundY = getGroundYAtX(this.playerState.x + PLAYER_WIDTH / 2, layout.sections);
     this.playerState = updatePlayerPhysics(
       this.playerState,
       input,

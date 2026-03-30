@@ -6,7 +6,7 @@ import { updatePlayerPhysics } from '../../systems/PlayerController';
 import { resumeData } from '../../data/resumeContent';
 import { sectionConfigs } from '../../data/sectionConfig';
 import type { PlayerPhysicsState } from '../../types/player';
-import { PLAYER_HEIGHT, PLAYER_JUMP_VELOCITY, GRAVITY } from '../../constants';
+import { PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_JUMP_VELOCITY, GRAVITY } from '../../constants';
 
 describe('World Generation Integration', () => {
   const layout = computeWorldLayout(resumeData, sectionConfigs);
@@ -64,6 +64,45 @@ describe('World Generation Integration', () => {
       const gap = sorted[i].x - sorted[i - 1].x;
       // Minimum 50px apart to avoid overlap
       expect(gap).toBeGreaterThanOrEqual(50);
+    }
+  });
+
+  it('player feet align with ground at center-X on steep ramps', () => {
+    // Walk player onto the steepest ramp (certifications→contact)
+    // and verify that the ground is sampled at player center, not left edge
+    const certSection = layout.sections.find(s => s.type === 'certifications')!;
+    const contactSection = layout.sections.find(s => s.type === 'contact')!;
+
+    // Position player at the boundary between certifications and contact
+    const boundaryX = contactSection.startX;
+    const groundAtLeftEdge = getGroundYAtX(boundaryX, layout.sections);
+    const groundAtCenter = getGroundYAtX(boundaryX + PLAYER_WIDTH / 2, layout.sections);
+
+    // On a steep ramp, these should differ significantly
+    expect(Math.abs(groundAtLeftEdge - groundAtCenter)).toBeGreaterThan(0);
+
+    // Simulate player walking through the ramp using center-sampled ground
+    let state: PlayerPhysicsState = {
+      x: boundaryX - 50,
+      y: getGroundYAtX(boundaryX - 50 + PLAYER_WIDTH / 2, layout.sections) - PLAYER_HEIGHT,
+      velocityX: 0,
+      velocityY: 0,
+      isGrounded: true,
+      facing: 'right',
+    };
+    const bounds = { minX: 0, maxX: layout.totalWidth };
+    const input = { left: false, right: true, jump: false, interact: false };
+
+    // Walk through the ramp for several frames
+    for (let i = 0; i < 30; i++) {
+      const centerX = state.x + PLAYER_WIDTH / 2;
+      const currentGroundY = getGroundYAtX(centerX, layout.sections);
+      state = updatePlayerPhysics(state, input, 1 / 60, bounds, [], currentGroundY);
+
+      // Player feet should always be at or above the ground at their center
+      const playerFeetY = state.y + PLAYER_HEIGHT;
+      const groundAtPlayerCenter = getGroundYAtX(state.x + PLAYER_WIDTH / 2, layout.sections);
+      expect(playerFeetY).toBeLessThanOrEqual(groundAtPlayerCenter + 1);
     }
   });
 

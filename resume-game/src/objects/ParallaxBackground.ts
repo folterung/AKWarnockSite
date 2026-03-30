@@ -28,6 +28,10 @@ const BIOME_SKY: Record<BiomeType, BiomeSkyConfig> = {
     topColor: { r: 0x2e, g: 0x1a, b: 0x3e },
     bottomColor: { r: 0x5e, g: 0x2e, b: 0x1a },
   },
+  workshop: {
+    topColor: { r: 0x1a, g: 0x12, b: 0x0a },
+    bottomColor: { r: 0x4a, g: 0x37, b: 0x28 },
+  },
 };
 
 const BIOME_FAR_TEXTURES: Record<BiomeType, string> = {
@@ -36,6 +40,7 @@ const BIOME_FAR_TEXTURES: Record<BiomeType, string> = {
   gallery: TEXTURES.bg_gallery_far,
   campus: TEXTURES.bg_campus_far,
   park: TEXTURES.bg_park_far,
+  workshop: TEXTURES.bg_workshop_far,
 };
 
 const BIOME_NEAR_TEXTURES: Record<BiomeType, string> = {
@@ -44,6 +49,7 @@ const BIOME_NEAR_TEXTURES: Record<BiomeType, string> = {
   gallery: TEXTURES.bg_gallery_near,
   campus: TEXTURES.bg_campus_near,
   park: TEXTURES.bg_park_near,
+  workshop: TEXTURES.bg_workshop_near,
 };
 
 export class ParallaxBackground {

@@ -19,6 +19,14 @@ export const sectionConfigs: SectionConfig[] = [
     groundY: SECTION_GROUND_Y.career,
   },
   {
+    type: 'independentProjects',
+    widthPx: 2400,
+    themeColor: COLORS.independentProjectsTheme,
+    label: 'Independent Projects',
+    decorationSet: 'workshop',
+    groundY: SECTION_GROUND_Y.independentProjects,
+  },
+  {
     type: 'skills',
     widthPx: 2400,
     themeColor: COLORS.skillsTheme,
