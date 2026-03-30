@@ -19,6 +19,7 @@ const DECORATION_TO_BIOME: Record<string, BiomeType> = {
   gallery: 'gallery',
   campus: 'campus',
   park: 'park',
+  workshop: 'workshop',
 };
 
 export function getGroundYAtX(x: number, sections: SectionBounds[]): number {
@@ -116,6 +117,11 @@ function computeInteractables(
           ...createCareerInteractables(data.experience, section)
         );
         break;
+      case 'independentProjects':
+        interactables.push(
+          ...createIndependentProjectInteractables(data.independentProjects, section)
+        );
+        break;
       case 'skills':
         interactables.push(
           ...createSkillInteractables(data.skills, section)
@@ -210,6 +216,22 @@ function createCareerInteractables(
     objectType: 'desk' as InteractableObjectType,
     label: exp.company,
     modalContent: buildExperienceModal(exp),
+  }));
+}
+
+function createIndependentProjectInteractables(
+  projects: ResumeData['independentProjects'],
+  section: SectionBounds
+): WorldInteractable[] {
+  const positions = distributePositions(projects.length, section);
+  return projects.map((proj, i) => ({
+    id: proj.id,
+    x: positions[i],
+    y: section.groundY,
+    sectionType: 'independentProjects' as SectionType,
+    objectType: 'trophy' as InteractableObjectType,
+    label: proj.title,
+    modalContent: buildExperienceModal(proj),
   }));
 }
 
@@ -335,7 +357,8 @@ function computePlatforms(sections: SectionBounds[]): WorldPlatform[] {
     switch (section.type) {
       case 'intro':
       case 'career':
-        // No platforms — flat, simple onboarding
+      case 'independentProjects':
+        // No platforms — flat sections
         break;
 
       case 'skills': {
@@ -430,6 +453,7 @@ function computeDecorations(sections: SectionBounds[]): WorldDecoration[] {
     gallery: ['plant', 'lamp'],
     campus: ['tree', 'lamp', 'bookshelf'],
     park: ['tree', 'plant'],
+    workshop: ['lamp', 'bookshelf', 'plant'],
   };
 
   for (const section of sections) {

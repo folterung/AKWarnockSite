@@ -60,6 +60,7 @@ export interface ResumeData {
   tagline: string;
   summary: string;
   experience: WorkExperience[];
+  independentProjects: WorkExperience[];
   skills: Skill[];
   certifications: Certification[];
   education: Education[];

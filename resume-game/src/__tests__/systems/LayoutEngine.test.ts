@@ -37,9 +37,20 @@ describe('LayoutEngine', () => {
     expect(introItems).toHaveLength(2);
   });
 
-  it('career section has 8 interactables (one per experience)', () => {
+  it('career section has one interactable per work experience', () => {
     const careerItems = layout.interactables.filter(i => i.sectionType === 'career');
     expect(careerItems).toHaveLength(resumeData.experience.length);
+  });
+
+  it('independentProjects section has one interactable per project', () => {
+    const projItems = layout.interactables.filter(i => i.sectionType === 'independentProjects');
+    expect(projItems).toHaveLength(resumeData.independentProjects.length);
+  });
+
+  it('independentProjects section uses workshop biome', () => {
+    const projSection = layout.sections.find(s => s.type === 'independentProjects');
+    expect(projSection).toBeDefined();
+    expect(projSection!.biome).toBe('workshop');
   });
 
   it('skills section has 5 interactables (one per category)', () => {
@@ -141,7 +152,7 @@ describe('LayoutEngine — Platforms', () => {
   it('all sections have a biome field', () => {
     for (const section of layout.sections) {
       expect(section.biome).toBeDefined();
-      expect(['city', 'circuit', 'gallery', 'campus', 'park']).toContain(section.biome);
+      expect(['city', 'circuit', 'gallery', 'campus', 'park', 'workshop']).toContain(section.biome);
     }
   });
 

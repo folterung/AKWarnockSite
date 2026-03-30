@@ -8,6 +8,7 @@ const BIOME_GROUND_TEXTURES: Record<BiomeType, string> = {
   gallery: TEXTURES.ground_gallery,
   campus: TEXTURES.ground_campus,
   park: TEXTURES.ground_park,
+  workshop: TEXTURES.ground_workshop,
 };
 
 const BIOME_PLATFORM_TEXTURES: Record<BiomeType, string> = {
@@ -16,6 +17,7 @@ const BIOME_PLATFORM_TEXTURES: Record<BiomeType, string> = {
   gallery: TEXTURES.platform_gallery,
   campus: TEXTURES.platform_campus,
   park: TEXTURES.platform_park,
+  workshop: TEXTURES.platform_workshop,
 };
 
 const BIOME_EDGE_COLORS: Record<BiomeType, number> = {
@@ -24,6 +26,7 @@ const BIOME_EDGE_COLORS: Record<BiomeType, number> = {
   gallery: 0xd4a574,
   campus: 0x2dd4bf,
   park: 0x4ade80,
+  workshop: 0xd4a574,
 };
 
 export class Ground {

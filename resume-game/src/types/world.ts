@@ -1,6 +1,7 @@
 export type SectionType =
   | 'intro'
   | 'career'
+  | 'independentProjects'
   | 'skills'
   | 'featuredWork'
   | 'certifications'
@@ -11,9 +12,10 @@ export type DecorationSet =
   | 'circuit'
   | 'gallery'
   | 'campus'
-  | 'park';
+  | 'park'
+  | 'workshop';
 
-export type BiomeType = 'city' | 'circuit' | 'gallery' | 'campus' | 'park';
+export type BiomeType = 'city' | 'circuit' | 'gallery' | 'campus' | 'park' | 'workshop';
 
 export interface WorldPlatform {
   id: string;

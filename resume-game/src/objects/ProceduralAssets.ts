@@ -680,6 +680,85 @@ function generateBiomeBackgrounds(scene: Phaser.Scene): void {
       g.fillRect(bx + 26, 170, 8, 30);
     }
   });
+
+  // Workshop (independent projects) — far: warm workshop interior with workbenches and tools
+  createTexture(scene, TEXTURES.bg_workshop_far, 800, 300, (g) => {
+    // Warm dark wood background
+    g.fillStyle(0x1a120a, 1);
+    g.fillRect(0, 0, 800, 300);
+    // Pegboard grid
+    g.fillStyle(0x2a1e14, 0.6);
+    for (let x = 0; x < 800; x += 20) {
+      for (let y = 0; y < 300; y += 20) {
+        g.fillCircle(x + 10, y + 10, 2);
+      }
+    }
+    // Hanging tools silhouettes
+    const tools = [
+      { x: 60, y: 30, w: 6, h: 50 },   // wrench
+      { x: 140, y: 20, w: 4, h: 60 },   // screwdriver
+      { x: 280, y: 25, w: 8, h: 45 },   // hammer
+      { x: 400, y: 35, w: 5, h: 55 },   // saw handle
+      { x: 520, y: 20, w: 6, h: 50 },   // pliers
+      { x: 660, y: 30, w: 4, h: 60 },   // chisel
+    ];
+    for (const t of tools) {
+      g.fillStyle(0x6b5030, 0.4);
+      g.fillRect(t.x, t.y, t.w, t.h);
+      // Hook
+      g.fillStyle(0x8b7050, 0.5);
+      g.fillCircle(t.x + t.w / 2, t.y - 3, 3);
+    }
+    // Shelves with jars/containers
+    g.fillStyle(0x3a2818, 0.6);
+    g.fillRect(0, 120, 800, 6);
+    g.fillRect(0, 220, 800, 6);
+    // Jars on shelves
+    const jars = [80, 200, 350, 500, 650];
+    for (const jx of jars) {
+      g.fillStyle(0x4a6040, 0.3);
+      g.fillRect(jx, 100, 16, 20);
+      g.fillStyle(0x5a7050, 0.4);
+      g.fillRect(jx + 2, 98, 12, 4);
+    }
+    // Workbench outline at bottom
+    g.fillStyle(0x3a2818, 0.5);
+    g.fillRect(0, 260, 800, 40);
+    g.lineStyle(1, 0x5a4030, 0.3);
+    g.lineBetween(0, 260, 800, 260);
+  });
+
+  // Workshop near — workbench details, project items
+  createTexture(scene, TEXTURES.bg_workshop_near, 800, 200, (g) => {
+    g.fillStyle(0x000000, 0);
+    g.fillRect(0, 0, 800, 200);
+    // Workbench surfaces
+    for (let i = 0; i < 4; i++) {
+      const bx = 50 + i * 200;
+      // Bench top
+      g.fillStyle(0x5a4030, 0.5);
+      g.fillRect(bx, 150, 120, 12);
+      // Bench legs
+      g.fillStyle(0x4a3020, 0.4);
+      g.fillRect(bx + 10, 162, 8, 38);
+      g.fillRect(bx + 100, 162, 8, 38);
+      // Items on bench
+      g.fillStyle(0x8b7050, 0.4);
+      g.fillRect(bx + 25, 140, 20, 10);
+      g.fillStyle(0xd4a574, 0.3);
+      g.fillRect(bx + 60, 138, 30, 12);
+    }
+    // Hanging lightbulbs
+    for (let i = 0; i < 5; i++) {
+      const lx = 80 + i * 160;
+      g.lineStyle(1, 0x6b5030, 0.3);
+      g.lineBetween(lx, 0, lx, 30);
+      g.fillStyle(0xfbbf24, 0.2);
+      g.fillCircle(lx, 36, 8);
+      g.fillStyle(0xfbbf24, 0.1);
+      g.fillCircle(lx, 36, 14);
+    }
+  });
 }
 
 function generatePlatformTextures(scene: Phaser.Scene): void {
@@ -754,6 +833,24 @@ function generatePlatformTextures(scene: Phaser.Scene): void {
     g.fillRect(36, 0, 12, 2);
   });
 
+  // Workshop: rough hewn wood with nail heads
+  createTexture(scene, TEXTURES.platform_workshop, PW, PH, (g) => {
+    g.fillStyle(0x5a4030, 1);
+    g.fillRect(0, 0, PW, PH);
+    g.fillStyle(0x6b5040, 1);
+    g.fillRect(0, 2, PW, PH - 4);
+    // Wood grain
+    g.lineStyle(1, 0x4a3020, 0.3);
+    g.lineBetween(0, 8, PW, 8);
+    g.lineBetween(0, 16, PW, 16);
+    // Nail heads
+    g.fillStyle(0x8b8b8b, 0.5);
+    for (let x = 12; x < PW; x += 20) {
+      g.fillCircle(x, 6, 2);
+      g.fillCircle(x, PH - 6, 2);
+    }
+  });
+
   // Park: wooden planks with knots
   createTexture(scene, TEXTURES.platform_park, PW, PH, (g) => {
     g.fillStyle(0x8b6914, 1);
@@ -814,6 +911,16 @@ function generateBiomeGroundTextures(scene: Phaser.Scene): void {
     g.lineStyle(1, 0x3a4a2a, 0.3);
     for (let y = 0; y < GROUND_HEIGHT; y += 16) g.lineBetween(0, y, tileSize, y);
     g.lineStyle(1, 0x3a4a2a, 0.15);
+    g.lineBetween(tileSize / 2, 0, tileSize / 2, GROUND_HEIGHT);
+  });
+
+  // Workshop ground: warm wood floor
+  createTexture(scene, TEXTURES.ground_workshop, tileSize, GROUND_HEIGHT, (g) => {
+    g.fillStyle(0x3a2818, 1);
+    g.fillRect(0, 0, tileSize, GROUND_HEIGHT);
+    g.lineStyle(1, 0x4a3828, 0.3);
+    for (let y = 0; y < GROUND_HEIGHT; y += 16) g.lineBetween(0, y, tileSize, y);
+    g.lineStyle(1, 0x4a3828, 0.15);
     g.lineBetween(tileSize / 2, 0, tileSize / 2, GROUND_HEIGHT);
   });
 }
