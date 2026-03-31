@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kevin Warnock — Senior Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       CSS VARIABLES — edit these to retheme
+       ======================================== */
+    :root {
+      --color-ink:        #1a1a1a;
+      --color-ink-light:  #4a4a4a;
+      --color-ink-muted:  #7a7a7a;
+      --color-paper:      #faf9f6;
+      --color-paper-warm: #f3f1ec;
+      --color-accent:     #8b4513;
+      --color-accent-light: #c4875a;
+      --color-rule:       #d4cfc7;
+      --color-rule-dark:  #a89f91;
+
+      --font-display: 'Cormorant Garamond', 'Georgia', serif;
+      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+      --font-mono:    'JetBrains Mono', 'Menlo', monospace;
+
+      --page-max-width: 860px;
+      --page-padding: 3rem;
+    }
+
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      background-color: var(--color-paper);
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--color-ink);
+      background-color: var(--color-paper);
+      line-height: 1.65;
+      min-height: 100vh;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Subtle paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    a {
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--color-accent-light);
+    }
+
+    /* ========================================
+       PAGE LAYOUT
+       ======================================== */
+    .page {
+      max-width: var(--page-max-width);
+      margin: 0 auto;
+      padding: var(--page-padding);
+      padding-top: 4rem;
+      padding-bottom: 6rem;
+    }
+
+    /* ========================================
+       HEADER
+       ======================================== */
+    .header {
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(
+        to right,
+        var(--color-accent),
+        var(--color-rule-dark) 40%,
+        transparent
+      );
+      margin-top: 2rem;
+    }
+
+    .header__name {
+      font-family: var(--font-display);
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--color-ink);
+    }
+
+    .header__title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--color-accent);
+      margin-top: 0.35rem;
+      letter-spacing: 0.01em;
+    }
+
+    .header__contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.6rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--color-ink-light);
+    }
+
+    .header__contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .header__contact-item svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ========================================
+       SECTIONS
+       ======================================== */
+    .section {
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .section:nth-child(2)  { animation-delay: 0.08s; }
+    .section:nth-child(3)  { animation-delay: 0.16s; }
+    .section:nth-child(4)  { animation-delay: 0.24s; }
+    .section:nth-child(5)  { animation-delay: 0.32s; }
+    .section:nth-child(6)  { animation-delay: 0.40s; }
+    .section:nth-child(7)  { animation-delay: 0.48s; }
+    .section:nth-child(8)  { animation-delay: 0.56s; }
+    .section:nth-child(9)  { animation-delay: 0.64s; }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section__heading {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-rule);
+      position: relative;
+    }
+
+    .section__heading::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 3rem;
+      height: 2px;
+      background-color: var(--color-accent);
+    }
+
+    /* ========================================
+       SUMMARY
+       ======================================== */
+    .summary {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--color-ink-light);
+      max-width: 680px;
+    }
+
+    /* ========================================
+       SKILLS
+       ======================================== */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .skill-tag {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--color-rule);
+      border-radius: 2px;
+      color: var(--color-ink-light);
+      background-color: var(--color-paper-warm);
+      transition: all 0.25s ease;
+      cursor: default;
+    }
+
+    .skill-tag:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(139, 69, 19, 0.1);
+    }
+
+    /* ========================================
+       JOB ENTRIES
+       ======================================== */
+    .job {
+      margin-bottom: 2rem;
+      padding-left: 1.25rem;
+      border-left: 2px solid var(--color-rule);
+      position: relative;
+      transition: border-color 0.3s ease;
+    }
+
+    .job:hover {
+      border-left-color: var(--color-accent);
+    }
+
+    .job::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-paper);
+      border: 2px solid var(--color-rule);
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .job:hover::before {
+      border-color: var(--color-accent);
+      background-color: var(--color-accent);
+    }
+
+    .job:last-child {
+      margin-bottom: 0;
+    }
+
+    .job__header {
+      margin-bottom: 0.6rem;
+    }
+
+    .job__role {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-ink);
+      line-height: 1.3;
+    }
+
+    .job__company {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .job__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1rem;
+      font-size: 0.82rem;
+      color: var(--color-ink-muted);
+      margin-top: 0.15rem;
+    }
+
+    .job__meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .job__meta-item svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: var(--color-ink-muted);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .job__bullets {
+      list-style: none;
+      padding: 0;
+    }
+
+    .job__bullets li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+      color: var(--color-ink-light);
+      line-height: 1.6;
+    }
+
+    .job__bullets li::before {
+      content: '\2014';
+      position: absolute;
+      left: 0;
+      color: var(--color-rule-dark);
+      font-weight: 600;
+    }
+
+    /* ========================================
+       EDUCATION & CERTIFICATIONS
+       ======================================== */
+    .edu-item {
+      margin-bottom: 1.25rem;
+    }
+
+    .edu-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .edu-item__degree {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    .edu-item__school {
+      font-size: 0.9rem;
+      color: var(--color-accent);
+      font-weight: 500;
+    }
+
+    .edu-item__details {
+      font-size: 0.85rem;
+      color: var(--color-ink-muted);
+      margin-top: 0.15rem;
+    }
+
+    .cert-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .cert-list li {
+      font-size: 0.88rem;
+      color: var(--color-ink-light);
+      padding: 0.5rem 0.75rem;
+      background-color: var(--color-paper-warm);
+      border-left: 3px solid var(--color-rule);
+      transition: border-color 0.2s ease;
+    }
+
+    .cert-list li:hover {
+      border-left-color: var(--color-accent);
+    }
+
+    /* ========================================
+       INDEPENDENT PROJECTS
+       ======================================== */
+    .project {
+      margin-bottom: 0.75rem;
+    }
+
+    .project__name {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    .project__desc {
+      font-size: 0.9rem;
+      color: var(--color-ink-light);
+    }
+
+    /* ========================================
+       LINKS / ADDITIONAL INFO
+       ======================================== */
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .link-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--color-rule);
+      border-radius: 3px;
+      transition: all 0.25s ease;
+    }
+
+    .link-item:hover {
+      border-color: var(--color-accent);
+      background-color: var(--color-paper-warm);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(139, 69, 19, 0.08);
+    }
+
+    .link-item svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .footer {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 3rem;
+      border-top: 1px solid var(--color-rule);
+      font-size: 0.8rem;
+      color: var(--color-ink-muted);
+      font-style: italic;
+    }
+
+    /* ========================================
+       PRINT STYLES
+       ======================================== */
+    @media print {
+      body::before { display: none; }
+
+      .page {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .section {
+        opacity: 1;
+        transform: none;
+        animation: none;
+      }
+
+      .job { break-inside: avoid; }
+      .edu-item { break-inside: avoid; }
+
+      .skill-tag:hover,
+      .job:hover,
+      .cert-list li:hover,
+      .link-item:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 640px) {
+      :root {
+        --page-padding: 1.5rem;
+      }
+
+      .header__name {
+        font-size: 2.6rem;
+      }
+
+      .header__title {
+        font-size: 1.1rem;
+      }
+
+      .header__contact {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .cert-list {
+        grid-template-columns: 1fr;
+      }
+
+      .links {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="resume"></main>
+
+  <!-- ===== SVG ICON TEMPLATES ===== -->
+  <template id="icon-location">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </template>
+  <template id="icon-phone">
+    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  </template>
+  <template id="icon-email">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </template>
+  <template id="icon-calendar">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  </template>
+  <template id="icon-linkedin">
+    <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+  </template>
+  <template id="icon-github">
+    <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+  </template>
+  <template id="icon-gamepad">
+    <svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
+  </template>
+
+  <script>
+    /* ========================================
+       RESUME RENDERER
+       Reads resume.json and populates the page.
+       ======================================== */
+    (async function () {
+      const res = await fetch('resume.json');
+      const data = await res.json();
+      const root = document.getElementById('resume');
+
+      // Helper: grab SVG from <template>
+      function icon(name) {
+        const tpl = document.getElementById(`icon-${name}`);
+        return tpl ? tpl.content.firstElementChild.cloneNode(true).outerHTML : '';
+      }
+
+      // Helper: escape HTML
+      function esc(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+      }
+
+      // ---- Header ----
+      document.title = `${data.name} — ${data.title}`;
+      let html = `
+        <header class="header">
+          <h1 class="header__name">${esc(data.name)}</h1>
+          <p class="header__title">${esc(data.title)}</p>
+          <div class="header__contact">
+            <span class="header__contact-item">${icon('location')} ${esc(data.contact.location)}</span>
+            <span class="header__contact-item">${icon('phone')} ${esc(data.contact.phone)}</span>
+            <span class="header__contact-item">${icon('email')} <a href="mailto:${esc(data.contact.email)}">${esc(data.contact.email)}</a></span>
+          </div>
+        </header>`;
+
+      // ---- Summary ----
+      html += `
+        <section class="section">
+          <h2 class="section__heading">Professional Summary</h2>
+          <p class="summary">${esc(data.summary)}</p>
+        </section>`;
+
+      // ---- Skills ----
+      html += `
+        <section class="section">
+          <h2 class="section__heading">Skills</h2>
+          <div class="skills">
+            ${data.skills.map(s => `<span class="skill-tag">${esc(s)}</span>`).join('\n            ')}
+          </div>
+        </section>`;
+
+      // ---- Work History ----
+      html += `
+        <section class="section">
+          <h2 class="section__heading">Work History</h2>
+          ${data.jobs.map(job => `
+          <article class="job">
+            <div class="job__header">
+              <h3 class="job__role">${esc(job.role)}</h3>
+              <span class="job__company">${esc(job.company)}</span>
+              <div class="job__meta">
+                <span class="job__meta-item">${icon('calendar')} ${esc(job.dates)}</span>
+                ${job.location ? `<span class="job__meta-item">${icon('location')} ${esc(job.location)}</span>` : ''}
+              </div>
+            </div>
+            <ul class="job__bullets">
+              ${job.bullets.map(b => `<li>${esc(b)}</li>`).join('\n              ')}
+            </ul>
+          </article>`).join('')}
+        </section>`;
+
+      // ---- Independent Projects ----
+      if (data.projects && data.projects.length) {
+        html += `
+        <section class="section">
+          <h2 class="section__heading">Independent Projects</h2>
+          ${data.projects.map(p => `
+          <div class="project">
+            <span class="project__name">${esc(p.name)}</span>
+            <p class="project__desc">${esc(p.description)}</p>
+          </div>`).join('')}
+        </section>`;
+      }
+
+      // ---- Education ----
+      html += `
+        <section class="section">
+          <h2 class="section__heading">Education</h2>
+          ${data.education.map(e => `
+          <div class="edu-item">
+            <div class="edu-item__degree">${esc(e.degree)}</div>
+            <div class="edu-item__school">${esc(e.school)} — ${esc(e.location)}</div>
+            ${e.details ? `<div class="edu-item__details">${esc(e.details)}</div>` : ''}
+          </div>`).join('')}
+        </section>`;
+
+      // ---- Certifications ----
+      html += `
+        <section class="section">
+          <h2 class="section__heading">Certifications</h2>
+          <ul class="cert-list">
+            ${data.certifications.map(c => `<li>${esc(c)}</li>`).join('\n            ')}
+          </ul>
+        </section>`;
+
+      // ---- Links ----
+      if (data.links && data.links.length) {
+        html += `
+        <section class="section">
+          <h2 class="section__heading">Links</h2>
+          <div class="links">
+            ${data.links.map(l => `<a class="link-item" href="${esc(l.url)}" target="_blank" rel="noopener">${icon(l.icon)} ${esc(l.label)}</a>`).join('\n            ')}
+          </div>
+        </section>`;
+      }
+
+      // ---- Footer ----
+      if (data.footer) {
+        html += `
+        <footer class="footer">${esc(data.footer)}</footer>`;
+      }
+
+      root.innerHTML = html;
+    })();
+  </script>
+</body>
+</html>

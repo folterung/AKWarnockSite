@@ -102,9 +102,20 @@ export default function Header() {
               </button>
             </div>
 
-            <a href="/resume-game/" className="nav-link">
-              Interactive Resume
-            </a>
+            {/* Resume Dropdown */}
+            <div className="relative group">
+              <button className="nav-link">
+                Resume
+              </button>
+              <div className="nav-dropdown">
+                <a href="/resume-game/" className="nav-dropdown-item">
+                  Interactive
+                </a>
+                <a href="/resume/" className="nav-dropdown-item">
+                  Traditional
+                </a>
+              </div>
+            </div>
 
             <Link href="/contact" className="nav-link">
               Contact
@@ -156,9 +167,15 @@ export default function Header() {
             <Link href="/about" className="block px-3 py-2 nav-link">
               About
             </Link>
-            <a href="/resume-game/" className="block px-3 py-2 nav-link">
-              Interactive Resume
-            </a>
+            <div className="block px-3 py-2">
+              <span className="nav-link font-semibold">Resume</span>
+              <a href="/resume-game/" className="block px-3 py-1 nav-link text-sm">
+                Interactive
+              </a>
+              <a href="/resume/" className="block px-3 py-1 nav-link text-sm">
+                Traditional
+              </a>
+            </div>
             <Link href="/contact" className="block px-3 py-2 nav-link">
               Contact
             </Link>

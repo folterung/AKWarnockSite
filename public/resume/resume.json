@@ -1,0 +1,219 @@
+{
+  "name": "Kevin Warnock",
+  "title": "Senior Software Engineer",
+  "contact": {
+    "location": "Saint Marys, GA 31558",
+    "phone": "(757) 585-8774",
+    "email": "kevi.warnock@gmail.com"
+  },
+  "summary": "Seasoned Senior Software Engineer with proven expertise leading cross-functional teams and architecting scalable solutions for major clients. Demonstrated success deploying integration engines, mentoring junior developers, and delivering production features at organizations such as Capital One and the Federal Reserve Bank. Adept at full-stack development, cloud infrastructure, and AI-assisted workflows.",
+  "skills": [
+    "TypeScript",
+    "JavaScript",
+    "React",
+    "Angular",
+    "NodeJS",
+    "Python",
+    "Java",
+    "C#",
+    "HTML5",
+    "SCSS",
+    "AWS / Lambda",
+    "ECS / Fargate",
+    "Terraform",
+    "Docker",
+    "Elasticsearch",
+    "SQL",
+    "Git",
+    "AI-Assisted Development",
+    "Prompt Engineering",
+    "Claude / Cursor / Copilot",
+    "MCP Workflows",
+    "Software Craftsmanship",
+    "Debugging",
+    "Mentoring"
+  ],
+  "jobs": [
+    {
+      "role": "Senior Software Engineer",
+      "company": "Major Rocket",
+      "dates": "Jul 2025 – Mar 2026",
+      "location": "Remote",
+      "bullets": [
+        "Architected and deployed QA and staging environments on AWS using ECS + Fargate, fully managed through Terraform, enabling reliable environment parity and streamlined deployment workflows",
+        "Designed and implemented an integration engine responsible for synchronizing data across 8 external provider systems, supporting automated ingestion, normalization, and processing pipelines",
+        "Built internal administrative tooling to trigger, monitor, and manage synchronization jobs, improving operational visibility and reducing manual intervention",
+        "Extended the frontend application to support new data models and entities introduced through external integrations, ensuring consistent user experience",
+        "Developed monitoring and operational controls around background sync processes, improving reliability and enabling rapid debugging of integration failures",
+        "Collaborated with cross-functional teams to ensure integration data consistency across backend services and UI layers"
+      ]
+    },
+    {
+      "role": "Software Solutions Architect",
+      "company": "Authentic Digital Agency",
+      "dates": "Jul 2021 – Apr 2024",
+      "location": "Remote",
+      "bullets": [
+        "Architected and implemented a Bloomreach CMS integration for Audacy, enabling dynamic content delivery powering web and mobile application experiences for the largest radio content platform in the United States",
+        "Designed scalable content models and API-driven delivery patterns to support flexible editorial workflows and high-volume digital publishing",
+        "Developed a custom CMS extension using React that added an Elasticsearch query builder interface within the Bloomreach CMS UI, allowing non-technical users to construct complex search queries through a structured visual interface",
+        "Built integration layers connecting Bloomreach content APIs, Elasticsearch search infrastructure, and downstream application clients to ensure performant and reliable content retrieval",
+        "Collaborated with engineering and product stakeholders to translate business requirements into scalable CMS architecture and integration strategies",
+        "Promoted from Senior Software Engineer to Software Solutions Architect after successful Audacy implementation, expanding responsibilities to overseeing architecture and integration strategy across multiple client engagements",
+        "Provided architectural leadership on system design, integration patterns, and platform extensibility to ensure maintainable and scalable solutions across projects"
+      ]
+    },
+    {
+      "role": "Senior Software Engineer",
+      "company": "Kinsale Insurance",
+      "dates": "Oct 2020 – Jun 2021",
+      "location": "Richmond, VA",
+      "bullets": [
+        "Led Angular development initiative as Subject Matter Expert and primary point-of-contact, driving project success",
+        "Trained and mentored junior developers in Angular, TypeScript, JavaScript, SCSS, HTML, Java, and PL/SQL, improving overall team performance",
+        "Developed new vertically sliced features across the full stack, enhancing application functionality",
+        "Created proofs of concept for innovative new solutions, accelerating project innovation",
+        "Designed and developed forward-thinking systems that meet user needs and improve productivity",
+        "Collaborated with cross-functional team members to analyze potential system solutions based on evolving client requirements",
+        "Fixed all unit tests and acceptance tests within each code base contributed to, ensuring code reliability"
+      ]
+    },
+    {
+      "role": "Senior Software Engineer",
+      "company": "Federal Reserve Bank of Richmond",
+      "dates": "Aug 2020 – Oct 2020",
+      "location": "Richmond, VA",
+      "bullets": [
+        "Developed Dashboard and Job Scheduling functionality, enhancing system usability",
+        "Decomposed large components into smaller, more manageable components, improving maintainability",
+        "Fixed all unit tests and acceptance tests within the code base, ensuring software reliability",
+        "Collaborated with business and stakeholders to obtain requirements, aligning solutions with business needs",
+        "Migrated application from Angular 9 to Angular 10, modernizing the technology stack",
+        "Improved system performance by making proactive adjustments and resolving bugs",
+        "Estimated work hours and tracked progress using Scrum methodology"
+      ]
+    },
+    {
+      "role": "Master Software Engineer",
+      "company": "Capital One",
+      "dates": "Dec 2015 – Apr 2020",
+      "location": "Richmond, VA",
+      "bullets": [
+        "Delivered production features and innovative solutions enabling Capital One to migrate from legacy systems to new systems while ensuring continuous feature delivery during migrations",
+        "Developed internal tools to enhance day-to-day operations (CI pipeline on Jenkins, GitHub webhooks, custom cache busting solution, custom ts-lint rules), improving developer productivity",
+        "Trained and mentored junior developers in object-oriented programming design patterns using NodeJS, Angular, TypeScript, Java, and Groovy, improving overall productivity and code quality",
+        "Migrated a large enterprise application from AngularJS v1.3 to Angular 8, modernizing the platform",
+        "Troubleshot enterprise production systems, ensuring high system availability",
+        "Worked with project managers, developers, QA, and customers to resolve technical issues"
+      ]
+    },
+    {
+      "role": "Senior Software Engineer",
+      "company": "Celerity IT LLC",
+      "dates": "Dec 2014 – Dec 2015",
+      "location": "Richmond, VA",
+      "bullets": [
+        "Contracted by Capital One to build new features, set application design patterns, establish best practices, and optimize their web application",
+        "Troubleshot production and pre-production enterprise application bugs and performance problems, improving system stability",
+        "Developed processes and tools to enhance day-to-day development, increasing team efficiency",
+        "Set patterns and best practices for acceptance testing, improving software quality"
+      ]
+    },
+    {
+      "role": "Senior Software Engineer",
+      "company": "Axseum Solutions LLC",
+      "dates": "Oct 2014 – Dec 2014",
+      "location": null,
+      "bullets": [
+        "Built internal digital library for the Army Training Support Center (ATSC) using AngularJS, HTML, CSS, and Java, improving information accessibility",
+        "Researched, tested, built, and integrated enhancements based on client requirements, ensuring tailored solutions",
+        "Designed, developed, and optimized web applications using HTML5, CSS3, and JavaScript"
+      ]
+    },
+    {
+      "role": "Mobile/Web Application Developer",
+      "company": "Zantech IT Services Inc",
+      "dates": "May 2013 – Sep 2014",
+      "location": null,
+      "bullets": [
+        "Built internal digital library for ATSC using AngularJS, HTML, CSS, and Java, enhancing digital resource management",
+        "Designed, developed, and optimized web and hybrid applications using Cordova, expanding platform compatibility",
+        "Developed processes, tools, and best practices to enhance development workflow"
+      ]
+    },
+    {
+      "role": "Business Systems Analyst",
+      "company": "CRGT Inc",
+      "dates": "Feb 2013 – May 2013",
+      "location": null,
+      "bullets": [
+        "Maintained and enhanced internal ATSC applications through coding changes and database maintenance, ensuring system reliability",
+        "Released one of the largest improvements in over three years to AutoDB, a frequently used application for Mission Support and the help desk"
+      ]
+    },
+    {
+      "role": "Senior Help Desk Specialist",
+      "company": "CRGT Inc",
+      "dates": "May 2012 – Feb 2013",
+      "location": null,
+      "bullets": [
+        "Identified, diagnosed, and resolved software and hardware issues, improving user satisfaction",
+        "Built strong working relationships with customers to resolve technical issues efficiently",
+        "Created batch files, PowerShell scripts, and VBScript scripts to simplify day-to-day operations"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Game Developer (AKGames)",
+      "description": "Published Flippy Boi on the Android Play Store (US & UK) using Phaser 3 + Capacitor. Managed the full release pipeline including builds, store submission, and advertising integration. Currently developing additional titles in Unity."
+    },
+    {
+      "name": "Author (AKWarnock)",
+      "description": "Co-authored The Spirit Blessed Chronicles: A New Legacy, collaborating on worldbuilding, character design, and the independent publishing process."
+    },
+    {
+      "name": "Podcast Host",
+      "description": "Hosted and produced an independent podcast discussing culture, technology, and unconventional ideas. Managed the full production workflow from planning through distribution."
+    }
+  ],
+  "education": [
+    {
+      "degree": "Computer Science and Programming",
+      "school": "Coastal College of Georgia",
+      "location": "Kingsland, GA",
+      "details": "Member of Phi Theta Kappa \u00b7 Majored in Programming"
+    },
+    {
+      "degree": "Associate of Applied Science: Occupational Science",
+      "school": "Advanced Technology Institute",
+      "location": "Virginia Beach, VA",
+      "details": "Graduated 2005"
+    }
+  ],
+  "certifications": [
+    "CompTIA Security+ CE",
+    "Microsoft Certified IT Professional (MCITP)",
+    "Microsoft Certified Solutions Associate (MCSA)",
+    "Microsoft Certified Technology Specialist (MCTS)",
+    "Microsoft Certified .NET 4.0 Web Applications Developer"
+  ],
+  "links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/kevin-warnock-44b78484",
+      "icon": "linkedin"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/folterung",
+      "icon": "github"
+    },
+    {
+      "label": "Interactive Resume",
+      "url": "https://akwarnockwrites.com/resume-game/",
+      "icon": "gamepad"
+    }
+  ],
+  "footer": "References available upon request."
+}
