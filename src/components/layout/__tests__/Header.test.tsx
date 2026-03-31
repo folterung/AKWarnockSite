@@ -5,9 +5,11 @@ import Header from '../Header'
 
 // Mock next/link to render as a plain anchor
 jest.mock('next/link', () => {
-  return ({ href, children, ...props }: any) => (
+  const MockLink = ({ href, children, ...props }: any) => (
     <a href={href} {...props}>{children}</a>
   )
+  MockLink.displayName = 'MockLink'
+  return MockLink
 })
 
 describe('Header Resume Dropdown', () => {
