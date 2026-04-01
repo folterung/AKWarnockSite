@@ -1,8 +1,8 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import ScratchyTD, { getStaticProps } from '../index'
-import { landingData } from '../../../../data/scratchytd-landing'
+import ScratchyTD, { getStaticProps } from '@/pages/games/scratchytd/index'
+import { landingData } from '@/data/scratchytd-landing'
 
 // Mock next/head to render children inline
 jest.mock('next/head', () => {
