@@ -5,6 +5,7 @@ const createJestConfig = nextJest({
 })
 
 const customJestConfig = {
+  roots: ['<rootDir>/src'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
@@ -13,6 +14,10 @@ const customJestConfig = {
   testMatch: [
     '**/__tests__/**/*.test.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/resume-game/'
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

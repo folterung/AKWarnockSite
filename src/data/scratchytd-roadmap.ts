@@ -1,0 +1,559 @@
+export const roadmapData = {
+  meta: {
+    title: "ScratchyTD Roadmap",
+    description:
+      "Follow along as we build ScratchyTD — the cutest cats vs dogs tower defense game! Here's what we're working on and what's coming next.",
+    lastUpdated: "2026-04-01",
+  },
+  recentUpdates: [
+    // {
+    //   icon: "🎉",
+    //   title: "Laser Pointer Tower shipped!",
+    //   description:
+    //     "Our first cat-themed tower is live in v0.8. Three upgrade tiers available.",
+    //   date: "2026-03-25",
+    // },
+    // {
+    //   icon: "🗺️",
+    //   title: "Pet Shop map entering testing",
+    //   description:
+    //     "The indoor pet shop level is now in playtesting. Feedback welcome on Discord!",
+    //   date: "2026-03-22",
+    // },
+    // {
+    //   icon: "🔊",
+    //   title: "New sound effects recording",
+    //   description:
+    //     "We recorded real cat purrs for the Laser Pointer tower. So cozy.",
+    //   date: "2026-03-18",
+    // },
+    // {
+    //   icon: "⚖️",
+    //   title: "Big balance patch incoming",
+    //   description:
+    //     "Early levels nerfed, late levels buffed based on 200+ playtesting sessions.",
+    //   date: "2026-03-15",
+    // },
+    // {
+    //   icon: "🐾",
+    //   title: "Level variants announced!",
+    //   description:
+    //     "Every level will get 5 variants — Night, Rain, Reverse, Bonus Wave, and Chaos.",
+    //   date: "2026-03-12",
+    // },
+  ],
+
+  communityIdeas: [
+    // {
+    //   title: "Cat Cafe Map",
+    //   description:
+    //     "A cozy indoor cat cafe with tables, chairs, and spilled milk puddles as hazards.",
+    //   votes: 47,
+    //   author: "FluffyPaws#1234",
+    // },
+    // {
+    //   title: "Co-op Mode",
+    //   description:
+    //     "Play with a friend! One player controls cat towers, the other controls dog towers.",
+    //   votes: 89,
+    //   author: "DoggoFan#5678",
+    // },
+    // {
+    //   title: "Tower Fusion System",
+    //   description:
+    //     "Combine two adjacent towers to create a super tower with combined abilities.",
+    //   votes: 62,
+    //   author: "StrategyKing#9012",
+    // },
+    // {
+    //   title: "Endless Mode",
+    //   description:
+    //     "A never-ending wave mode with leaderboards. How far can you get?",
+    //   votes: 73,
+    //   author: "WaveRunner#3456",
+    // },
+    // {
+    //   title: "Pet Your Towers",
+    //   description:
+    //     "Let us click on towers to pet them and give a temporary boost. Please!",
+    //   votes: 112,
+    //   author: "CatLover#7890",
+    // },
+    // {
+    //   title: "Weather System",
+    //   description:
+    //     "Dynamic weather that affects gameplay — rain slows everyone, sun boosts fire towers.",
+    //   votes: 38,
+    //   author: "StormChaser#2345",
+    // },
+  ],
+
+  milestones: [
+    // {
+    //   name: "v0.9 — Open Beta",
+    //   date: "2026-04-15",
+    //   description: "Public beta with 15 playable levels",
+    // },
+    // {
+    //   name: "v1.0 — Full Launch",
+    //   date: "2026-06-01",
+    //   description: "25 levels, all core towers, boss fights",
+    // },
+    // {
+    //   name: "v1.1 — Level Variants Update",
+    //   date: "2026-07-15",
+    //   description: "5 variants per level = 125 total levels",
+    // },
+    // {
+    //   name: "v1.2 — Cosmetics & Seasons",
+    //   date: "2026-09-01",
+    //   description: "Seasonal events and cosmetic unlocks",
+    // },
+  ],
+
+  items: [
+    {
+      id: 1,
+      title: "Laser Pointer Tower",
+      description:
+        "A cat-themed tower that fires a continuous laser beam. Cats chase the dot!",
+      status: "Completed",
+      category: "Towers",
+      priority: "High",
+      version: "v0.8",
+      deadline: "2026-03-01",
+      progress: 100,
+      notes:
+        "Includes 3 upgrade tiers: Red Dot, Green Beam, and Rainbow Laser.",
+      dateAdded: "2026-01-10",
+    },
+    {
+      id: 2,
+      title: "Yarn Ball Cannon",
+      description:
+        "Launches tangled yarn balls that slow enemies in an area. Adorable chaos.",
+      status: "Completed",
+      category: "Towers",
+      priority: "High",
+      version: "v0.8",
+      deadline: "2026-03-01",
+      progress: 100,
+      notes: "AoE slow effect stacks with other slow towers.",
+      dateAdded: "2026-01-12",
+    },
+    {
+      id: 3,
+      title: "Treat Dispenser Tower",
+      description:
+        "Drops treats that distract dog enemies, making them pause and sniff around.",
+      status: "In Progress",
+      category: "Towers",
+      priority: "High",
+      version: "v0.9",
+      deadline: "2026-04-10",
+      progress: 65,
+      notes:
+        "Balancing the distraction duration — currently 2.5s base, scales with upgrades.",
+      dateAdded: "2026-02-20",
+    },
+    {
+      id: 4,
+      title: "Scratching Post Tower",
+      description:
+        "Melee tower that swipes at nearby enemies. Cat defenders sharpen their claws!",
+      status: "In Progress",
+      category: "Towers",
+      priority: "Medium",
+      version: "v0.9",
+      deadline: "2026-04-12",
+      progress: 40,
+      notes: "Working on swipe animation and hit detection radius.",
+      dateAdded: "2026-03-01",
+    },
+    {
+      id: 5,
+      title: "Water Spritzer Tower",
+      description:
+        "Sprays water to scare cats and slow dogs. Universal deterrent tower!",
+      status: "Planned",
+      category: "Towers",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-20",
+      progress: 10,
+      notes: "Concept art done. Needs programming and VFX.",
+      dateAdded: "2026-03-15",
+    },
+    {
+      id: 6,
+      title: "Corgi Rush Enemy",
+      description:
+        "Fast, small corgi enemies that come in large packs. Low HP but speedy!",
+      status: "Completed",
+      category: "Enemies",
+      priority: "High",
+      version: "v0.8",
+      deadline: "2026-02-15",
+      progress: 100,
+      notes: "Balanced at 3x speed, 0.5x HP compared to base enemy.",
+      dateAdded: "2026-01-05",
+    },
+    {
+      id: 7,
+      title: "Maine Coon Tank Enemy",
+      description:
+        "Massive fluffy cat enemy with tons of HP. Slow but very hard to take down.",
+      status: "Testing",
+      category: "Enemies",
+      priority: "High",
+      version: "v0.9",
+      deadline: "2026-04-05",
+      progress: 85,
+      notes:
+        "Testing HP scaling across difficulty levels. May need slight nerf on Easy.",
+      dateAdded: "2026-02-10",
+    },
+    {
+      id: 8,
+      title: "Puppy Swarm Wave Type",
+      description:
+        "A special wave where dozens of tiny puppies flood the map. Overwhelming but weak individually.",
+      status: "In Progress",
+      category: "Enemies",
+      priority: "Medium",
+      version: "v0.9",
+      deadline: "2026-04-08",
+      progress: 55,
+      notes:
+        "Optimizing rendering for 50+ puppies on screen. Using object pooling.",
+      dateAdded: "2026-02-25",
+    },
+    {
+      id: 9,
+      title: "Boss: General Woofs",
+      description:
+        "A giant armored bulldog boss with a charge attack and bark shockwave.",
+      status: "In Progress",
+      category: "Bosses",
+      priority: "High",
+      version: "v1.0",
+      deadline: "2026-05-15",
+      progress: 30,
+      notes:
+        "Phase 1 mechanics done. Phase 2 (enraged mode) still in design.",
+      dateAdded: "2026-03-05",
+    },
+    {
+      id: 10,
+      title: "Boss: Empress Whiskers",
+      description:
+        "An elegant Persian cat boss that summons kitten minions and has a hypnotic gaze attack.",
+      status: "Planned",
+      category: "Bosses",
+      priority: "High",
+      version: "v1.0",
+      deadline: "2026-05-25",
+      progress: 15,
+      notes:
+        "Concept art approved. The hypnotic gaze will temporarily disable towers in a cone.",
+      dateAdded: "2026-03-10",
+    },
+    {
+      id: 11,
+      title: "5 Level Variants for Every Level",
+      description:
+        "Each of the 25 launch levels will have 5 unique variants with different enemy paths, spawn points, environmental hazards, and weather conditions. This brings the total effective level count from 25 to 125, giving players tons of replay value without needing entirely new maps.",
+      status: "Planned",
+      category: "Maps",
+      priority: "High",
+      version: "v1.1",
+      deadline: "2026-07-15",
+      progress: 5,
+      notes:
+        "Variant types: Night Mode, Rain Storm, Reverse Path, Bonus Wave, and Chaos Mode. Each variant changes visual theme and gameplay modifiers. This is a huge content multiplier for post-launch.",
+      dateAdded: "2026-03-20",
+    },
+    {
+      id: 12,
+      title: "Backyard Map",
+      description:
+        "Classic suburban backyard with a fence maze. Dog houses and cat trees as obstacles.",
+      status: "Completed",
+      category: "Maps",
+      priority: "High",
+      version: "v0.8",
+      deadline: "2026-02-20",
+      progress: 100,
+      notes: "First map completed! Includes dynamic sprinkler hazard.",
+      dateAdded: "2026-01-01",
+    },
+    {
+      id: 13,
+      title: "Pet Shop Map",
+      description:
+        "Indoor pet shop with aisles of toys and food. Tight corridors and chokepoints.",
+      status: "Testing",
+      category: "Maps",
+      priority: "Medium",
+      version: "v0.9",
+      deadline: "2026-04-01",
+      progress: 80,
+      notes:
+        "Playtesters love the fish tank hazard. Adjusting aisle widths for better flow.",
+      dateAdded: "2026-02-01",
+    },
+    {
+      id: 14,
+      title: "Dog Park Map",
+      description:
+        "Open outdoor map with multiple winding paths through a hilly dog park.",
+      status: "In Progress",
+      category: "Maps",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-10",
+      progress: 35,
+      notes:
+        "Working on the branching path system. Players can block paths with special towers.",
+      dateAdded: "2026-03-01",
+    },
+    {
+      id: 15,
+      title: "Tower Upgrade System v2",
+      description:
+        "Revamped upgrade paths with branching choices. Each tower gets 2 unique upgrade tracks.",
+      status: "In Progress",
+      category: "Progression",
+      priority: "High",
+      version: "v1.0",
+      deadline: "2026-05-01",
+      progress: 45,
+      notes:
+        "UI mockups approved. Implementing the branching logic and balance spreadsheet.",
+      dateAdded: "2026-02-15",
+    },
+    {
+      id: 16,
+      title: "Achievement System",
+      description:
+        "Unlock cute badges for milestones like 'Defeat 1000 Corgis' and 'Pet Every Tower'.",
+      status: "Planned",
+      category: "Progression",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-28",
+      progress: 10,
+      notes: "30 achievements planned for launch. More to come in updates.",
+      dateAdded: "2026-03-12",
+    },
+    {
+      id: 17,
+      title: "Cosmetic Hats for Towers",
+      description:
+        "Unlockable hats and accessories for your towers. Top hats, bows, sunglasses, and more!",
+      status: "Planned",
+      category: "Cosmetics",
+      priority: "Low",
+      version: "v1.2",
+      deadline: "2026-08-15",
+      progress: 5,
+      notes: "20 hats planned. Community poll for favorites coming soon.",
+      dateAdded: "2026-03-18",
+    },
+    {
+      id: 18,
+      title: "Seasonal Event: Summer Splash",
+      description:
+        "Limited-time summer event with water gun towers and beach-themed enemies.",
+      status: "Planned",
+      category: "Cosmetics",
+      priority: "Low",
+      version: "v1.2",
+      deadline: "2026-08-01",
+      progress: 0,
+      notes:
+        "First seasonal event! Will include exclusive cosmetics and a temporary map.",
+      dateAdded: "2026-03-22",
+    },
+    {
+      id: 19,
+      title: "Difficulty Balancing Pass",
+      description:
+        "Full rebalance of enemy HP, tower damage, and wave pacing across all levels.",
+      status: "Testing",
+      category: "Balancing",
+      priority: "High",
+      version: "v0.9",
+      deadline: "2026-04-10",
+      progress: 70,
+      notes:
+        "Using playtest data from 200+ sessions. Early levels were too hard, late levels too easy.",
+      dateAdded: "2026-02-28",
+    },
+    {
+      id: 20,
+      title: "Wave Variety Improvements",
+      description:
+        "More interesting wave compositions with mixed enemy types and surprise mini-bosses.",
+      status: "In Progress",
+      category: "Balancing",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-05",
+      progress: 25,
+      notes:
+        "Designing 15 new wave templates. Adding a 'surprise wave' system.",
+      dateAdded: "2026-03-08",
+    },
+    {
+      id: 21,
+      title: "Sound Effects Overhaul",
+      description:
+        "New meow, bark, and tower sound effects. More satisfying pops and booms!",
+      status: "In Progress",
+      category: "Audio",
+      priority: "Medium",
+      version: "v0.9",
+      deadline: "2026-04-05",
+      progress: 60,
+      notes:
+        "Recording real cat purrs for the Laser Pointer tower. The internet will love this.",
+      dateAdded: "2026-02-18",
+    },
+    {
+      id: 22,
+      title: "Background Music Tracks",
+      description:
+        "Unique music for each map theme — jazzy pet shop, chill backyard, upbeat dog park.",
+      status: "Planned",
+      category: "Audio",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-15",
+      progress: 15,
+      notes:
+        "Composer hired! First track (Backyard Groove) draft coming next week.",
+      dateAdded: "2026-03-15",
+    },
+    {
+      id: 23,
+      title: "UI Polish Pass",
+      description:
+        "Smoother animations, better button feedback, and cleaner menus throughout.",
+      status: "In Progress",
+      category: "UI",
+      priority: "Medium",
+      version: "v0.9",
+      deadline: "2026-04-12",
+      progress: 50,
+      notes:
+        "Focusing on the tower placement UX and wave countdown timer.",
+      dateAdded: "2026-03-01",
+    },
+    {
+      id: 24,
+      title: "Mobile Touch Controls",
+      description:
+        "Optimized touch input for mobile. Drag-to-place towers, pinch zoom, tap targeting.",
+      status: "Planned",
+      category: "Mobile",
+      priority: "High",
+      version: "v1.0",
+      deadline: "2026-05-20",
+      progress: 10,
+      notes:
+        "Prototyping touch gestures. Need to solve the fat-finger problem for tower placement.",
+      dateAdded: "2026-03-10",
+    },
+    {
+      id: 25,
+      title: "Mobile Performance Optimization",
+      description:
+        "Target 60fps on mid-range phones. Reduce draw calls and optimize particle systems.",
+      status: "Planned",
+      category: "Mobile",
+      priority: "High",
+      version: "v1.0",
+      deadline: "2026-05-25",
+      progress: 5,
+      notes:
+        "Profiling on test devices. Main bottleneck is the particle system during big waves.",
+      dateAdded: "2026-03-14",
+    },
+    {
+      id: 26,
+      title: "Fast Forward Button",
+      description:
+        "2x and 3x speed options for waves. A must-have quality-of-life feature.",
+      status: "Completed",
+      category: "QoL",
+      priority: "High",
+      version: "v0.8",
+      deadline: "2026-02-10",
+      progress: 100,
+      notes:
+        "Added 1x, 2x, 3x toggle. Remembers last setting between levels.",
+      dateAdded: "2026-01-20",
+    },
+    {
+      id: 27,
+      title: "Auto-Start Waves Option",
+      description:
+        "Toggle to automatically start the next wave when the current one ends.",
+      status: "Testing",
+      category: "QoL",
+      priority: "Low",
+      version: "v0.9",
+      deadline: "2026-04-01",
+      progress: 90,
+      notes:
+        "Added a brief 3-second countdown between auto-started waves.",
+      dateAdded: "2026-03-05",
+    },
+    {
+      id: 28,
+      title: "Tower Range Indicators",
+      description:
+        "Show range circles when placing or selecting towers. Color-coded by tower type.",
+      status: "Completed",
+      category: "QoL",
+      priority: "Medium",
+      version: "v0.8",
+      deadline: "2026-02-25",
+      progress: 100,
+      notes:
+        "Uses soft gradient circles. Looks great and doesn't clutter the screen.",
+      dateAdded: "2026-01-25",
+    },
+    {
+      id: 29,
+      title: "Stealth Ninja Cat Enemy",
+      description:
+        "A sneaky cat that turns invisible and can only be revealed by specific towers.",
+      status: "Planned",
+      category: "Enemies",
+      priority: "Medium",
+      version: "v1.1",
+      deadline: "2026-07-01",
+      progress: 0,
+      notes:
+        "Will pair with a new Detection Tower. Creates interesting strategic choices.",
+      dateAdded: "2026-03-22",
+    },
+    {
+      id: 30,
+      title: "Golden Retriever Healer Enemy",
+      description:
+        "A friendly golden retriever that heals nearby enemies. Must be prioritized!",
+      status: "Planned",
+      category: "Enemies",
+      priority: "Medium",
+      version: "v1.0",
+      deadline: "2026-05-18",
+      progress: 5,
+      notes:
+        "Heal aura radius and rate still being designed. Should encourage target prioritization.",
+      dateAdded: "2026-03-20",
+    },
+  ],
+};
