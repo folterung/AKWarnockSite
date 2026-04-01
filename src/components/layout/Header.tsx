@@ -90,6 +90,12 @@ export default function Header() {
                 >
                   Flippy Boi
                 </a>
+                <div className="nav-dropdown-header">
+                  Steam
+                </div>
+                <Link href="/games/scratchytd" className="nav-dropdown-item">
+                  ScratchyTD
+                </Link>
               </div>
             </div>
 
