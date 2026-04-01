@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { GetStaticProps } from 'next';
+import { roadmapData as defaultRoadmapData } from '@/data/scratchytd-roadmap';
 
 function useRevealOnScroll() {
   const [visible, setVisible] = useState(false);
@@ -92,8 +94,12 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-export default function ScratchyTDRoadmap() {
-  const [staticData, setStaticData] = useState<StaticRoadmapData | null>(null);
+interface ScratchyTDRoadmapProps {
+  roadmapData: StaticRoadmapData;
+}
+
+export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProps) {
+  const staticData = roadmapData;
   const [boardData, setBoardData] = useState<BoardData | null>(null);
   const [boardError, setBoardError] = useState(false);
   const [search, setSearch] = useState('');
@@ -104,12 +110,6 @@ export default function ScratchyTDRoadmap() {
 
   useEffect(() => {
     setMounted(true);
-
-    // Fetch static roadmap data (meta, updates, community, milestones)
-    fetch('/data/scratchytd-roadmap.json')
-      .then(r => r.json())
-      .then(setStaticData)
-      .catch(() => {});
 
     // Fetch live board data from GitHub via Netlify Function
     fetch('/.netlify/functions/github-project')
@@ -165,7 +165,7 @@ export default function ScratchyTDRoadmap() {
   }, [boardData]);
 
   const totalItems = boardData?.items.length || 0;
-  const dataReady = staticData || boardData;
+  const dataReady = true;
 
   const boardReveal = useRevealOnScroll();
   const updatesReveal = useRevealOnScroll();
@@ -207,18 +207,14 @@ export default function ScratchyTDRoadmap() {
           </div>
           <h1 className="srm-title">ScratchyTD</h1>
           <p className="srm-subtitle">Public Roadmap</p>
-          {staticData && (
-            <>
-              <p className="srm-desc">{staticData.meta.description}</p>
-              <p className="srm-updated">Last updated: {formatDate(staticData.meta.lastUpdated)}</p>
-            </>
-          )}
+          <p className="srm-desc">{staticData.meta.description}</p>
+          <p className="srm-updated">Last updated: {formatDate(staticData.meta.lastUpdated)}</p>
         </header>
 
         {dataReady && (
           <>
-            {/* Status pills — from live board columns */}
-            {boardData && (
+            {/* Status pills — from live board columns (only show if static sections exist to scroll past) */}
+            {boardData && (staticData.recentUpdates.length > 0 || staticData.milestones.length > 0 || staticData.communityIdeas.length > 0) && (
               <section className="srm-status-summary srm-anim-fade" style={{ animationDelay: '0.25s' }}>
                 <button
                   className="srm-status-pill srm-status-pill-clickable"
@@ -243,7 +239,7 @@ export default function ScratchyTDRoadmap() {
             )}
 
             {/* Latest Updates — from static data */}
-            {staticData && staticData.recentUpdates.length > 0 && (
+            {staticData.recentUpdates.length > 0 && (
               <section className="srm-updates srm-anim-fade" style={{ animationDelay: '0.4s' }}>
                 <h2 className="srm-section-title">🐾 Latest Updates</h2>
                 <div className="srm-updates-list">
@@ -262,7 +258,7 @@ export default function ScratchyTDRoadmap() {
             )}
 
             {/* Community Ideas — from static data */}
-            {staticData && staticData.communityIdeas.length > 0 && (
+            {staticData.communityIdeas.length > 0 && (
               <section className="srm-community srm-anim-fade" style={{ animationDelay: '0.55s' }}>
                 <h2 className="srm-section-title">🐾 Ideas from the Community</h2>
                 <p className="srm-community-subtitle">Suggestions from our amazing Discord fam! 💬</p>
@@ -282,7 +278,7 @@ export default function ScratchyTDRoadmap() {
             )}
 
             {/* Milestones — from static data */}
-            {staticData && staticData.milestones.length > 0 && (
+            {staticData.milestones.length > 0 && (
               <section ref={updatesReveal.ref} className={`srm-milestones ${updatesReveal.visible ? 'srm-reveal-visible' : 'srm-reveal-hidden'}`}>
                 <h2 className="srm-section-title">🐾 Upcoming Milestones</h2>
                 <div className="srm-milestones-list">
@@ -547,3 +543,9 @@ function BoardCard({ item, expanded, onToggle, columns }: { item: BoardItem; exp
     </div>
   );
 }
+
+export const getStaticProps: GetStaticProps<ScratchyTDRoadmapProps> = async () => {
+  return {
+    props: { roadmapData: defaultRoadmapData },
+  };
+};

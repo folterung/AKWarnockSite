@@ -15,7 +15,7 @@ describe('generator', () => {
     const solved = solve(puzzle);
     expect(solved).not.toBeNull();
     
-    const validation = validateAll(puzzle.constraints, solved!);
+    const validation = validateAll(puzzle.constraints, solved!, puzzle.gridSize);
     expect(validation.isValid).toBe(true);
   });
 
@@ -50,7 +50,7 @@ describe('generator', () => {
       const solution = solve(puzzle);
       expect(solution).not.toBeNull();
       
-      const validation = validateAll(puzzle.constraints, solution!);
+      const validation = validateAll(puzzle.constraints, solution!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -59,7 +59,7 @@ describe('generator', () => {
       const solution = solve(puzzle);
       expect(solution).not.toBeNull();
       
-      const validation = validateAll(puzzle.constraints, solution!);
+      const validation = validateAll(puzzle.constraints, solution!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -68,7 +68,7 @@ describe('generator', () => {
       const solution = solve(puzzle);
       expect(solution).not.toBeNull();
       
-      const validation = validateAll(puzzle.constraints, solution!);
+      const validation = validateAll(puzzle.constraints, solution!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -86,7 +86,7 @@ describe('generator', () => {
   describe('constraint validation', () => {
     it('generates puzzles where solution satisfies all constraints', () => {
       const puzzle = generatePuzzle('test-constraints-1', 'medium');
-      const validation = validateAll(puzzle.constraints, puzzle.solution);
+      const validation = validateAll(puzzle.constraints, puzzle.solution, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -98,7 +98,7 @@ describe('generator', () => {
       );
       
       if (adjacencyConstraints.length > 0) {
-        const validation = validateAll(puzzle.constraints, puzzle.solution);
+        const validation = validateAll(puzzle.constraints, puzzle.solution, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -111,7 +111,7 @@ describe('generator', () => {
       );
       
       expect(countConstraints.length).toBeGreaterThan(0);
-      const validation = validateAll(puzzle.constraints, puzzle.solution);
+      const validation = validateAll(puzzle.constraints, puzzle.solution, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -129,7 +129,7 @@ describe('generator', () => {
           expect(pairConstraints.length).toBeGreaterThanOrEqual(0);
         }
         
-        const validation = validateAll(puzzle.constraints, puzzle.solution);
+        const validation = validateAll(puzzle.constraints, puzzle.solution, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -149,7 +149,7 @@ describe('generator', () => {
       if (sunAdj && moonAdj) {
         const solution = solve(puzzle);
         expect(solution).not.toBeNull();
-        const validation = validateAll(puzzle.constraints, solution!);
+        const validation = validateAll(puzzle.constraints, solution!, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -202,7 +202,7 @@ describe('generator', () => {
       
       expect(solved).not.toBeNull();
       
-      const validation = validateAll(puzzle.constraints, solved!);
+      const validation = validateAll(puzzle.constraints, solved!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
       
       for (const [key, value] of Array.from(puzzle.givens.entries())) {
@@ -216,7 +216,7 @@ describe('generator', () => {
       const solved = solve(puzzle);
       
       expect(solved).not.toBeNull();
-      const validation = validateAll(puzzle.constraints, solved!);
+      const validation = validateAll(puzzle.constraints, solved!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 

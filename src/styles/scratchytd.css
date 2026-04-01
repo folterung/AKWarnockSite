@@ -161,7 +161,6 @@
   margin: 0 auto;
   opacity: 0;
   animation: scratchyFadeUp 0.8s ease forwards;
-  animation-delay: 0.15s;
 }
 
 .scratchy-hero-icons {
@@ -192,6 +191,12 @@
 
 .scratchy-title-accent {
   color: #7EB8D8;
+}
+
+.scratchy-title-logo {
+  height: 12rem;
+  width: auto;
+  display: inline-block;
 }
 
 .scratchy-tagline {
@@ -246,9 +251,6 @@
   opacity: 0;
   animation: scratchyFadeUp 0.6s ease forwards;
 }
-.scratchy-feature-card:nth-child(1) { animation-delay: 0.4s; }
-.scratchy-feature-card:nth-child(2) { animation-delay: 0.55s; }
-.scratchy-feature-card:nth-child(3) { animation-delay: 0.7s; }
 
 .scratchy-feature-card:hover {
   transform: translateY(-6px);
@@ -281,13 +283,12 @@
 /* Status Banner */
 .scratchy-status {
   max-width: 680px;
-  margin: 48px auto 0;
+  margin: 0 auto;
   padding: 0 24px;
   position: relative;
   z-index: 1;
   opacity: 0;
   animation: scratchyFadeUp 0.6s ease forwards;
-  animation-delay: 0.85s;
 }
 
 .scratchy-status-inner {
@@ -345,7 +346,6 @@
   z-index: 1;
   opacity: 0;
   animation: scratchyFadeUp 0.6s ease forwards;
-  animation-delay: 1s;
 }
 
 .scratchy-cta-heading {
@@ -428,7 +428,6 @@
   z-index: 1;
   opacity: 0;
   animation: scratchyFadeUp 0.6s ease forwards;
-  animation-delay: 1.15s;
 }
 
 .scratchy-gallery-placeholder {
@@ -482,6 +481,10 @@
     font-size: 3rem;
   }
 
+  .scratchy-title-logo {
+    height: 9rem;
+  }
+
   .scratchy-tagline {
     font-size: 1rem;
     letter-spacing: 1px;
@@ -510,6 +513,10 @@
   .scratchy-title {
     font-size: 2.4rem;
     letter-spacing: -1px;
+  }
+
+  .scratchy-title-logo {
+    height: 7rem;
   }
 
   .scratchy-wiggle-icon {
@@ -623,6 +630,12 @@
   text-shadow: 0 2px 0 rgba(139, 111, 94, 0.1);
   margin: 0;
   line-height: 1;
+}
+
+.srm-title-logo {
+  height: 10rem;
+  width: auto;
+  display: inline-block;
 }
 
 .srm-subtitle {
@@ -1410,10 +1423,15 @@
   .srm-title {
     font-size: 3.2rem;
   }
+
+  .srm-title-logo {
+    height: 12rem;
+  }
 }
 
 @media (max-width: 600px) {
   .srm-title { font-size: 2rem; }
+  .srm-title-logo { height: 7rem; }
   .srm-community-list { grid-template-columns: 1fr; }
   .srm-status-summary { gap: 8px; }
   .srm-status-pill { padding: 6px 12px; font-size: 0.78rem; }

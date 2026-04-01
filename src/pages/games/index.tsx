@@ -176,8 +176,14 @@ export default function Games() {
             >
               <div className="flex items-center gap-6">
                 <div className="flex-shrink-0">
-                  <div className="w-24 h-24 bg-gradient-to-br from-orange-50 to-amber-100 border-2 border-orange-200 rounded-lg overflow-hidden flex items-center justify-center">
-                    <span className="text-4xl" role="img" aria-label="ScratchyTD">🐱</span>
+                  <div className="w-24 h-24 bg-gradient-to-br from-orange-50 to-amber-100 border-2 border-orange-200 rounded-lg overflow-hidden">
+                    <Image
+                      src="/images/games/scratchytd.png"
+                      alt="ScratchyTD game"
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
                 <div className="flex-1">

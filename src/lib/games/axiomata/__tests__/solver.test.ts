@@ -30,12 +30,12 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 2,
-            moonCount: 2,
+            counts: new Map<TileState, number>([['SUN', 2], ['MOON', 2]]),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-1',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
@@ -44,8 +44,8 @@ describe('solver', () => {
       expect(result![0][1]).toBe('SUN');
       expect(result![0][2]).toBe('MOON');
       expect(result![0][3]).toBe('MOON');
-      
-      const validation = validateAll(puzzle.constraints, result!);
+
+      const validation = validateAll(puzzle.constraints, result!, puzzle.gridSize);
       expect(validation.isValid).toBe(true);
     });
 
@@ -64,12 +64,12 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 2,
-            moonCount: 2,
+            counts: new Map<TileState, number>([['SUN', 2], ['MOON', 2]]),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-2',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
@@ -96,6 +96,7 @@ describe('solver', () => {
         ],
         difficulty: 'easy',
         dailyKey: 'test-3',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
@@ -123,19 +124,19 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 3,
-            moonCount: 0,
+            counts: new Map<TileState, number>([['SUN', 3]]),
           },
         ],
         difficulty: 'medium',
         dailyKey: 'test-4',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
       expect(result).not.toBeNull();
       if (result) {
         expect(result[0][0]).toBe('SUN');
-        const validation = validateAll(puzzle.constraints, result);
+        const validation = validateAll(puzzle.constraints, result, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -168,6 +169,7 @@ describe('solver', () => {
         ],
         difficulty: 'medium',
         dailyKey: 'test-5',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
@@ -175,7 +177,7 @@ describe('solver', () => {
       if (result) {
         expect(result[0][0]).toBe('SUN');
         expect(result[0][1]).toBe('SUN');
-        const validation = validateAll(puzzle.constraints, result);
+        const validation = validateAll(puzzle.constraints, result, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -201,6 +203,7 @@ describe('solver', () => {
         ],
         difficulty: 'medium',
         dailyKey: 'test-6',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
@@ -221,19 +224,19 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 1,
-            moonCount: 0,
+            counts: new Map<TileState, number>([['SUN', 1]]),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-7',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
       expect(result).not.toBeNull();
       if (result) {
         expect(result[0][0]).toBe('SUN');
-        const validation = validateAll(puzzle.constraints, result);
+        const validation = validateAll(puzzle.constraints, result, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -252,18 +255,18 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 0,
-            moonCount: 0,
+            counts: new Map<TileState, number>(),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-8',
+        gridSize: 5,
       };
 
       const result = solve(puzzle);
       expect(result).not.toBeNull();
       if (result) {
-        const validation = validateAll(puzzle.constraints, result);
+        const validation = validateAll(puzzle.constraints, result, puzzle.gridSize);
         expect(validation.isValid).toBe(true);
       }
     });
@@ -293,12 +296,12 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 5,
-            moonCount: 0,
+            counts: new Map<TileState, number>([['SUN', 5]]),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-9',
+        gridSize: 5,
       };
 
       const isUnique = hasUniqueSolution(puzzle);
@@ -321,6 +324,7 @@ describe('solver', () => {
         ],
         difficulty: 'easy',
         dailyKey: 'test-10',
+        gridSize: 5,
       };
 
       const isUnique = hasUniqueSolution(puzzle);
@@ -338,12 +342,12 @@ describe('solver', () => {
             type: 'count',
             direction: 'row',
             index: 0,
-            sunCount: 1,
-            moonCount: 0,
+            counts: new Map<TileState, number>([['SUN', 1]]),
           },
         ],
         difficulty: 'easy',
         dailyKey: 'test-11',
+        gridSize: 5,
       };
 
       const isUnique = hasUniqueSolution(puzzle);
@@ -351,4 +355,3 @@ describe('solver', () => {
     });
   });
 });
-
