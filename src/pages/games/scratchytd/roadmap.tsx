@@ -98,6 +98,27 @@ interface ScratchyTDRoadmapProps {
   roadmapData: StaticRoadmapData;
 }
 
+interface SpriteOption {
+  src: string;
+  offsetY?: number;
+}
+
+const CAT_SPRITES: SpriteOption[] = [
+  { src: '/images/games/scratchytd/sprites/cats/basic.png' },
+  { src: '/images/games/scratchytd/sprites/cats/heavy.png' },
+  { src: '/images/games/scratchytd/sprites/cats/rapid.png' },
+];
+
+const DOG_SPRITES: SpriteOption[] = [
+  { src: '/images/games/scratchytd/sprites/dogs/basic.png' },
+  { src: '/images/games/scratchytd/sprites/dogs/heavy.png', offsetY: -8 },
+  { src: '/images/games/scratchytd/sprites/dogs/rapid.png' },
+];
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProps) {
   const staticData = roadmapData;
   const [boardData, setBoardData] = useState<BoardData | null>(null);
@@ -107,6 +128,8 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
   const [labelFilter, setLabelFilter] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [catSprite] = useState(() => pickRandom(CAT_SPRITES));
+  const [dogSprite] = useState(() => pickRandom(DOG_SPRITES));
 
   useEffect(() => {
     setMounted(true);
@@ -202,13 +225,16 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
         {/* Header */}
         <header className="srm-header srm-anim-fade" style={{ animationDelay: '0.1s' }}>
           <div className="srm-header-icons">
-            <span className="srm-wiggle">🐱</span>
-            <span className="srm-wiggle srm-wiggle-delay">🐶</span>
+            <div className="srm-sprite-wiggle">
+              <div className="srm-sprite srm-sprite-cat" style={{ backgroundImage: `url(${catSprite.src})`, ...(catSprite.offsetY ? { transform: `scale(0.65) translateY(${catSprite.offsetY}px)` } : {}) }} aria-label="Cat tower" />
+            </div>
+            <div className="srm-sprite-wiggle srm-sprite-wiggle-delay">
+              <div className="srm-sprite" style={{ backgroundImage: `url(${dogSprite.src})`, ...(dogSprite.offsetY ? { transform: `translateY(${dogSprite.offsetY}px)` } : {}) }} aria-label="Dog tower" />
+            </div>
           </div>
           <h1 className="srm-title">ScratchyTD</h1>
           <p className="srm-subtitle">Public Roadmap</p>
           <p className="srm-desc">{staticData.meta.description}</p>
-          <p className="srm-updated">Last updated: {formatDate(staticData.meta.lastUpdated)}</p>
         </header>
 
         {dataReady && (
@@ -388,6 +414,17 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
                   </div>
                 )}
               </section>
+            )}
+
+            {!boardData && !boardError && (
+              <div className="srm-loader" aria-label="Loading board data">
+                <div className="srm-loader-paws">
+                  <span className="srm-loader-paw" style={{ animationDelay: '0s' }}>🐾</span>
+                  <span className="srm-loader-paw" style={{ animationDelay: '0.2s' }}>🐾</span>
+                  <span className="srm-loader-paw" style={{ animationDelay: '0.4s' }}>🐾</span>
+                </div>
+                <p className="srm-loader-text">Fetching the board<span className="srm-loader-dots"></span></p>
+              </div>
             )}
 
             {boardError && (

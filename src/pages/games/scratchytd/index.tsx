@@ -4,6 +4,27 @@ import { useEffect, useState } from 'react';
 import { GetStaticProps } from 'next';
 import { landingData as defaultLandingData } from '@/data/scratchytd-landing';
 
+interface SpriteOption {
+  src: string;
+  offsetY?: number;
+}
+
+const CAT_SPRITES: SpriteOption[] = [
+  { src: '/images/games/scratchytd/sprites/cats/basic.png' },
+  { src: '/images/games/scratchytd/sprites/cats/heavy.png' },
+  { src: '/images/games/scratchytd/sprites/cats/rapid.png' },
+];
+
+const DOG_SPRITES: SpriteOption[] = [
+  { src: '/images/games/scratchytd/sprites/dogs/basic.png' },
+  { src: '/images/games/scratchytd/sprites/dogs/heavy.png', offsetY: -8 },
+  { src: '/images/games/scratchytd/sprites/dogs/rapid.png' },
+];
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 interface Feature {
   key: string;
   icon: string;
@@ -42,6 +63,8 @@ interface ScratchyTDProps {
 
 export default function ScratchyTD({ landingData }: ScratchyTDProps) {
   const [mounted, setMounted] = useState(false);
+  const [catSprite] = useState(() => pickRandom(CAT_SPRITES));
+  const [dogSprite] = useState(() => pickRandom(DOG_SPRITES));
   const { meta, hero, features, status, cta, gallery, footer, decorations, nav } = landingData;
 
   useEffect(() => {
@@ -95,11 +118,12 @@ export default function ScratchyTD({ landingData }: ScratchyTDProps) {
         <header className="scratchy-hero" style={{ animationDelay: `${heroDelay}s` }}>
           <div className="scratchy-hero-inner">
             <div className="scratchy-hero-icons">
-              {hero.icons.map((icon, i) => (
-                <span key={i} className={`scratchy-wiggle-icon${i > 0 ? ' scratchy-wiggle-delay' : ''}`}>
-                  {icon}
-                </span>
-              ))}
+              <div className="srm-sprite-wiggle">
+                <div className="srm-sprite srm-sprite-lg srm-sprite-cat" style={{ backgroundImage: `url(${catSprite.src})`, ...(catSprite.offsetY ? { transform: `scale(0.65) translateY(${catSprite.offsetY}px)` } : {}) }} aria-label="Cat tower" />
+              </div>
+              <div className="srm-sprite-wiggle srm-sprite-wiggle-delay">
+                <div className="srm-sprite srm-sprite-lg" style={{ backgroundImage: `url(${dogSprite.src})`, ...(dogSprite.offsetY ? { transform: `translateY(${dogSprite.offsetY}px)` } : {}) }} aria-label="Dog tower" />
+              </div>
             </div>
             <h1 className="scratchy-title">
               {hero.title}<span className="scratchy-title-accent">{hero.titleAccent}</span>
