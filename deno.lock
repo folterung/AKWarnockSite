@@ -17,6 +17,8 @@
         "npm:@netlify/functions@^3.0.4",
         "npm:@netlify/plugin-nextjs@^5.10.1",
         "npm:@next/eslint-plugin-next@^15.2.4",
+        "npm:@testing-library/jest-dom@^6.9.1",
+        "npm:@testing-library/react@^16.3.2",
         "npm:@types/jest@^29.5.14",
         "npm:@types/node@^20.11.16",
         "npm:@types/nodemailer@^6.4.17",

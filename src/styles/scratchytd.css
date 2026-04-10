@@ -170,15 +170,6 @@
   margin-bottom: 12px;
 }
 
-.scratchy-wiggle-icon {
-  font-size: 3rem;
-  display: inline-block;
-  animation: scratchyWiggle 3s ease-in-out infinite;
-}
-.scratchy-wiggle-delay {
-  animation-delay: 1.5s;
-}
-
 .scratchy-title {
   font-size: 4.5rem;
   font-weight: 900;
@@ -519,9 +510,17 @@
     height: 7rem;
   }
 
-  .scratchy-wiggle-icon {
-    font-size: 2.2rem;
+  .srm-sprite-lg {
+    width: 72px;
+    height: 72px;
+    background-size: 1152px 72px;
+    animation-name: srmSpritePlayMd;
   }
+}
+
+@keyframes srmSpritePlayMd {
+  from { background-position: 0 0; }
+  to { background-position: -1152px 0; }
 }
 
 
@@ -611,16 +610,48 @@
 .srm-header-icons {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
-.srm-wiggle {
-  font-size: 2rem;
+.srm-sprite-wiggle {
   display: inline-block;
   animation: scratchyWiggle 3s ease-in-out infinite;
 }
-.srm-wiggle-delay { animation-delay: 1.5s; }
+
+.srm-sprite-wiggle-delay {
+  animation-delay: 1.5s;
+}
+
+.srm-sprite {
+  width: 64px;
+  height: 64px;
+  background-size: 1024px 64px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: srmSpritePlay 0.8s steps(16) infinite;
+}
+
+.srm-sprite-cat {
+  transform: scale(0.65);
+}
+
+@keyframes srmSpritePlay {
+  from { background-position: 0 0; }
+  to { background-position: -1024px 0; }
+}
+
+.srm-sprite-lg {
+  width: 96px;
+  height: 96px;
+  background-size: 1536px 96px;
+  animation-name: srmSpritePlayLg;
+}
+
+@keyframes srmSpritePlayLg {
+  from { background-position: 0 0; }
+  to { background-position: -1536px 0; }
+}
 
 .srm-title {
   font-size: 2.8rem;
@@ -654,10 +685,54 @@
   max-width: 560px;
 }
 
-.srm-updated {
+/* Loading spinner */
+.srm-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  gap: 16px;
+}
+
+.srm-loader-paws {
+  display: flex;
+  gap: 18px;
+}
+
+.srm-loader-paw {
+  font-size: 1.6rem;
+  animation: srmPawBounce 1.2s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+@keyframes srmPawBounce {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.15);
+  }
+}
+
+.srm-loader-text {
   color: #A89888;
-  margin-top: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.srm-loader-dots::after {
+  content: '';
+  animation: srmDots 1.5s steps(4, end) infinite;
+}
+
+@keyframes srmDots {
+  0%  { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
 }
 
 /* Status pills */
