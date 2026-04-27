@@ -53,6 +53,69 @@
     will-change: opacity, transform, filter;
   }
 
+  .home-boot-curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(218, 180, 116, 0.24), transparent 30%),
+      radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.08), transparent 24%),
+      linear-gradient(180deg, #191512 0%, #080706 64%, #030302 100%);
+    opacity: 1;
+    transition: opacity 900ms ease, visibility 900ms ease;
+    visibility: visible;
+  }
+
+  .home-boot-curtain--hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .home-boot-curtain__glow {
+    position: absolute;
+    inset: -20%;
+    background:
+      conic-gradient(from 145deg at 50% 50%, transparent, rgba(255, 255, 255, 0.08), rgba(218, 180, 116, 0.18), transparent 46%);
+    filter: blur(32px);
+    opacity: 0.8;
+    animation: home-boot-drift 4200ms ease-in-out infinite alternate;
+  }
+
+  .home-boot-curtain__content {
+    position: relative;
+    width: min(320px, calc(100vw - 64px));
+    text-align: center;
+  }
+
+  .home-boot-curtain__mark {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  }
+
+  .home-boot-curtain__line {
+    position: relative;
+    height: 1px;
+    margin-top: 22px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .home-boot-curtain__line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 42%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.92), transparent);
+    animation: home-boot-line 1300ms ease-in-out infinite;
+  }
+
   .home-hero__panel {
     position: relative;
     isolation: isolate;
@@ -92,5 +155,39 @@
 
   to {
     background-position: -10% 0, center, center;
+  }
+}
+
+@keyframes home-boot-drift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) rotate(-2deg) scale(1);
+  }
+
+  to {
+    transform: translate3d(1.5%, 1%, 0) rotate(2deg) scale(1.04);
+  }
+}
+
+@keyframes home-boot-line {
+  from {
+    transform: translateX(-105%);
+  }
+
+  to {
+    transform: translateX(245%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-boot-curtain,
+  .home-hero__image,
+  .home-hero__reveal {
+    transition-duration: 1ms;
+  }
+
+  .home-boot-curtain__glow,
+  .home-boot-curtain__line::after,
+  .home-hero__reveal {
+    animation: none;
   }
 }
