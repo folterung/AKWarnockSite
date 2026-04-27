@@ -114,10 +114,10 @@ export default function Header() {
                 Resume
               </button>
               <div className="nav-dropdown">
-                <a href="/resume-game/" className="nav-dropdown-item">
+                <a href="/resume-game/index.html" className="nav-dropdown-item">
                   Interactive
                 </a>
-                <a href="/resume/" className="nav-dropdown-item">
+                <a href="/resume/index.html" className="nav-dropdown-item">
                   Traditional
                 </a>
               </div>
@@ -175,10 +175,10 @@ export default function Header() {
             </Link>
             <div className="block px-3 py-2">
               <span className="nav-link font-semibold">Resume</span>
-              <a href="/resume-game/" className="block px-3 py-1 nav-link text-sm">
+              <a href="/resume-game/index.html" className="block px-3 py-1 nav-link text-sm">
                 Interactive
               </a>
-              <a href="/resume/" className="block px-3 py-1 nav-link text-sm">
+              <a href="/resume/index.html" className="block px-3 py-1 nav-link text-sm">
                 Traditional
               </a>
             </div>
@@ -190,4 +190,4 @@ export default function Header() {
       )}
     </header>
   )
-} 
+}

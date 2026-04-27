@@ -40,13 +40,14 @@ interface HomeProps {
   };
 }
 
+type HomeHeroWindow = Window & {
+  __homeHeroReady?: boolean;
+};
+
 export default function Home({ homeInfo }: HomeProps) {
   const [email, setEmail] = useState(''); // Track email input
   const [loading, setLoading] = useState(false);
   const [heroImageReady, setHeroImageReady] = useState(false);
-  const [fontsReady, setFontsReady] = useState(false);
-  const [introReady, setIntroReady] = useState(false);
-  const [introVisible, setIntroVisible] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -66,41 +67,11 @@ export default function Home({ homeInfo }: HomeProps) {
     }
   }, [router, router.query]);
 
-  useEffect(() => {
-    const minIntroTimer = window.setTimeout(() => {
-      setIntroReady(true);
-    }, 900);
-    const maxIntroTimer = window.setTimeout(() => {
-      setFontsReady(true);
-      setHeroImageReady(true);
-      setIntroReady(true);
-    }, 3600);
-
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        setFontsReady(true);
-      });
-    } else {
-      setFontsReady(true);
-    }
-
-    return () => {
-      window.clearTimeout(minIntroTimer);
-      window.clearTimeout(maxIntroTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!heroImageReady || !fontsReady || !introReady) {
-      return;
-    }
-
-    const exitTimer = window.setTimeout(() => {
-      setIntroVisible(false);
-    }, 120);
-
-    return () => window.clearTimeout(exitTimer);
-  }, [fontsReady, heroImageReady, introReady]);
+  const markHeroImageReady = () => {
+    setHeroImageReady(true);
+    (window as HomeHeroWindow).__homeHeroReady = true;
+    window.dispatchEvent(new Event('home-hero-ready'));
+  };
 
   const handleSubscription = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -132,14 +103,6 @@ export default function Home({ homeInfo }: HomeProps) {
 
   return (
     <div className="min-h-screen">
-      <div className={`home-boot-curtain ${introVisible ? '' : 'home-boot-curtain--hidden'}`} aria-hidden="true">
-        <div className="home-boot-curtain__glow" />
-        <div className="home-boot-curtain__content">
-          <div className="home-boot-curtain__mark">AK WARNOCK</div>
-          <div className="home-boot-curtain__line" />
-        </div>
-      </div>
-
       <Header />
 
       {/* Hero Section */}
@@ -156,8 +119,8 @@ export default function Home({ homeInfo }: HomeProps) {
             className={`home-hero__image object-cover transition-[opacity,transform,filter] duration-[1400ms] ease-out ${
               heroImageReady ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-105 blur-sm'
             }`}
-            onLoad={() => setHeroImageReady(true)}
-            onError={() => setHeroImageReady(true)}
+            onLoad={markHeroImageReady}
+            onError={markHeroImageReady}
           />
           <div className={`home-hero__reveal absolute inset-0 transition-opacity duration-1000 ${heroImageReady ? 'opacity-0' : 'opacity-100'}`} />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,255,255,0.16),rgba(255,255,255,0)_34%),linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.42)_70%,rgba(0,0,0,0.58))]" />
