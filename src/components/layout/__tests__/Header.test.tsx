@@ -19,18 +19,18 @@ describe('Header Resume Dropdown', () => {
     expect(desktopNav.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('renders "Interactive" option linking to /resume-game/', () => {
+  it('renders "Interactive" option linking to the interactive resume entry file', () => {
     render(<Header />)
     const interactiveLinks = screen.getAllByText('Interactive')
     const link = interactiveLinks[0].closest('a')
-    expect(link).toHaveAttribute('href', '/resume-game/')
+    expect(link).toHaveAttribute('href', '/resume-game/index.html')
   })
 
-  it('renders "Traditional" option linking to /resume/', () => {
+  it('renders "Traditional" option linking to the traditional resume entry file', () => {
     render(<Header />)
     const traditionalLinks = screen.getAllByText('Traditional')
     const link = traditionalLinks[0].closest('a')
-    expect(link).toHaveAttribute('href', '/resume/')
+    expect(link).toHaveAttribute('href', '/resume/index.html')
   })
 
   it('does not render "Interactive Resume" as a standalone link', () => {

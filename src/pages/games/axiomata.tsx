@@ -530,7 +530,7 @@ export default function AxiomataPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900">
                 Axiomata
               </h1>
               <div className="flex items-center justify-center">
@@ -568,7 +568,7 @@ export default function AxiomataPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900">
                 Axiomata
               </h1>
               <div className="flex items-center justify-center">
@@ -591,7 +591,7 @@ export default function AxiomataPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20 sm:pt-24 md:pt-28 lg:pt-[4.5rem] py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
-              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <h1 className="text-4xl md:text-5xl font-light italic text-center mb-6 sm:mb-7 md:mb-8 text-gray-900">
                 Axiomata
               </h1>
               <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 sm:p-5 md:p-6 text-center">
@@ -621,7 +621,7 @@ export default function AxiomataPage() {
                     <div className="relative">
                       <h1 
                         className="text-5xl md:text-6xl font-semibold italic text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" 
-                        style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                        style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                       >
                         Axiomata
                       </h1>
@@ -639,7 +639,6 @@ export default function AxiomataPage() {
                   <button
                     onClick={() => setIsHowToPlayOpen(true)}
                     className="w-full px-4 py-2 bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl hover:from-primary-100 hover:to-blue-100 hover:border-primary-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900">How to Play</span>
                   </button>
@@ -649,14 +648,12 @@ export default function AxiomataPage() {
                       track('clear_tiles', { game: 'axiomata' });
                     }}
                     className="w-full px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900">Clear Tiles</span>
                   </button>
                   <button
                     onClick={handleChangeDifficulty}
                     className="w-full px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl hover:from-amber-100 hover:to-orange-100 hover:border-amber-300 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md italic"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-amber-600 to-gray-900">Change Difficulty</span>
                   </button>
@@ -676,7 +673,7 @@ export default function AxiomataPage() {
             {isHowToPlayOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsHowToPlayOpen(false)}>
                 <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 border-2 border-gray-100 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-semibold italic text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                  <h2 className="text-3xl font-semibold italic text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                     How to Play
                   </h2>
                   
