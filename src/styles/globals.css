@@ -1,16 +1,8 @@
-/* Import fonts first */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap');
-
-/* Then import Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
-    font-family: 'Cormorant Garamond', serif;
-  }
-  
   body {
     @apply bg-white text-gray-900;
   }
@@ -56,4 +48,49 @@
   .input {
     @apply w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500;
   }
-} 
+
+  .home-hero__image {
+    will-change: opacity, transform, filter;
+  }
+
+  .home-hero__panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 38%, rgba(0, 0, 0, 0) 70%),
+      rgba(7, 7, 6, 0.78);
+    -webkit-backdrop-filter: blur(18px) saturate(115%);
+    backdrop-filter: blur(18px) saturate(115%);
+  }
+
+  .home-hero__panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 48%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%);
+    pointer-events: none;
+  }
+
+  .home-hero__reveal {
+    background:
+      linear-gradient(115deg, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0.16) 44%, rgba(255, 255, 255, 0) 68%),
+      radial-gradient(circle at 50% 42%, rgba(218, 180, 116, 0.42), rgba(80, 54, 42, 0.18) 36%, rgba(20, 18, 15, 0.94) 78%),
+      #14120f;
+    background-size: 240% 100%, 100% 100%, 100% 100%;
+    animation: hero-reveal-sheen 1800ms ease-in-out infinite alternate;
+  }
+}
+
+@keyframes hero-reveal-sheen {
+  from {
+    background-position: 110% 0, center, center;
+  }
+
+  to {
+    background-position: -10% 0, center, center;
+  }
+}

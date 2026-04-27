@@ -120,7 +120,7 @@ export default function ConstraintsPanel() {
       <div className="relative mb-6">
         <h3 
           className="text-2xl md:text-3xl lg:text-xl font-semibold italic text-center text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" 
-          style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+          style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
         >
           Must Satisfy All Rules
         </h3>

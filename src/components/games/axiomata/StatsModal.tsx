@@ -98,7 +98,7 @@ export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: 
             <div ref={modalContentRef} style={{ padding: '10px' }}>
               {completedDifficulties.length === 4 ? (
                 <>
-                  <h2 className="text-3xl font-light italic text-center mb-2 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  <h2 className="text-3xl font-light italic text-center mb-2 text-gray-900">
                     All Daily Puzzles Complete!
                   </h2>
                   <p className="text-base text-gray-600 text-center mb-6 italic">
@@ -106,7 +106,7 @@ export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: 
                   </p>
                 </>
               ) : (
-                <h2 className="text-3xl font-light italic text-center mb-6 text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                <h2 className="text-3xl font-light italic text-center mb-6 text-gray-900">
                   Puzzle Complete! 🎉
                 </h2>
               )}
@@ -117,7 +117,7 @@ export default function StatsModal({ isOpen, onClose, onTryAnotherDifficulty }: 
                   <div className="text-3xl font-bold text-primary-900 font-mono text-center">{formatTime(timeToSolveMs)}</div>
                 </div>
                 <div className="bg-gradient-to-br from-teal-50 to-green-50 border-2 border-teal-200 rounded-xl p-4 shadow-sm">
-                  <div className="text-base italic text-teal-900 mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  <div className="text-base italic text-teal-900 mb-2">
                     &ldquo;{quote.text}&rdquo;
                   </div>
                   <div className="text-sm text-teal-700 font-medium text-right">

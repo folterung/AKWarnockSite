@@ -76,7 +76,7 @@ export default function DifficultySelector({ onSelect, onViewCompleted }: Diffic
           <div className="overflow-y-auto flex-1 p-4 sm:p-6 md:p-8">
         <h2 
           className="text-4xl md:text-5xl font-semibold italic text-center mb-6 sm:mb-7 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 drop-shadow-sm" 
-          style={{ fontFamily: "'Cormorant Garamond', serif", textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+          style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
         >
           Choose Difficulty
         </h2>

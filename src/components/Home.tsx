@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import elementalBackdrop from '../../public/images/elemental-backdrop.jpg';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import { ToastContainer, toast } from 'react-toastify';
@@ -42,6 +43,7 @@ interface HomeProps {
 export default function Home({ homeInfo }: HomeProps) {
   const [email, setEmail] = useState(''); // Track email input
   const [loading, setLoading] = useState(false);
+  const [heroImageReady, setHeroImageReady] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -94,11 +96,29 @@ export default function Home({ homeInfo }: HomeProps) {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white bg-cover bg-center" style={{ backgroundImage: 'url(/images/elemental-backdrop.jpg)', maxWidth: '1920px', margin: '0 auto' }}>
+      <section className="home-hero relative h-screen min-h-[680px] flex items-center justify-center overflow-hidden bg-[#14120f]" style={{ maxWidth: '1920px', margin: '0 auto' }}>
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src={elementalBackdrop}
+            alt=""
+            fill
+            priority
+            placeholder="blur"
+            sizes="100vw"
+            quality={90}
+            className={`home-hero__image object-cover transition-[opacity,transform,filter] duration-[1400ms] ease-out ${
+              heroImageReady ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-105 blur-sm'
+            }`}
+            onLoad={() => setHeroImageReady(true)}
+          />
+          <div className={`home-hero__reveal absolute inset-0 transition-opacity duration-1000 ${heroImageReady ? 'opacity-0' : 'opacity-100'}`} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,255,255,0.16),rgba(255,255,255,0)_34%),linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.42)_70%,rgba(0,0,0,0.58))]" />
+        </div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="space-y-8">
-            <div className="bg-black/70 p-8 rounded-lg max-w-3xl mx-auto">
-              <div className="space-y-8">
+            <div className="home-hero__panel p-8 md:p-10 rounded-lg max-w-3xl mx-auto shadow-2xl ring-1 ring-white/20">
+              <div className={`relative z-10 space-y-8 transition-opacity duration-700 ease-out ${heroImageReady ? 'opacity-100' : 'opacity-90'}`}>
                 <h1 className="hero-text text-white">
                   {homeInfo.hero.title}
                 </h1>
