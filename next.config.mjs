@@ -26,18 +26,25 @@ const nextConfig = {
   },
   trailingSlash: true,
   async rewrites() {
-    // In development, proxy /resume-game/* to the Vite dev server
     if (process.env.NODE_ENV === 'development') {
       return [
+        // Proxy /resume-game/* to the Vite dev server
         {
           source: '/resume-game/:path*',
           destination: 'http://localhost:5174/resume-game/:path*',
+        },
+        // Proxy /.netlify/functions/* to the Netlify dev server so the
+        // ScratchyTD roadmap board works whether the user opens the app
+        // on :3000 (next dev) or :8888 (netlify dev) under `npm run dev:netlify`.
+        {
+          source: '/.netlify/functions/:path*',
+          destination: 'http://localhost:8888/.netlify/functions/:path*',
         },
       ];
     }
     return [];
   },
-  transpilePackages: ['zustand', 'html-to-image'],
+  transpilePackages: ['zustand', 'html-to-image', 'marked'],
   webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback = {

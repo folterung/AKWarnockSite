@@ -2,7 +2,26 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { GetStaticProps } from 'next';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { roadmapData as defaultRoadmapData } from '@/data/scratchytd-roadmap';
+
+// Force external-link safety on every anchor produced by marked + sanitized
+// in the modal body. Registered once at module load.
+if (typeof window !== 'undefined' && !(DOMPurify as any).__srmAnchorHook) {
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if ((node as Element).tagName === 'A') {
+      (node as Element).setAttribute('target', '_blank');
+      (node as Element).setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+  (DOMPurify as any).__srmAnchorHook = true;
+}
+
+function renderMarkdownBody(md: string): string {
+  const html = marked.parse(md, { breaks: true, gfm: true, async: false }) as string;
+  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+}
 
 function useRevealOnScroll() {
   const [visible, setVisible] = useState(false);
@@ -127,7 +146,8 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [labelFilter, setLabelFilter] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [selectedItem, setSelectedItem] = useState<BoardItem | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   const [catSprite] = useState(() => pickRandom(CAT_SPRITES));
   const [dogSprite] = useState(() => pickRandom(DOG_SPRITES));
 
@@ -144,13 +164,16 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
       .catch(() => setBoardError(true));
   }, []);
 
-  const toggleCard = useCallback((id: string) => {
-    setExpandedCards(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const openItem = useCallback((item: BoardItem, el: HTMLElement | null) => {
+    triggerRef.current = el;
+    setSelectedItem(item);
+  }, []);
+
+  const closeItem = useCallback(() => {
+    setSelectedItem(null);
+    const trigger = triggerRef.current;
+    triggerRef.current = null;
+    if (trigger) trigger.focus();
   }, []);
 
   // Derive labels from board items for filtering
@@ -396,7 +419,7 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
                         </div>
                         <div className="srm-column-cards">
                           {colItems.length ? colItems.map(item => (
-                            <BoardCard key={cardKey(item)} item={item} expanded={expandedCards.has(cardKey(item))} onToggle={toggleCard} columns={boardData.columns} />
+                            <BoardCard key={cardKey(item)} item={item} onSelect={openItem} columns={boardData.columns} />
                           )) : (
                             <div className="srm-column-empty">Nothing here yet — stay tuned!</div>
                           )}
@@ -408,13 +431,15 @@ export default function ScratchyTDRoadmap({ roadmapData }: ScratchyTDRoadmapProp
                   <div className="srm-column srm-column-full">
                     <div className="srm-column-cards">
                       {filteredItems.map(item => (
-                        <BoardCard key={cardKey(item)} item={item} expanded={expandedCards.has(cardKey(item))} onToggle={toggleCard} columns={boardData.columns} />
+                        <BoardCard key={cardKey(item)} item={item} onSelect={openItem} columns={boardData.columns} />
                       ))}
                     </div>
                   </div>
                 )}
               </section>
             )}
+
+            <BoardCardModal item={selectedItem} columns={boardData?.columns ?? []} onClose={closeItem} />
 
             {!boardData && !boardError && (
               <div className="srm-loader" aria-label="Loading board data">
@@ -496,33 +521,35 @@ function darkenHex(hex: string, amount: number): string {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
-// --- Board Card Component ---
+// --- Board Card Component (compact) ---
 
-const TRUNCATE_THRESHOLD = 120;
-
-function BoardCard({ item, expanded, onToggle, columns }: { item: BoardItem; expanded: boolean; onToggle: (id: string) => void; columns: string[] }) {
-  const key = cardKey(item);
+function BoardCard({ item, onSelect, columns }: { item: BoardItem; onSelect: (item: BoardItem, el: HTMLElement | null) => void; columns: string[] }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const statusColor = item.status ? getColumnColor(item.status, columns) : '#8B6F5E';
-  const isTruncated = item.body.length > TRUNCATE_THRESHOLD;
-  const isExpandable = isTruncated;
 
-  // Extract notable fields (skip Status since it's shown by column)
-  const extraFields = Object.entries(item.fields).filter(
-    ([k]) => k.toLowerCase() !== 'status' && k.toLowerCase() !== 'title'
-  );
-
-  // Truncate body for description
-  const desc = isTruncated ? item.body.slice(0, TRUNCATE_THRESHOLD) + '...' : item.body;
+  const open = () => onSelect(item, cardRef.current);
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
+  };
 
   return (
     <div
-      className={`srm-card ${expanded ? 'srm-card-expanded' : ''} ${!isExpandable ? 'srm-card-static' : ''}`}
-      onClick={isExpandable ? () => onToggle(key) : undefined}
+      ref={cardRef}
+      className="srm-card"
+      style={{ ['--card-status' as any]: statusColor }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open details for ${item.title}`}
+      onClick={open}
+      onKeyDown={handleKey}
     >
       <div className="srm-card-top">
         <span className="srm-card-title">{item.title}</span>
+        {item.number != null && <span className="srm-card-number">#{item.number}</span>}
       </div>
-      {desc && <div className="srm-card-desc">{desc}</div>}
       {item.labels.length > 0 && (
         <div className="srm-card-tags">
           {item.labels.map(l => {
@@ -536,47 +563,154 @@ function BoardCard({ item, expanded, onToggle, columns }: { item: BoardItem; exp
         </div>
       )}
       {item.assignees.length > 0 && (
-        <div className="srm-card-assignees">
+        <div className="srm-card-assignees srm-card-assignees-stack">
           {item.assignees.map(a => (
-            <a
+            <img
               key={a.login}
-              href={a.profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="srm-card-assignee"
+              src={a.avatarUrl}
+              alt={a.login}
               title={a.login}
-              onClick={e => e.stopPropagation()}
-            >
-              <img src={a.avatarUrl} alt={a.login} className="srm-card-avatar" width={22} height={22} />
-              <span className="srm-card-assignee-name">{a.login}</span>
-            </a>
+              className="srm-card-avatar"
+              width={24}
+              height={24}
+            />
           ))}
         </div>
       )}
-      {item.status && (
-        <div className="srm-card-status-indicator" style={{ background: statusColor }} />
-      )}
-      {isExpandable && <span className="srm-card-hint">tap to expand</span>}
-      {isExpandable && (
-        <div className="srm-card-details">
-          <div className="srm-card-notes">
-            <div className="srm-card-notes-label">Description</div>
-            {item.body}
+    </div>
+  );
+}
+
+// --- Board Card Modal ---
+
+function BoardCardModal({ item, columns, onClose }: { item: BoardItem | null; columns: string[]; onClose: () => void }) {
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeBtnRef.current?.focus();
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [item, onClose]);
+
+  if (!item) return null;
+
+  const statusColor = item.status ? getColumnColor(item.status, columns) : '#8B6F5E';
+  const extraFields = Object.entries(item.fields).filter(
+    ([k]) => k.toLowerCase() !== 'status' && k.toLowerCase() !== 'title'
+  );
+
+  const onBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div className="srm-modal-backdrop" onClick={onBackdropClick}>
+      <div
+        className="srm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="srm-modal-title"
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          ref={closeBtnRef}
+          type="button"
+          className="srm-modal-close"
+          aria-label="Close"
+          onClick={onClose}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 6l12 12M6 18L18 6" />
+          </svg>
+        </button>
+
+        <header className="srm-modal-header">
+          {item.status && (
+            <span className="srm-modal-status-pill" style={{ background: statusColor }}>
+              {item.status}
+            </span>
+          )}
+          <h2 id="srm-modal-title" className="srm-modal-title">{item.title}</h2>
+          {item.number != null && <span className="srm-modal-number">#{item.number}</span>}
+        </header>
+
+        {item.labels.length > 0 && (
+          <div className="srm-modal-tags">
+            {item.labels.map(l => {
+              const style = getLabelStyle(l.color);
+              return (
+                <span key={l.name} className="srm-card-tag" style={style}>
+                  {l.name}
+                </span>
+              );
+            })}
           </div>
-          {extraFields.length > 0 && (
-            <div className="srm-card-fields">
-              {extraFields.map(([k, v]) => (
-                v != null && (
-                  <div key={k} className="srm-card-field">
-                    <span className="srm-card-field-label">{k}:</span>{' '}
-                    <span className="srm-card-field-value">{String(v)}</span>
-                  </div>
-                )
+        )}
+
+        {item.body ? (
+          <div
+            className="srm-modal-body srm-md"
+            dangerouslySetInnerHTML={{ __html: renderMarkdownBody(item.body) }}
+          />
+        ) : (
+          <div className="srm-modal-body">
+            <em className="srm-modal-empty">No description.</em>
+          </div>
+        )}
+
+        {item.assignees.length > 0 && (
+          <section className="srm-modal-assignees">
+            <div className="srm-modal-section-label">Assignees</div>
+            <div className="srm-modal-assignees-list">
+              {item.assignees.map(a => (
+                <a
+                  key={a.login}
+                  href={a.profileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="srm-modal-assignee"
+                >
+                  <img src={a.avatarUrl} alt={a.login} className="srm-modal-avatar" width={28} height={28} />
+                  <span className="srm-modal-assignee-name">{a.login}</span>
+                </a>
               ))}
             </div>
-          )}
-        </div>
-      )}
+          </section>
+        )}
+
+        {extraFields.length > 0 && (
+          <dl className="srm-modal-fields">
+            {extraFields.map(([k, v]) => (
+              v != null && (
+                <div key={k} className="srm-modal-field">
+                  <dt>{k}</dt>
+                  <dd>{String(v)}</dd>
+                </div>
+              )
+            ))}
+          </dl>
+        )}
+
+        {item.url && (
+          <a
+            className="srm-modal-github"
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub →
+          </a>
+        )}
+      </div>
     </div>
   );
 }
