@@ -621,95 +621,98 @@ function BoardCardModal({ item, columns, onClose }: { item: BoardItem | null; co
         aria-labelledby="srm-modal-title"
         onClick={e => e.stopPropagation()}
       >
-        <button
-          ref={closeBtnRef}
-          type="button"
-          className="srm-modal-close"
-          aria-label="Close"
-          onClick={onClose}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 6l12 12M6 18L18 6" />
-          </svg>
-        </button>
+        <div className="srm-modal-scroll">
+          <header className="srm-modal-header">
+            {item.status && (
+              <span className="srm-modal-status-pill" style={{ background: statusColor }}>
+                {item.status}
+              </span>
+            )}
+            <h2 id="srm-modal-title" className="srm-modal-title">{item.title}</h2>
+            {item.number != null && <span className="srm-modal-number">#{item.number}</span>}
+          </header>
 
-        <header className="srm-modal-header">
-          {item.status && (
-            <span className="srm-modal-status-pill" style={{ background: statusColor }}>
-              {item.status}
-            </span>
-          )}
-          <h2 id="srm-modal-title" className="srm-modal-title">{item.title}</h2>
-          {item.number != null && <span className="srm-modal-number">#{item.number}</span>}
-        </header>
-
-        {item.labels.length > 0 && (
-          <div className="srm-modal-tags">
-            {item.labels.map(l => {
-              const style = getLabelStyle(l.color);
-              return (
-                <span key={l.name} className="srm-card-tag" style={style}>
-                  {l.name}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        {item.body ? (
-          <div
-            className="srm-modal-body srm-md"
-            dangerouslySetInnerHTML={{ __html: renderMarkdownBody(item.body) }}
-          />
-        ) : (
-          <div className="srm-modal-body">
-            <em className="srm-modal-empty">No description.</em>
-          </div>
-        )}
-
-        {item.assignees.length > 0 && (
-          <section className="srm-modal-assignees">
-            <div className="srm-modal-section-label">Assignees</div>
-            <div className="srm-modal-assignees-list">
-              {item.assignees.map(a => (
-                <a
-                  key={a.login}
-                  href={a.profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="srm-modal-assignee"
-                >
-                  <img src={a.avatarUrl} alt={a.login} className="srm-modal-avatar" width={28} height={28} />
-                  <span className="srm-modal-assignee-name">{a.login}</span>
-                </a>
-              ))}
+          {item.labels.length > 0 && (
+            <div className="srm-modal-tags">
+              {item.labels.map(l => {
+                const style = getLabelStyle(l.color);
+                return (
+                  <span key={l.name} className="srm-card-tag" style={style}>
+                    {l.name}
+                  </span>
+                );
+              })}
             </div>
-          </section>
-        )}
+          )}
 
-        {extraFields.length > 0 && (
-          <dl className="srm-modal-fields">
-            {extraFields.map(([k, v]) => (
-              v != null && (
-                <div key={k} className="srm-modal-field">
-                  <dt>{k}</dt>
-                  <dd>{String(v)}</dd>
-                </div>
-              )
-            ))}
-          </dl>
-        )}
+          {item.body ? (
+            <div
+              className="srm-modal-body srm-md"
+              dangerouslySetInnerHTML={{ __html: renderMarkdownBody(item.body) }}
+            />
+          ) : (
+            <div className="srm-modal-body">
+              <em className="srm-modal-empty">No description.</em>
+            </div>
+          )}
 
-        {item.url && (
-          <a
-            className="srm-modal-github"
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          {item.assignees.length > 0 && (
+            <section className="srm-modal-assignees">
+              <div className="srm-modal-section-label">Assignees</div>
+              <div className="srm-modal-assignees-list">
+                {item.assignees.map(a => (
+                  <a
+                    key={a.login}
+                    href={a.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="srm-modal-assignee"
+                  >
+                    <img src={a.avatarUrl} alt={a.login} className="srm-modal-avatar" width={28} height={28} />
+                    <span className="srm-modal-assignee-name">{a.login}</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {extraFields.length > 0 && (
+            <dl className="srm-modal-fields">
+              {extraFields.map(([k, v]) => (
+                v != null && (
+                  <div key={k} className="srm-modal-field">
+                    <dt>{k}</dt>
+                    <dd>{String(v)}</dd>
+                  </div>
+                )
+              ))}
+            </dl>
+          )}
+        </div>
+
+        <footer className="srm-modal-footer">
+          {item.url && (
+            <a
+              className="srm-modal-github"
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View on GitHub →
+            </a>
+          )}
+          <button
+            ref={closeBtnRef}
+            type="button"
+            className="srm-modal-close"
+            aria-label="Close"
+            onClick={onClose}
           >
-            View on GitHub →
-          </a>
-        )}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 6l12 12M6 18L18 6" />
+            </svg>
+          </button>
+        </footer>
       </div>
     </div>
   );

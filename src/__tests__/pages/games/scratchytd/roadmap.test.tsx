@@ -269,6 +269,44 @@ describe('ScratchyTD Roadmap Page', () => {
     })
   })
 
+  describe('Modal footer layout', () => {
+    beforeEach(() => mockFetchOk())
+
+    async function openModalFor(title: string) {
+      render(<ScratchyTDRoadmap {...defaultProps} />)
+      const titleEl = await screen.findByText(title)
+      fireEvent.click(titleEl.closest('.srm-card') as HTMLElement)
+      return await screen.findByRole('dialog')
+    }
+
+    it('places the close button inside the modal footer', async () => {
+      const dialog = await openModalFor('Laser Pointer Tower')
+      const footer = dialog.querySelector('.srm-modal-footer') as HTMLElement | null
+      expect(footer).not.toBeNull()
+      const closeBtn = within(dialog).getByRole('button', { name: /close/i })
+      expect(footer!.contains(closeBtn)).toBe(true)
+    })
+
+    it('places the View on GitHub link inside the modal footer', async () => {
+      const dialog = await openModalFor('Laser Pointer Tower')
+      const footer = dialog.querySelector('.srm-modal-footer') as HTMLElement | null
+      expect(footer).not.toBeNull()
+      const githubLink = within(dialog).getByRole('link', { name: /github/i })
+      expect(footer!.contains(githubLink)).toBe(true)
+    })
+
+    it('renders the footer after the body content in DOM order', async () => {
+      const dialog = await openModalFor('Markdown Demo')
+      const body = dialog.querySelector('.srm-modal-body') as HTMLElement
+      const footer = dialog.querySelector('.srm-modal-footer') as HTMLElement
+      expect(body).not.toBeNull()
+      expect(footer).not.toBeNull()
+      expect(
+        body.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy()
+    })
+  })
+
   describe('Filters', () => {
     beforeEach(() => mockFetchOk())
 
