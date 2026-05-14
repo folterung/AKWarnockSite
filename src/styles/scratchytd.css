@@ -1686,7 +1686,6 @@
 .srm-modal-github {
   display: inline-flex;
   align-items: center;
-  margin-top: 22px;
   padding: 8px 16px;
   border-radius: 50px;
   background: #F4845F;
@@ -1699,6 +1698,14 @@
 .srm-modal-github:hover {
   background: #D9654A;
   transform: translateY(-1px);
+}
+
+.srm-modal-footer {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Roadmap responsive */
@@ -1758,13 +1765,46 @@
 
   .srm-modal-backdrop {
     padding: 0;
-    align-items: flex-end;
+    align-items: stretch;
   }
   .srm-modal {
     max-width: none;
-    max-height: 92vh;
-    border-radius: 20px 20px 0 0;
-    padding: 22px 18px 22px;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .srm-modal-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 18px 16px;
+  }
+  .srm-modal-footer {
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid #F0E3D1;
+    background: #FFF8F0;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .srm-modal-close {
+    position: static;
+    top: auto;
+    right: auto;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .srm-modal-close:hover {
+    transform: none;
   }
   .srm-modal-title { font-size: 1.15rem; }
   .srm-modal-body { font-size: 0.88rem; }
